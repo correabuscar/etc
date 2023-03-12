@@ -1,0 +1,157 @@
+# /etc/fstab: static file system information.
+#
+# noatime turns off atimes for increased performance (atimes normally aren't 
+# needed); notail increases performance of ReiserFS (at the expense of storage 
+# efficiency).  It's safe to drop the noatime options if you want and to 
+# switch between notail / tail freely.
+#
+# The root filesystem should have a pass number of either 0 or 1.
+# All other filesystems should have a pass number of 0 or greater than 1.
+#
+# See the manpage fstab(5) for more information.
+#
+
+# <fs>			<mountpoint>	<type>		<opts>		<dump/pass>
+# NOTE: If your BOOT partition is ReiserFS, add the notail option to opts.
+#
+# NOTE: Even though we list ext4 as the type here, it will work with ext2/ext3
+#       filesystems.  This just tells the kernel to use the ext4 driver.
+#
+# NOTE: You can use full paths to devices like /dev/sda3, but it is often
+#       more reliable to use filesystem labels or UUIDs. See your filesystem
+#       documentation for details on setting a label. To obtain the UUID, use
+#       the blkid(8) command.
+
+#LABEL=boot		/boot		ext4		noauto,noatime	1 2
+#UUID=58e72203-57d1-4497-81ad-97655bd56494		/		ext4		noatime		0 1
+#LABEL=swap		none		swap		sw		0 0
+#/dev/cdrom		/mnt/cdrom	auto		noauto,ro	0 0
+
+# <file system> <dir> <type> <options> <dump> <pass>
+UUID=ae174e75-7960-44f7-9ae0-3fcef5efae64 / btrfs rw,strictatime,lazytime,async,suid,exec,dev,datasum,datacow,compress-force=zstd:1,ssd,clear_cache,space_cache=v1,autodefrag,commit=5 0 0
+#04Sept2020: must use zstd:1 instead of zstd:15 or else, considerable slow-down (not to mention mouse moving in frames) especially seen when compiling (with ccache, when no hits)!
+#17aug2020: space_cache replaced with clear_cache,nospace_cache  and if u put it back please use clear_cache,space_cache=v1 see: https://btrfs.wiki.kernel.org/index.php/Manpage/btrfs(5)
+#setting to strictatime,lazytime  which mount|grep btrfs will show just as 'lazytime'
+#trying relatime,lazytime, or just 'atime' (via remount) has no effect, it's just 'noatime,lazytime' when seen by mount|grep btrfs) - 28 july2020
+#noatime overrides lazytime here, and thus no access time is changed ever! strictatime with lazytime (which just shows as lazytime only) does work; 28 july 2020
+#zstd here means zstd:3 ! unless overriden by my kernel patch btrfs_zstd_default_level.patch which then means it's zstd:1!
+#removed: discard (14 july 2020) because we'll use periodic fstrim instead!
+#discard removed on 16 july 2020 because of using fstrim instead, for faster experience... supposedly.
+# set last column to 0 because man fsck.btrfs does nothing! and if it did it would take long time, also --repair is to be used only "with care"! (see 'man fsck.btrfs')
+#can't use zstd:5 for non-git kernels! if I do, it fails and auto-uses /dev/sda2 on / type btrfs (rw,relatime,ssd,space_cache,subvolid=5,subvol=/) XXX: made level 5(instead of 3) as zstd default via kernel patch btrfs_zstd_default_level.patch
+#XXX noatime+lazytime - is not the reason kernel rebuilds the .o files, but rather it's because of installing the just built linux-api-headers package, so next ./recompile will regen all .o file (but still via ccache hits)
+
+#see `man 5 btrfs` for more options.
+#XXX 22 April 2019 set zstd:5 (was 3)
+#XXX: 02 April 2019, with zstd:15 lots of high CPU usage and disk access lag after big writes such as kernel being compiled&installed in kworker/*-btrfs-delalloc processes; ie. update-grub took 3m35.068s; switching to the default of zstd:3
+#XXX: 02 March 2019, commit=300 changed to commit=5 after a system freeze(due to kernel?) yielded the most recent changed files into 0 bytes and thus lost! (considering using ext4 ..)
+#XXX: june 9th 2018, chose zstd:3 (zstd method 3) ACTUALLY not yet implemented(done in 5.1-rc3 at least, https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=3f93aef535c8ea03e40cd8acf0753b3e6ed33e96) (unlike zlib:9 for example) src: https://git.kernel.org/pub/scm/linux/kernel/git/mason/linux-btrfs.git/commit/?h=next&id=5c1aab1dd5445ed8bdcdbb575abc1b0d7ee5b2e7
+#see also: https://btrfs.wiki.kernel.org/index.php/Compression
+#Note: using zlib:9 then just remount, then using zstd, then remount, will cause mount to report zstd:9 :D
+
+#XXX: removed enospc_debug because getting dmesg errors like kernel: BTRFS: block rsv returned -28
+#XXX: ^ [ 1374.879921] BTRFS info (device sda1): unrecognized mount option 'lazytime'
+#but 'mount' still reports it! and no errors in dmesg during mount from arch*.iso
+#ok so this is when it happens(still, 10 april 2018):
+#[   23.701947] systemd-shutdown[1]: Unmounting file systems.
+#[   23.705349] [1667]: Remounting '/' read-only in with options 'lazytime,compress-force=lzo,ssd,discard,space_cache,autodefrag,commit=300,subvolid=5,subvol=/'.
+#[   23.784507] BTRFS info (device sdb1): unrecognized mount option 'lazytime'
+#[   23.786754] [1667]: Failed to remount '/' read-only: Invalid argument
+#[   23.789841] systemd-shutdown[1]: Remounting '/' failed abnormally, child process 1667 aborted or exited non-zero.
+
+
+# XXX: do not add errors=remount-ro  because btrfs says: unrecognized mount option
+
+
+#18 march 2017, replaced noatime with strictatime, for tmpfs here:
+#05 april 2020, uncommented these, at the end of the above zram ones for /tmp and /var/tmp so that with the util-linux mount patch multiple_target_fstab-entries.patch if zram fails, then these tmpfs ones will be tried:
+#17 aug 2020, recommented these!
+#tmpfs                   /tmp            tmpfs           auto,rw,exec,nosuid,strictatime,nodev,size=90%,mode=1777 0 0
+#XXX ^ last known good
+#was 82% but no space left on device when compiling firefox on 04 jan 2019 with outdir on /tmp ; 90% seems ok ! don't change or firefox build may no longer succeed!
+#tmpfs                   /var/tmp        tmpfs auto,rw,exec,nosuid,strictatime,nodev,size=90%,mode=1777 0 0
+#XXX ^ last known good!
+#^ "Do not use it on /var/tmp, because that folder is meant for temporary files that are preserved across reboots." https://wiki.archlinux.org/index.php/tmpfs
+#actually i don't care! can't risk hidden/deleted files being written to disk just like vte does in /tmp
+#/dev/zram1                   /tmp        ext4    defaults,auto,rw,exec,nosuid,strictatime,nodev,discard,delalloc,block_validity,user_xattr,nojournal_checksum,barrier 0 0
+#/dev/zram2               /var/tmp        ext4    defaults,auto,rw,exec,nosuid,strictatime,nodev,discard,delalloc,block_validity,user_xattr,nojournal_checksum,barrier 0 0
+#^ TODO: make these 2 work in gentoo: https://wiki.gentoo.org/wiki/Zram#Using_zram-init_service
+#/dev/zram1                   /tmp        ext4    defaults,nofail,auto,rw,exec,nosuid,strictatime,nodev,discard,delalloc,block_validity,user_xattr,nojournal_checksum,barrier 0 0
+#FIXME: ^ nofail makes it get 0755 instead of 1777  see `man 5 systemd.mount`
+#1####
+/dev/zram1                   /tmp        ext4    defaults,auto,rw,exec,nosuid,strictatime,nodev,discard,delalloc,block_validity,user_xattr,nojournal_checksum,barrier 0 0
+#XXX ^ last known good
+#/dev/zram1                   /tmp        ext4    defaults,x-systemd.device-timeout=15,x-systemd.after=systemd-udev-trigger.service,x-systemd.requires=systemd-udev-trigger.service,auto,rw,exec,nosuid,strictatime,nodev,discard,delalloc,block_validity,user_xattr,nojournal_checksum,barrier 0 0
+#/dev/zram2               /var/tmp        ext4    defaults,nofail,auto,rw,exec,nosuid,strictatime,nodev,discard,delalloc,block_validity,user_xattr,nojournal_checksum,barrier 0 0
+#FIXME: ^ nofail makes it get 0755 instead of 1777  see `man 5 systemd.mount`
+#2####
+/dev/zram2               /var/tmp        ext4    defaults,auto,rw,exec,nosuid,strictatime,nodev,discard,delalloc,block_validity,user_xattr,nojournal_checksum,barrier 0 0
+#XXX ^ last known good
+#FIXME: on systemd(ie. archlinux) ^ 'nofail' above makes it get 0755 instead of 1777  see `man 5 systemd.mount` so using 'auto' seems good!
+#/dev/zram2               /var/tmp        ext4    defaults,x-systemd.device-timeout=15,x-systemd.after=systemd-udev-trigger.service,x-systemd.requires=systemd-udev-trigger.service,auto,rw,exec,nosuid,strictatime,nodev,discard,delalloc,block_validity,user_xattr,nojournal_checksum,barrier 0 0
+#todo: maybe /etc/udev/rules.d/99-zram.rules  because in kdump kernel this doesn't seem to execute: /etc/udev/rules.d/99-zram.rules
+/dev/zram3                   /var/tmp/portage        ext4   defaults,auto,rw,exec,nodev,nosuid,strictatime,discard,delalloc,block_validity,user_xattr,acl,nojournal_checksum,barrier,x-mount.mkdir=775 0 0
+#XXX ^ last known good
+#26 jan 2021: nosuid on /var/tmp/portage is bad because emerging virtualbox will make /usr/lib64/virtualbox/VBoxNetAdpCtl get 4710 instead of 4750 - actually this isn't true, it's something else doing this: it's portage/emerge! thansk to 'ionen' on #gentoo freenode irc, "<ionen> yeah it's preinst_sfperms in portage's bin/misc-functions.sh , intentionally drops go-r if suid, or o-r if sgid" also I had FEATURES=suidctl which makes virtualbox unrunnable as non-root! error is like this: https://bugs.gentoo.org/283617#c9  More specifically, I didn't have /usr/lib64/virtualbox/VirtualBoxVM in /etc/portage/suidctl.conf hence it was emerged as non-suid!!
+#mode=775,uid=portage,gid=portage
+#XXX: can't make this owned by portage:portage at mount time! it's drwxr-xr-x 3 root root   so, modifying Gentoo's /etc/init.d/localmount owned by sys-apps/openrc-0.42.1 to chown it :P
+#XXX: can't use noexec, obviously! probably need to have dev and suid, or just suid,exec ; ok since it worked as tmpfs with nosuid for this then I don't need 'suid' as mount option: sys-apps/shadow-4.8.1-r2 (/bin/su)  yes it's -rws--x--x
+
+
+#doneFIXME need to `chmod 1777 /var/tmp /tmp` upon mount! Hmm, something's setting them to 1777 now... no idea what! ("defaults"?) XXX: possibly by /usr/lib/tmpfiles.d/tmp.conf owned by systemd 242.29-1
+
+#TODO: make zram these too:
+#tmpfs           7.6G  1.1M  7.6G   1% /dev/shm
+#tmpfs           7.6G     0  7.6G   0% /sys/fs/cgroup  <-- this is ro
+#tmpfs           1.6G   58M  1.5G   4% /run/user/1000
+
+#all relevant files: /etc/fstab /etc/udev/rules.d/99-zram.rules /etc/modules-load.d/zram.conf /etc/modprobe.d/zram.conf
+#run `zramctl` to see stats, it's from package util-linux
+
+#see https://www.kernel.org/doc/html/latest/admin-guide/binfmt-misc.html
+#none /proc/sys/fs/binfmt_misc binfmt_misc defaults 0 0
+#^ TODO: uncomment that and maybe use it (tested it to work, but didn't register any formats)
+
+#https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=3f93aef535c8ea03e40cd8acf0753b3e6ed33e96
+#Level Ratio Compression (MB/s) Decompression (MB/s) Memory (KB)
+# 1 2.658 438.47 910.51 780 
+# 2 2.744 364.86 886.55 1004 
+# 3 2.801 336.33 828.41 1260 
+# 4 2.858 286.71 886.55 1260 
+# 5 2.916 212.77 556.84 1388 
+# 6 2.363 119.82 990.85 1516 
+# 7 3.000 154.06 849.30 1516 
+# 8 3.011 159.54 875.03 1772 
+# 9 3.025 100.51 940.15 1772 
+#10 3.033 118.97 616.26 1772 
+#11 3.036 94.19 802.11 1772 
+#12 3.037 73.45 931.49 1772 
+#13 3.041 55.17 835.26 2284 
+#14 3.087 44.70 716.78 2547 
+#15 3.126 37.30 878.84 2547
+
+#XXX: 12Sept2019 holy shiet, I've just discovered that zstd:5 (especially zstd:15) is so slow that it makes my mouse move in frames and it's the reason that youtube videos playing were skipping for example! and it's not due to Kingston SSD writes! because zstd:1 works just fine!!! It's all those kworkers using CPU when zstd level is high(er) that are causing all the stuttering!!!!! Ergo, switching to zstd:1 via kernel patch! (tested with zstd:15,commit=300, my current was zstd:5,commit=5  the :5 was in kernel patch! and now tested zstd:1,commit=300 rsync-ing the whole rootfs into another Kingston SSD of the same type has no stuttering at all!) - true for 5.3.0-rc8-gf74c2bb98776 (at least)
+#zstd:5 to zstd:1 after rsync is:
+#/dev/sda2       224G  118G  105G  53% /
+#/dev/sdb1       224G  133G   91G  60% /tmp/empty
+#15G extra space used!
+#hmmmm, I've had bfq disk scheduler! instead of mq-deadline
+
+#doneFIXME: swap is disabled in kernel!
+#3####
+/dev/zram0 none swap defaults,discard 0 0
+#ok, reason for using swap at all("kernel defragments particular structures in memory is push copy of the structure to swap then modify it"): https://www.phoronix.com/forums/forum/phoronix/general-discussion/1118164-yes-linux-does-bad-in-low-ram-memory-pressure-situations-on-the-desktop?p=1118311#post1118311
+#^ see also knowhow2.wofl or just read https://www.phoronix.com/forums/forum/phoronix/latest-phoronix-articles/1120793-new-low-memory-monitor-project-can-help-with-linux-s-ram-responsiveness-problem?p=1120861#post1120861
+
+#^ TODO: make these 3 work in gentoo: https://wiki.gentoo.org/wiki/Zram#Using_zram-init_service
+#/dev/zram1 none swap defaults 0 0
+#/dev/zram2 none swap defaults 0 0
+#/dev/zram3 none swap defaults 0 0
+#https://wiki.archlinux.org/index.php/Improving_performance#Swap_on_zRAM_using_a_udev_rule
+#XXX: no need to have 4 swaps (one per core) anymore: cat /sys/block/zram0/max_comp_streams
+
+#from old gentoo: (these have no effect now that the above zram ones are uncommented!)
+#tmpfs                   /tmp            tmpfs           auto,rw,nosuid,relatime,nodev,size=90%,mode=1777 0 0
+#tmpfs                   /var/tmp        tmpfs auto,rw,nosuid,relatime,nodev,size=90%,mode=1777 0 0
+#tmpfs                   /var/tmp/portage        tmpfs   auto,rw,nosuid,relatime,nodev,size=90%,mode=775,uid=portage,gid=portage,x-mount.mkdir=775 0 0
+

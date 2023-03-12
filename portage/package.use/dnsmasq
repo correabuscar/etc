@@ -1,0 +1,8 @@
+net-dns/dnsmasq -dhcp -dumpfile -tfpt -ipv6 -auth-dns -lua script conntrack
+# required by app-emulation/libvirt-7.0.0::gentoo[virt-network]
+# required by app-emulation/libvirt-glib-3.0.0::gentoo
+# required by app-emulation/virt-manager-3.2.0::gentoo
+# required by virt-manager (argument)
+#>=net-dns/dnsmasq-2.84-r101 script
+
+#conntrack ~ or else: dnsmasq: conntrack support not available: set HAVE_CONNTRACK in src/config.h because have  conntrack in /etc/dnsmasq.conf

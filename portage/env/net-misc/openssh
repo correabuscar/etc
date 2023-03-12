@@ -1,0 +1,31 @@
+#!/bin/bash
+
+#thanks to iamben on #gentoo freenode irc!
+
+#pre_ and post_  works for every phase function names: https://devmanual.gentoo.org/ebuild-writing/functions/index.html
+#even for pkg_postinst ie. post_pkg_postinst() works!
+
+#These files(like $0 here) are sourced by line "__source_env_files --no-qa "${PM_EBUILD_HOOK_DIR}"" in /usr/lib/portage/python3.6/ebuild.sh where PM_EBUILD_HOOK_DIR is /etc/portage/env/
+
+post_src_install() {
+  einfo "hello world from '${FUNCNAME[0]}()' from script '$0' (well, it actually sourced this: '${BASH_SOURCE[0]}'), from pwd=`pwd`, passed args($#)='$*'" #no args! hello world from 'post_src_install' from script '/usr/lib/portage/python3.6/ebuild.sh' (well, actually '/etc/portage/env/net-misc/openssh'), pwd=/var/tmp/portage/net-misc/openssh-8.2_p1-r6/work/openssh-8.2p1, args(0)=''
+  if test -z "$ED"; then
+    #doesn't happen:
+    ewarn "Empty \${ED} ! not copying /etc/ssh/sshd_config and /etc/ssh/ssh_config as /etc/ssh/.dist.sshd_config and /etc/ssh/.dist.ssh_config" >&2
+  else
+    cp -a -- "${ED}/etc/ssh/sshd_config" "${ED}/etc/ssh/.dist.sshd_config"
+    cp -a -- "${ED}/etc/ssh/ssh_config" "${ED}/etc/ssh/.dist.ssh_config"
+  fi
+}
+
+post_pkg_postinst() {
+  #yes, this function gets called too!
+
+  #sys-apps/coreutils-8.32-r1 (/usr/bin/tee)
+  local appended="# this line is for emulating user-made modifications so that when the next package update happens via emerge it will not simply overwrite these files without telling you to call eg. dispatch-conf to see the changes!"
+  #ewarn "$ROOT" # it's empty string apparently
+  if ! grep -qF -- "$appended" "${ROOT}/etc/ssh/.dist.sshd_config" "${ROOT}/etc/ssh/.dist.ssh_config"; then
+    #only add it if it doesn't already exist, otherwise re-emerging the same package(at least) will append another line! for some reason, unknown yet.
+    echo "$appended" | tee --append "${ROOT}/etc/ssh/.dist.sshd_config" "${ROOT}/etc/ssh/.dist.ssh_config"
+  fi
+}

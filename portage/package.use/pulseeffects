@@ -1,0 +1,176 @@
+media-video/pipewire gstreamer -echo-cancel -bluetooth ssl udev
+#^ gstreamer is required for pulseeffects, lookslike
+
+media-sound/pulseeffects calf rubberband bs2b
+#Since version 5.0.0, media-sound/pulseeffects have explicitly required
+#media-video/pipewire rather than just a PulseAudio client (i.e. either
+#PipeWire or plain media-sound/pulseaudio). Following up on this change,
+#upstream has decided to rename the project to EasyEffects starting with
+#version 6.0.0.
+media-sound/easyeffects calf rubberband bs2b -webrtc
+media-plugins/calf lv2
+#^ for bass enhancer
+
+
+#new emerge wants this on 07march2022
+#
+# required by dev-lang/ruby-3.0.3::gentoo
+# required by virtual/rubygems-16::gentoo[ruby_targets_ruby30]
+# required by dev-lang/ruby-2.6.9::gentoo
+# required by virtual/ruby-ssl-11::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/racc-1.5.2-r1::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/rdoc-6.3.3-r1::gentoo[ruby_targets_ruby26]
+# required by dev-lang/ruby-2.7.5::gentoo[rdoc]
+# required by dev-ruby/rbs-2.2.2::gentoo[ruby_targets_ruby27]
+# required by dev-ruby/typeprof-0.21.2::gentoo[ruby_targets_ruby30]
+>=dev-ruby/minitest-5.15.0 ruby_targets_ruby30
+# required by dev-lang/ruby-3.0.3::gentoo
+# required by virtual/rubygems-16::gentoo[ruby_targets_ruby30]
+# required by dev-lang/ruby-2.6.9::gentoo
+# required by virtual/ruby-ssl-11::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/racc-1.5.2-r1::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/rdoc-6.3.3-r1::gentoo[ruby_targets_ruby26]
+# required by dev-lang/ruby-2.7.5::gentoo[rdoc]
+# required by dev-ruby/rbs-2.2.2::gentoo[ruby_targets_ruby27]
+# required by dev-ruby/typeprof-0.21.2::gentoo[ruby_targets_ruby30]
+>=dev-ruby/power_assert-2.0.1 ruby_targets_ruby30
+# required by dev-lang/ruby-3.0.3::gentoo
+# required by virtual/rubygems-16::gentoo[ruby_targets_ruby30]
+# required by dev-lang/ruby-2.6.9::gentoo
+# required by virtual/ruby-ssl-11::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/racc-1.5.2-r1::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/rdoc-6.3.3-r1::gentoo[ruby_targets_ruby26]
+# required by dev-lang/ruby-2.7.5::gentoo[rdoc]
+# required by dev-ruby/rbs-2.2.2::gentoo[ruby_targets_ruby27]
+# required by dev-ruby/typeprof-0.21.2::gentoo[ruby_targets_ruby30]
+>=dev-ruby/rake-13.0.6 ruby_targets_ruby30
+# required by dev-ruby/typeprof-0.21.2::gentoo[ruby_targets_ruby30]
+# required by dev-lang/ruby-3.0.3::gentoo
+# required by virtual/rubygems-16::gentoo[ruby_targets_ruby30]
+# required by dev-lang/ruby-2.6.9::gentoo
+# required by virtual/ruby-ssl-11::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/racc-1.5.2-r1::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/rdoc-6.3.3-r1::gentoo[ruby_targets_ruby26]
+# required by dev-lang/ruby-2.7.5::gentoo[rdoc]
+# required by dev-ruby/rexml-3.2.5::gentoo[ruby_targets_ruby27]
+# required by dev-ruby/rss-0.2.9::gentoo[ruby_targets_ruby26]
+>=dev-ruby/rbs-2.2.2 ruby_targets_ruby30
+# required by dev-lang/ruby-3.0.3::gentoo
+# required by virtual/rubygems-16::gentoo[ruby_targets_ruby30]
+# required by dev-lang/ruby-2.6.9::gentoo
+# required by virtual/ruby-ssl-11::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/racc-1.5.2-r1::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/rdoc-6.3.3-r1::gentoo[ruby_targets_ruby26]
+# required by dev-lang/ruby-2.7.5::gentoo[rdoc]
+# required by dev-ruby/rbs-2.2.2::gentoo[ruby_targets_ruby27]
+# required by dev-ruby/typeprof-0.21.2::gentoo[ruby_targets_ruby30]
+>=dev-ruby/rexml-3.2.5 ruby_targets_ruby30
+# required by dev-lang/ruby-3.0.3::gentoo
+# required by virtual/rubygems-16::gentoo[ruby_targets_ruby30]
+# required by dev-lang/ruby-2.6.9::gentoo
+# required by virtual/ruby-ssl-11::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/racc-1.5.2-r1::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/rdoc-6.3.3-r1::gentoo[ruby_targets_ruby26]
+# required by dev-lang/ruby-2.7.5::gentoo[rdoc]
+# required by dev-ruby/rbs-2.2.2::gentoo[ruby_targets_ruby27]
+# required by dev-ruby/typeprof-0.21.2::gentoo[ruby_targets_ruby30]
+>=dev-ruby/rss-0.2.9 ruby_targets_ruby30
+# required by dev-lang/ruby-3.0.3::gentoo
+# required by virtual/rubygems-16::gentoo[ruby_targets_ruby30]
+# required by dev-lang/ruby-2.6.9::gentoo
+# required by virtual/ruby-ssl-11::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/racc-1.5.2-r1::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/rdoc-6.3.3-r1::gentoo[ruby_targets_ruby26]
+# required by dev-lang/ruby-2.7.5::gentoo[rdoc]
+# required by dev-ruby/rbs-2.2.2::gentoo[ruby_targets_ruby27]
+# required by dev-ruby/typeprof-0.21.2::gentoo[ruby_targets_ruby30]
+>=dev-ruby/test-unit-3.5.3 ruby_targets_ruby30
+# required by dev-lang/ruby-3.0.3::gentoo
+# required by virtual/rubygems-16::gentoo[ruby_targets_ruby30]
+# required by dev-lang/ruby-2.6.9::gentoo
+# required by virtual/ruby-ssl-11::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/racc-1.5.2-r1::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/rdoc-6.3.3-r1::gentoo[ruby_targets_ruby26]
+# required by dev-lang/ruby-2.7.5::gentoo[rdoc]
+# required by dev-ruby/rbs-2.2.2::gentoo[ruby_targets_ruby27]
+>=dev-ruby/typeprof-0.21.2 ruby_targets_ruby30
+# required by dev-lang/ruby-3.0.3::gentoo
+# required by virtual/rubygems-16::gentoo[ruby_targets_ruby30]
+# required by dev-lang/ruby-2.6.9::gentoo
+# required by virtual/ruby-ssl-11::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/racc-1.5.2-r1::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/rdoc-6.3.3-r1::gentoo[ruby_targets_ruby26]
+# required by dev-lang/ruby-2.7.5::gentoo[rdoc]
+# required by dev-ruby/rbs-2.2.2::gentoo[ruby_targets_ruby27]
+# required by dev-ruby/typeprof-0.21.2::gentoo[ruby_targets_ruby30]
+>=dev-ruby/bundler-2.2.33 ruby_targets_ruby30
+# required by dev-lang/ruby-3.0.3::gentoo
+# required by virtual/rubygems-16::gentoo[ruby_targets_ruby30]
+# required by dev-lang/ruby-2.6.9::gentoo
+# required by virtual/ruby-ssl-11::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/racc-1.5.2-r1::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/rdoc-6.3.3-r1::gentoo[ruby_targets_ruby26]
+# required by dev-lang/ruby-2.7.5::gentoo[rdoc]
+# required by dev-ruby/rbs-2.2.2::gentoo[ruby_targets_ruby27]
+# required by dev-ruby/typeprof-0.21.2::gentoo[ruby_targets_ruby30]
+>=dev-ruby/did_you_mean-1.6.1 ruby_targets_ruby30
+# required by dev-lang/ruby-3.0.3::gentoo
+# required by virtual/rubygems-16::gentoo[ruby_targets_ruby30]
+# required by dev-lang/ruby-2.6.9::gentoo
+# required by virtual/ruby-ssl-11::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/racc-1.5.2-r1::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/rdoc-6.3.3-r1::gentoo[ruby_targets_ruby26]
+# required by dev-lang/ruby-2.7.5::gentoo[rdoc]
+# required by dev-ruby/rbs-2.2.2::gentoo[ruby_targets_ruby27]
+# required by dev-ruby/typeprof-0.21.2::gentoo[ruby_targets_ruby30]
+>=dev-ruby/json-2.6.1 ruby_targets_ruby30
+# required by dev-lang/ruby-3.0.3::gentoo[rdoc]
+# required by virtual/rubygems-16::gentoo[ruby_targets_ruby30]
+# required by dev-lang/ruby-2.6.9::gentoo
+# required by virtual/ruby-ssl-11::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/racc-1.5.2-r1::gentoo[ruby_targets_ruby26]
+>=dev-ruby/rdoc-6.3.3-r1 ruby_targets_ruby30
+# required by dev-lang/ruby-3.0.3::gentoo
+# required by dev-ruby/rbs-2.2.2::gentoo[ruby_targets_ruby30]
+# required by dev-ruby/typeprof-0.21.2::gentoo[ruby_targets_ruby30]
+>=virtual/rubygems-16 ruby_targets_ruby30
+# required by virtual/rubygems-16::gentoo[ruby_targets_ruby30]
+# required by dev-lang/ruby-2.6.9::gentoo
+# required by virtual/ruby-ssl-11::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/racc-1.5.2-r1::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/rdoc-6.3.3-r1::gentoo[ruby_targets_ruby26]
+# required by dev-lang/ruby-3.0.3::gentoo[rdoc]
+# required by dev-ruby/rbs-2.2.2::gentoo[ruby_targets_ruby30]
+# required by dev-ruby/typeprof-0.21.2::gentoo[ruby_targets_ruby30]
+>=dev-ruby/rubygems-3.2.33 ruby_targets_ruby30
+
+# required by dev-ruby/rdoc-6.3.3-r1::gentoo[ruby_targets_ruby30]
+# required by dev-lang/ruby-3.0.3::gentoo[rdoc]
+# required by virtual/ruby-ssl-11::gentoo[ruby_targets_ruby30]
+# required by dev-ruby/racc-1.5.2-r1::gentoo[ruby_targets_ruby30]
+>=dev-ruby/kpeg-1.3.1 ruby_targets_ruby30
+# required by dev-ruby/rdoc-6.3.3-r1::gentoo[ruby_targets_ruby30]
+# required by dev-lang/ruby-3.0.3::gentoo[rdoc]
+# required by virtual/ruby-ssl-11::gentoo[ruby_targets_ruby30]
+# required by dev-ruby/rubygems-3.2.33::gentoo[ruby_targets_ruby26]
+# required by virtual/rubygems-16::gentoo[ruby_targets_ruby30]
+# required by dev-lang/ruby-2.6.9::gentoo
+# required by dev-ruby/rbs-2.2.2::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/typeprof-0.21.2::gentoo[ruby_targets_ruby27]
+>=dev-ruby/racc-1.5.2-r1 ruby_targets_ruby30
+# required by dev-ruby/rubygems-3.2.33::gentoo[ruby_targets_ruby30]
+# required by virtual/rubygems-16::gentoo[ruby_targets_ruby30]
+# required by dev-lang/ruby-2.6.9::gentoo
+# required by dev-ruby/rbs-2.2.2::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/typeprof-0.21.2::gentoo[ruby_targets_ruby27]
+# required by dev-lang/ruby-3.0.3::gentoo
+# required by dev-ruby/rexml-3.2.5::gentoo[ruby_targets_ruby30]
+# required by dev-ruby/rss-0.2.9::gentoo[ruby_targets_ruby30]
+>=virtual/ruby-ssl-11 ruby_targets_ruby30
+
+
+# required by media-sound/pulseeffects-4.8.5-r1::gentoo[rubberband]
+# required by @selected
+# required by @world (argument)
+>=media-libs/rubberband-2.0.2 ladspa
+

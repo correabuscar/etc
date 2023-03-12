@@ -1,0 +1,7 @@
+# created by eselect-repo
+
+
+[poly-c]
+location = /var/db/repos/poly-c
+sync-type = git
+sync-uri = https://github.com/gentoo-mirror/poly-c.git

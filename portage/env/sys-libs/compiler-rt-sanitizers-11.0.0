@@ -1,0 +1,7 @@
+#
+#CFLAGS="$CFLAGS -U_FORTIFY_SOURCE"
+#workaround for:
+#oh wait actually it's just a redef warning! so irrelevant! not tested!
+
+#meh my actual problem was: https://bugs.gentoo.org/756034 which needs cmake downgrade to temp fix
+

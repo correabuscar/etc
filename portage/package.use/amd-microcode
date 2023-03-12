@@ -1,0 +1,2 @@
+sys-kernel/linux-firmware initramfs
+# ^ initramfs use yields /boot/amd-uc.img which grub is happy to use, so no need to prepend amd microcode in cpio format to the beginning of the initramfs

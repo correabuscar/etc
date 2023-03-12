@@ -1,0 +1,3 @@
+net-misc/tigervnc drm -opengl pam xorgmodule dri3 -gnutls -java -libressl -nls -server -xinerama
+#so, since before 25may2022, +opengl needs +server but +server will bring in some xorg-server and build it apparently, as per the .ebuild file.
+#trying -opengl then.

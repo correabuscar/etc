@@ -1,0 +1,9 @@
+#=app-shells/bash-9999
+#^ never used?!
+=app-shells/bash-99999
+#^ in commit  b304aabc92d3f8f2a4f6ebbc35fa4614bbb83ea8                branch 'devel' of https://git.savannah.gnu.org/git/bash  it will fail to properly execute valid command: $ if [[ "1" -eq 2 ]]; then echo a ; fi
+#bash: [[: \1: syntax error: operand expected (error token is "\1")
+#ergo, downgrading to non-git version!
+
+#XXX ok, can't really not use the git version of bash, why ? because the non-git version doesn't have some bugfixes that my patches depend on to apply on top of.
+#

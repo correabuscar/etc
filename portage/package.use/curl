@@ -1,0 +1,19 @@
+>=net-misc/curl-7.84 curl_ssl_nss -curl_ssl_openssl ftp -openssl -pop3 -samba -smtp ssl -sslv3 -telnet -tftp threads zstd
+>=net-misc/curl-7.85.0 -adns threads
+#^done to fix this:
+#!!! Problem resolving dependencies for net-misc/curl from @selected
+#... done!
+#
+#!!! The ebuild selected to satisfy "net-misc/curl" has unmet requirements.
+#- net-misc/curl-7.85.0::gentoo USE="adns ftp http2 imap progress-meter ssl threads verify-sig zstd -alt-svc -brotli -gnutls -gopher -hsts -idn -ipv6 -kerberos -ldap -mbedtls (-nghttp3) -nss -openssl -pop3 -quiche -rtmp -samba -smtp -ssh -sslv3 -static-libs -telnet -test -tftp" ABI_X86="(64) -32 (-x32)" CURL_SSL="nss -gnutls -mbedtls -openssl"                                                                                                                                              
+#
+#  The following REQUIRED_USE flag constraints are unsatisfied:
+#    threads? ( !adns )
+#
+#  The above constraints are a subset of the following complete expression:
+#    threads? ( !adns ) ssl? ( exactly-one-of ( curl_ssl_gnutls curl_ssl_mbedtls curl_ssl_nss curl_ssl_openssl ) )
+#
+#(dependency required by "@selected" [set])
+#(dependency required by "@world" [argument])
+
+

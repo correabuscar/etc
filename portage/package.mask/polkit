@@ -1,0 +1,140 @@
+#=dev-lang/spidermonkey-78.4.1
+#=dev-lang/spidermonkey-78.5.0
+##supposedly fixed now 25nov2020
+#because spidermonkey fails to compile with both currently available spidermonkey:78 as follows eg.:
+#
+#     Running `CARGO=/usr/lib/rust/1.48.0/bin/cargo-1.48.0 CARGO_CRATE_NAME=mozglue_static CARGO_MANIFEST_DIR=/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/mozglue/static/rust CARGO_PKG_AUTHORS='' CARGO_PKG_DESCRIPTION='' CARGO_PKG_HOMEPAGE='' CARGO_PKG_LICENSE=MPL CARGO_PKG_LICENSE_FILE='' CARGO_PKG_NAME=mozglue-static CARGO_PKG_REPOSITORY='' CARGO_PKG_VERSION=0.1.0 CARGO_PKG_VERSION_MAJOR=0 CARGO_PKG_VERSION_MINOR=1 CARGO_PKG_VERSION_PATCH=0 CARGO_PKG_VERSION_PRE='' LD_LIBRARY_PATH='/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/build/release/deps:/usr/lib/rust/1.48.0/lib' OUT_DIR=/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/build/x86_64-unknown-linux-gnu/release/build/mozglue-static-72dcbf608171b403/out /usr/bin/rustc --crate-name mozglue_static --edition=2018 mozglue/static/rust/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts --crate-type lib --emit=dep-info,metadata,link -C opt-level=2 -C panic=abort -C embed-bitcode=no -C metadata=57b5a9ebbf075e53 -C extra-filename=-57b5a9ebbf075e53 --out-dir /var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/build/x86_64-unknown-linux-gnu/release/deps --target x86_64-unknown-linux-gnu -C linker=/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/build/cargo-linker -L dependency=/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/build/x86_64-unknown-linux-gnu/release/deps -L dependency=/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/build/release/deps --extern arrayvec=/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/build/x86_64-unknown-linux-gnu/release/deps/libarrayvec-6f7b713bca0f4652.rmeta -C opt-level=2 -C debuginfo=2 -C force-frame-pointers=yes --cap-lints warn -C codegen-units=1 -L native=/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/build/x86_64-unknown-linux-gnu/release/build/mozglue-static-72dcbf608171b403/out -l static=wrappers -l stdc++`
+#error[E0432]: unresolved import `crate::arch::x86_64::__m64`
+#  --> /var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/third_party/rust/packed_simd/src/api/into_bits/arch_specific.rs:51:15
+#   |
+#51 |               $($arch_ty),*
+#   |                 ^^^^^^^^ no `__m64` in `arch::x86_64`
+#...
+#86 | / impl_arch!(
+#87 | |     [x86["x86"]: __m64], [x86_64["x86_64"]: __m64],
+#88 | |     [arm["arm"]: int8x8_t, uint8x8_t, poly8x8_t, int16x4_t, uint16x4_t,
+#89 | |      poly16x4_t, int32x2_t, uint32x2_t, float32x2_t, int64x1_t,
+#...  |
+#96 | |     test: test_v64
+#97 | | );
+#   | |__- in this macro invocation
+#   |
+#   = note: this error originates in a macro (in Nightly builds, run with -Z macro-backtrace for more info)
+#
+#error[E0432]: unresolved import `crate::arch::x86_64::_mm_movemask_pi8`
+#  --> /var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/third_party/rust/packed_simd/src/codegen/reductions/mask/x86/sse.rs:47:21
+#   |
+#47 |                 use crate::arch::x86_64::_mm_movemask_pi8;
+#   |                     ^^^^^^^^^^^^^^^^^^^^^----------------
+#   |                     |                    |
+#   |                     |                    help: a similar name exists in the module: `_mm_movemask_epi8`
+#   |                     no `_mm_movemask_pi8` in `arch::x86_64`
+#   |
+#  ::: /var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/third_party/rust/packed_simd/src/codegen/reductions/mask.rs:41:1
+#   |
+#41 | impl_mask_reductions!(m8x8);
+#   | ---------------------------- in this macro invocation
+#   |
+#   = note: this error originates in a macro (in Nightly builds, run with -Z macro-backtrace for more info)
+#
+#error[E0432]: unresolved import `crate::arch::x86_64::_mm_movemask_pi8`
+#  --> /var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/third_party/rust/packed_simd/src/codegen/reductions/mask/x86/sse.rs:62:21
+#   |
+#62 |                 use crate::arch::x86_64::_mm_movemask_pi8;
+#   |                     ^^^^^^^^^^^^^^^^^^^^^----------------
+#   |                     |                    |
+#   |                     |                    help: a similar name exists in the module: `_mm_movemask_epi8`
+#   |                     no `_mm_movemask_pi8` in `arch::x86_64`
+#   |
+#  ::: /var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/third_party/rust/packed_simd/src/codegen/reductions/mask.rs:41:1
+#   |
+#41 | impl_mask_reductions!(m8x8);
+#   | ---------------------------- in this macro invocation
+#   |
+#   = note: this error originates in a macro (in Nightly builds, run with -Z macro-backtrace for more info)
+#
+#error[E0432]: unresolved import `crate::arch::x86_64::_mm_movemask_pi8`
+#  --> /var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/third_party/rust/packed_simd/src/codegen/reductions/mask/x86/sse.rs:47:21
+#   |
+#47 |                 use crate::arch::x86_64::_mm_movemask_pi8;
+#   |                     ^^^^^^^^^^^^^^^^^^^^^----------------
+#   |                     |                    |
+#   |                     |                    help: a similar name exists in the module: `_mm_movemask_epi8`
+#   |                     no `_mm_movemask_pi8` in `arch::x86_64`
+#   |
+#  ::: /var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/third_party/rust/packed_simd/src/codegen/reductions/mask.rs:47:1
+#   |
+#47 | impl_mask_reductions!(m16x4);
+#   | ----------------------------- in this macro invocation
+#   |
+#   = note: this error originates in a macro (in Nightly builds, run with -Z macro-backtrace for more info)
+#
+#error[E0432]: unresolved import `crate::arch::x86_64::_mm_movemask_pi8`
+#  --> /var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/third_party/rust/packed_simd/src/codegen/reductions/mask/x86/sse.rs:62:21
+#   |
+#62 |                 use crate::arch::x86_64::_mm_movemask_pi8;
+#   |                     ^^^^^^^^^^^^^^^^^^^^^----------------
+#   |                     |                    |
+#   |                     |                    help: a similar name exists in the module: `_mm_movemask_epi8`
+#   |                     no `_mm_movemask_pi8` in `arch::x86_64`
+#   |
+#  ::: /var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/third_party/rust/packed_simd/src/codegen/reductions/mask.rs:47:1
+#   |
+#47 | impl_mask_reductions!(m16x4);
+#   | ----------------------------- in this macro invocation
+#   |
+#   = note: this error originates in a macro (in Nightly builds, run with -Z macro-backtrace for more info)
+#
+#error[E0432]: unresolved import `crate::arch::x86_64::_mm_movemask_pi8`
+#  --> /var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/third_party/rust/packed_simd/src/codegen/reductions/mask/x86/sse.rs:47:21
+#   |
+#47 |                 use crate::arch::x86_64::_mm_movemask_pi8;
+#   |                     ^^^^^^^^^^^^^^^^^^^^^----------------
+#   |                     |                    |
+#   |                     |                    help: a similar name exists in the module: `_mm_movemask_epi8`
+#   |                     no `_mm_movemask_pi8` in `arch::x86_64`
+#   |
+#  ::: /var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/third_party/rust/packed_simd/src/codegen/reductions/mask.rs:52:1
+#   |
+#52 | impl_mask_reductions!(m32x2);
+#   | ----------------------------- in this macro invocation
+#   |
+#   = note: this error originates in a macro (in Nightly builds, run with -Z macro-backtrace for more info)
+#
+#error[E0432]: unresolved import `crate::arch::x86_64::_mm_movemask_pi8`
+#  --> /var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/third_party/rust/packed_simd/src/codegen/reductions/mask/x86/sse.rs:62:21
+#   |
+#62 |                 use crate::arch::x86_64::_mm_movemask_pi8;
+#   |                     ^^^^^^^^^^^^^^^^^^^^^----------------
+#   |                     |                    |
+#   |                     |                    help: a similar name exists in the module: `_mm_movemask_epi8`
+#   |                     no `_mm_movemask_pi8` in `arch::x86_64`
+#   |
+#  ::: /var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/third_party/rust/packed_simd/src/codegen/reductions/mask.rs:52:1
+#   |
+#52 | impl_mask_reductions!(m32x2);
+#   | ----------------------------- in this macro invocation
+#   |
+#   = note: this error originates in a macro (in Nightly builds, run with -Z macro-backtrace for more info)
+#
+#   Compiling wat v1.0.17
+#     Running `CARGO=/usr/lib/rust/1.48.0/bin/cargo-1.48.0 CARGO_CRATE_NAME=wat CARGO_MANIFEST_DIR=/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/third_party/rust/wat CARGO_PKG_AUTHORS='Alex Crichton <alex@alexcrichton.com>' CARGO_PKG_DESCRIPTION='Rust parser for the WebAssembly Text format, WAT
+#' CARGO_PKG_HOMEPAGE='https://github.com/bytecodealliance/wat' CARGO_PKG_LICENSE='Apache-2.0 WITH LLVM-exception' CARGO_PKG_LICENSE_FILE='' CARGO_PKG_NAME=wat CARGO_PKG_REPOSITORY='https://github.com/bytecodealliance/wat' CARGO_PKG_VERSION=1.0.17 CARGO_PKG_VERSION_MAJOR=1 CARGO_PKG_VERSION_MINOR=0 CARGO_PKG_VERSION_PATCH=17 CARGO_PKG_VERSION_PRE='' LD_LIBRARY_PATH='/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/build/release/deps:/usr/lib/rust/1.48.0/lib' /usr/bin/rustc --crate-name wat --edition=2018 /var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/third_party/rust/wat/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi --crate-type lib --emit=dep-info,metadata,link -C opt-level=2 -C panic=abort -C embed-bitcode=no -C metadata=040ed5cf25d0e39f -C extra-filename=-040ed5cf25d0e39f --out-dir /var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/build/x86_64-unknown-linux-gnu/release/deps --target x86_64-unknown-linux-gnu -C linker=/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/build/cargo-linker -L dependency=/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/build/x86_64-unknown-linux-gnu/release/deps -L dependency=/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/build/release/deps --extern wast=/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/build/x86_64-unknown-linux-gnu/release/deps/libwast-3357438a615dffb7.rmeta --cap-lints warn -C opt-level=2 -C debuginfo=2 -C force-frame-pointers=yes --cap-lints warn -C codegen-units=1`
+#error: aborting due to 7 previous errors
+#
+#For more information about this error, try `rustc --explain E0432`.
+#error: could not compile `packed_simd`
+#
+#Caused by:
+#  process didn't exit successfully: `CARGO=/usr/lib/rust/1.48.0/bin/cargo-1.48.0 CARGO_CRATE_NAME=packed_simd CARGO_MANIFEST_DIR=/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/third_party/rust/packed_simd CARGO_PKG_AUTHORS='Gonzalo Brito Gadeschi <gonzalobg88@gmail.com>' CARGO_PKG_DESCRIPTION='Portable Packed SIMD vectors' CARGO_PKG_HOMEPAGE='https://github.com/rust-lang-nursery/packed_simd' CARGO_PKG_LICENSE=MIT/Apache-2.0 CARGO_PKG_LICENSE_FILE='' CARGO_PKG_NAME=packed_simd CARGO_PKG_REPOSITORY='https://github.com/rust-lang-nursery/packed_simd' CARGO_PKG_VERSION=0.3.3 CARGO_PKG_VERSION_MAJOR=0 CARGO_PKG_VERSION_MINOR=3 CARGO_PKG_VERSION_PATCH=3 CARGO_PKG_VERSION_PRE='' LD_LIBRARY_PATH='/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/build/release/deps:/usr/lib/rust/1.48.0/lib' OUT_DIR=/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/build/x86_64-unknown-linux-gnu/release/build/packed_simd-607c778f79fcf6f3/out RUSTC_BOOTSTRAP=1 /usr/bin/rustc --crate-name packed_simd --edition=2018 /var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/third_party/rust/packed_simd/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts --crate-type lib --emit=dep-info,metadata,link -C opt-level=2 -C panic=abort -C embed-bitcode=no --cfg 'feature="default"' --cfg 'feature="into_bits"' -C metadata=81c64a65b64b7763 -C extra-filename=-81c64a65b64b7763 --out-dir /var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/build/x86_64-unknown-linux-gnu/release/deps --target x86_64-unknown-linux-gnu -C linker=/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/build/cargo-linker -L dependency=/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/build/x86_64-unknown-linux-gnu/release/deps -L dependency=/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/build/release/deps --extern cfg_if=/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/build/x86_64-unknown-linux-gnu/release/deps/libcfg_if-634d11a81150814c.rmeta --cap-lints warn -C opt-level=2 -C debuginfo=2 -C force-frame-pointers=yes --cap-lints warn -C codegen-units=1` (exit code: 1)
+#warning: build failed, waiting for other jobs to finish...
+#warning: 1 warning emitted
+#
+#error: build failed
+#make[3]: *** [/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/config/makefiles/rust.mk:301: force-cargo-library-build] Error 101
+#make[2]: *** [/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/config/recurse.mk:74: js/src/rust/target] Error 2
+#make[1]: *** [/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/config/recurse.mk:34: compile] Error 2
+#make: *** [/var/tmp/portage/dev-lang/spidermonkey-78.5.0/work/firefox-78.5.0/config/rules.mk:392: default] Error 2
+# * ERROR: dev-lang/spidermonkey-78.5.0::gentoo failed (compile phase):
+# *   emake failed
+

@@ -1,0 +1,40 @@
+#!/bin/bash
+
+echo "!! actually no longer needing '$0' because using /var/db/repos/localrepo means I'm manually updating manifests (and only there in that repo, not in gentoo, ever)" >&2
+exit 1
+
+
+#disabled:
+#sys-apps/debianutils
+#x11-drivers/xf86-video-virtualbox
+#app-emulation/virtualbox-guest-additions
+#media-plugins/gst-plugins-libav/
+#media-sound/gsm
+#dev-libs/liborcus
+#media-video/vlc
+alldirswithoutspaces=(
+#www-client/chromium
+#app-office/libreoffice
+
+##temp:
+#media-libs/libepoxy
+#media-libs/libsndfile
+##sys-fs/udisks
+#dev-qt/qtdeclarative
+#dev-libs/glib
+#sys-devel/llvm
+#x11-libs/libxcb
+#dev-libs/libevdev
+)
+
+#repodir="/usr/portage"  #old, now changed to:
+repodir="/var/db/repos/gentoo"
+
+for i in "${alldirswithoutspaces[@]}" ; do
+  #pushd "/usr/portage/${i}/" && repoman -v  --digest=y  --ask manifest && popd
+  pushd "${repodir}/${i}/" && repoman -v  --digest=y  --ask manifest && popd
+  #^ this rebuilds the recorded checksum for all packages in current dir.
+  #needed because .ebuild files got patched!
+done
+
+

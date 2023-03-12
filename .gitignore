@@ -1,0 +1,20 @@
+#
+server.crt
+server.csr
+server.key
+server.pem
+key.json
+ssh_host_*_key
+ssh_host_*_key.pub
+config-archive/
+ld.so.cache
+mtab
+#^ is a symlink
+shadow
+shadow-
+shadow*
+sub?id*
+machine-id
+adjtime
+localtime
+hosts.back*

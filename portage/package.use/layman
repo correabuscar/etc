@@ -1,0 +1,2 @@
+#app-portage/layman -gpg
+#^ now fixed: https://bugs.gentoo.org/789018

@@ -1,0 +1,1 @@
+net-misc/rsync xattr -ipv6 acl -lz4 zstd -system-zlib 

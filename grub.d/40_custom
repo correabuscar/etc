@@ -1,0 +1,49 @@
+#!/bin/sh
+exec tail -n +3 $0
+# This file provides an easy way to add custom menu entries.  Simply type the
+# menu entries you want to add after this comment.  Be careful not to change
+# the 'exec tail' line above.
+
+menuentry "System shutdown" {
+   echo "System shutting down..."
+   halt
+}
+
+menuentry "System restart" {
+   echo "System rebooting..."
+   reboot
+}
+
+#src: https://wiki.archlinux.org/index.php/Multiboot_USB_drive#Using_GRUB_and_loopback_devices
+
+# path to the partition holding ISO images (using UUID)
+probe -u $root --set=rootuuid
+set imgdevpath="/dev/disk/by-uuid/$rootuuid"
+
+
+#info src: https://wiki.gentoo.org/wiki/GRUB2/Chainloading
+menuentry "gentoo admincd 19 april 2020" {
+  #insmod search_fs_uuid
+  #search --no-floppy --set=isopart --fs-uuid 063af2e9
+  #set isofile=/boot.iso/arch/archlinux-2020.04.01-x86_64.iso
+  set isofile=/boot.iso/gentoo/admincd-amd64-20200419T214502Z.iso
+  #loopback loop ($isopart)$isofile
+  loopback loop $isofile
+  #these are the Z575 kernel args tho:
+	#linux (loop)/arch/boot/x86_64/vmlinuz img_dev=$imgdevpath img_loop=$isofile earlymodules=loop root_trim=yes rd.luks.allow-discards rd.luks.options=discard ipv6.disable=1 ipv6.disable_ipv6=1 ipv6.autoconf=0 loglevel=15 log_buf_len=16M ignore_loglevel printk.always_kmsg_dump=y printk.time=y printk.devkmsg=on mminit_loglevel=4 memory_corruption_check=1 fbcon=scrollback:4096k fbcon=font:ProFont6x11 net.ifnames=0 nolvm dobtrfs gk.log.keep=true console=tty1 earlyprintk=vga audit=0 systemd.log_target=kmsg systemd.journald.forward_to_console=1 enforcing=0 udev.children-max=1256 rd.udev.children-max=1256 nohz=on oops=panic crashkernel=512M panic=0 print_fatal_signals=1 page_poison=1 psi=1 sysrq_always_enabled random.trust_cpu=off logo.nologo lpj=0 mce=bootlog reboot=force,cold noexec=on nohibernate scsi_mod.use_blk_mq=1 consoleblank=120 mitigations=off nospectre_v1 nospectre_v2 spectre_v2=off nospec_store_bypass_disable kvm-intel.vmentry_l1d_flush=never l1tf=off nopti pti=off no_stf_barrier noibrs noibpb ssbd=force-off spectre_v2_user=off noretpoline mds=off rd.log=all noefi cpuidle.governor=menu zram.num_devices=3 zswap.enabled=0 zswap.same_filled_pages_enabled=1 zswap.compressor=zstd zswap.max_pool_percent=40 zswap.zpool=z3fold vsyscall=none apparmor=0 acpi_force_table_verification acpi_backlight=vendor CPUunderclocking tsc=unstable radeon.audio=0 radeon.lockup_timeout=999000 radeon.test=0 radeon.agpmode=-1 radeon.benchmark=0 radeon.tv=0 radeon.hard_reset=1 radeon.msi=1 radeon.pcie_gen2=-1 radeon.no_wb=1 radeon.dynclks=0 radeon.r4xx_atom=0 radeonfb radeon.fastfb=1 radeon.dpm=1 radeon.runpm=1 radeon.modeset=1 radeon.aspm=0 pcie_aspm=off rcu_nocbs=1-3 r8169.debug=16 systemd.mask=dhcpcd@
+	#linux (loop)/arch/boot/x86_64/vmlinuz img_dev=$imgdevpath img_loop=$isofile earlymodules=loop systemd.mask=dhcpcd@
+  #the i87k kernel args:
+	linux (loop)/boot/gentoo img_dev=$imgdevpath img_loop=$isofile earlymodules=loop systemd.mask=dhcpcd@ root_trim=yes rd.luks.allow-discards rd.luks.options=discard ipv6.disable=1 ipv6.disable_ipv6=1 ipv6.autoconf=0 loglevel=15 log_buf_len=16M ignore_loglevel printk.always_kmsg_dump=y printk.time=y printk.devkmsg=on mminit_loglevel=4 memory_corruption_check=1 fbcon=scrollback:4096k fbcon=font:ProFont6x11 net.ifnames=0 nolvm dobtrfs gk.log.keep=true console=tty1 earlyprintk=vga audit=0 systemd.log_target=kmsg systemd.journald.forward_to_console=1 enforcing=0 udev.children-max=1256 rd.udev.children-max=1256 nohz=on oops=panic crashkernel=512M panic=0 print_fatal_signals=1 page_poison=1 psi=1 sysrq_always_enabled random.trust_cpu=off logo.nologo lpj=0 mce=bootlog reboot=force,cold noexec=on nohibernate scsi_mod.use_blk_mq=1 consoleblank=120 mitigations=off nospectre_v1 nospectre_v2 spectre_v2=off nospec_store_bypass_disable kvm-intel.vmentry_l1d_flush=never l1tf=off nopti pti=off no_stf_barrier noibrs noibpb ssbd=force-off spectre_v2_user=off noretpoline mds=off rd.log=all noefi cpuidle.governor=menu zram.num_devices=4 zswap.enabled=0 zswap.same_filled_pages_enabled=1 zswap.compressor=zstd zswap.max_pool_percent=40 zswap.zpool=z3fold vsyscall=none apparmor=0 acpi_force_table_verification i915.enable_fbc=1 i915.verbose_state_checks=1 i915.enable_hangcheck=1 i915.error_capture=1 docache
+	#initrd (loop)/arch/boot/intel_ucode.img (loop)/arch/boot/amd_ucode.img (loop)/arch/boot/x86_64/archiso.img
+  initrd (loop)/boot/gentoo.igz
+}
+
+
+menuentry "gentoo installcd 19 april 2020" {
+  set isofile=/boot.iso/gentoo/install-amd64-minimal-20200419T214502Z.iso
+  loopback loop $isofile
+  #TODO maybe remove img_dev= and img_loop= ? since they are from archlinux (for the admincd.iso  entry above also!), OR maybe it's used by earlymodules=loop ? or wut? they are not in kernel Documentation/
+	linux (loop)/boot/gentoo img_dev=$imgdevpath img_loop=$isofile earlymodules=loop systemd.mask=dhcpcd@ root_trim=yes rd.luks.allow-discards rd.luks.options=discard ipv6.disable=1 ipv6.disable_ipv6=1 ipv6.autoconf=0 loglevel=15 log_buf_len=16M ignore_loglevel printk.always_kmsg_dump=y printk.time=y printk.devkmsg=on mminit_loglevel=4 memory_corruption_check=1 fbcon=scrollback:4096k fbcon=font:ProFont6x11 net.ifnames=0 nolvm dobtrfs gk.log.keep=true console=tty1 earlyprintk=vga audit=0 systemd.log_target=kmsg systemd.journald.forward_to_console=1 enforcing=0 udev.children-max=1256 rd.udev.children-max=1256 nohz=on oops=panic crashkernel=512M panic=0 print_fatal_signals=1 page_poison=1 psi=1 sysrq_always_enabled random.trust_cpu=off logo.nologo lpj=0 mce=bootlog reboot=force,cold noexec=on nohibernate scsi_mod.use_blk_mq=1 consoleblank=120 mitigations=off nospectre_v1 nospectre_v2 spectre_v2=off nospec_store_bypass_disable kvm-intel.vmentry_l1d_flush=never l1tf=off nopti pti=off no_stf_barrier noibrs noibpb ssbd=force-off spectre_v2_user=off noretpoline mds=off rd.log=all noefi cpuidle.governor=menu zram.num_devices=4 zswap.enabled=0 zswap.same_filled_pages_enabled=1 zswap.compressor=zstd zswap.max_pool_percent=40 zswap.zpool=z3fold vsyscall=none apparmor=0 acpi_force_table_verification i915.enable_fbc=1 i915.verbose_state_checks=1 i915.enable_hangcheck=1 i915.error_capture=1 docache
+  initrd (loop)/boot/gentoo.igz
+}
+

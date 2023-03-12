@@ -1,0 +1,149 @@
+#for ebuild phases see: https://dev.gentoo.org/~zmedico/portage/doc/ch06.html#package-ebuild-phases
+
+#if [[ $EBUILD_PHASE == @(depend) ]]; then  #depend is not a real one, it's just 'if'-ed within the 'inherit' function!
+#    source "${PORTDIR}/eclass/epatch3.eclass" ; ec="$?"
+#    #inherit epatch
+#    #ec="$?"
+#    if test "$ec" -ne "0"; then
+#      #set +xv
+#      die "sourcing epatch_user code failed!"
+#    else
+#      ewarn "sourced epatch!"
+#    fi
+#fi
+#pre_pkg_setup() { #using this function will still cause https://bugs.gentoo.org/710298
+#post_pkg_setup() { #using this function will still cause https://bugs.gentoo.org/710298
+#FIXME: technically EBUILD_PHASE only exists since EAPI 5, iirc.
+if [[ $EBUILD_PHASE == @(setup) ]] && [[ ${EAPI:-0} == [012345] ]]; then #using 'prepare' instead of 'setup' here will still cause https://bugs.gentoo.org/710298
+  #XXX: only for EAPI [0->5] see https://bugs.gentoo.org/show_bug.cgi?id=575704
+  #if [[ ${EAPI:-0} == [012345] ]]; then { #|| return #https://bugs.gentoo.org/show_bug.cgi?id=575704
+  #local ec=-1
+  if ! type epatch_user > /dev/null 2>&1; then
+#    local names="epatch_user epatch evar_push evar_push_set evar_pop estack_push estack_pop"
+#    set -evx
+#    source <(awk "/^# @FUNCTION: / { p = 0 } /^# @FUNCTION: (${names// /|})\$/ { p = 1; } p { print  }" /usr/portage/eclass/eutils.eclass)
+    #local names="EPATCH_USER_SOURCE epatch_user epatch evar_push evar_push_set evar_pop estack_push estack_pop epatch_user_death_notice"
+    #set -xv
+    #source <(awk "/^# @(FUNCTION|VARIABLE): / { p = 0 } /^# @(FUNCTION|VARIABLE): (${names// /|})\$/ { p = 1 } p { print }" "${PORTDIR}/eclass/"{eutils,epatch}".eclass") ; ec="$?"
+    #elog "About to source epatch from setup"
+    #source "${PORTDIR}/eclass/epatch.eclass" ; ec="$?"
+    #source "${PORTDIR}/eclass/epatchtwo.eclass" ; ec="$?"
+    #source "${PORTDIR}/eclass/epatch3.eclass" ; ec="$?"
+    inherit epatch ; ec="$?" #using inherit here is better because it can be mentioned in the log if illegally inherited! not sure if the exit code will be set though!
+    #ec="$?"
+    if test "$ec" -ne "0"; then
+      #set +xv
+      die "sourcing epatch_user code from 'setup' failed! See /etc/portage/bashrc"
+#    else
+#      ewarn "sourced epatch!"
+    fi
+    #PORTDIR is /var/db/repos/gentoo  (was /usr/portage)
+  fi
+  #ewarn "!! PORTDIR=$PORTDIR" #/var/db/repos/gentoo
+fi
+#}
+
+pre_src_prepare() {
+	#src: https://wiki.gentoo.org/wiki//etc/portage/patches
+	#ewarn "EAPI=$EAPI"
+	#this entire thing is only for EAPI [0..5], EAPI 6 doesn't use epatch_user but something else(eapply*? or something?) and it's doing it automatically and there's no way to NOT apply it, as long as any user patches exist they will be applied! see: https://wiki.gentoo.org/wiki//etc/portage/patches#EAPI_6_and_greater
+	[[ ${EAPI:-0} == [012345] ]] || return #https://bugs.gentoo.org/show_bug.cgi?id=575704
+	#local ec=-1
+	if ! type epatch_user > /dev/null 2>&1; then
+		#    local names="epatch_user epatch evar_push evar_push_set evar_pop estack_push estack_pop"
+		#    set -evx
+		#    source <(awk "/^# @FUNCTION: / { p = 0 } /^# @FUNCTION: (${names// /|})\$/ { p = 1; } p { print  }" /usr/portage/eclass/eutils.eclass)
+		#local names="EPATCH_USER_SOURCE epatch_user epatch evar_push evar_push_set evar_pop estack_push estack_pop epatch_user_death_notice"
+		#set -xv
+		#source <(awk "/^# @(FUNCTION|VARIABLE): / { p = 0 } /^# @(FUNCTION|VARIABLE): (${names// /|})\$/ { p = 1 } p { print }" "${PORTDIR}/eclass/"{eutils,epatch}".eclass") ; ec="$?"
+		ewarn "Sourcing epatch from pre_src_prepare() - that EBUILD_PHASE 'setup' one failed then!! See /etc/portage/bashrc"
+		source "${PORTDIR}/eclass/epatch.eclass" ; ec="$?"
+		#source "${PORTDIR}/eclass/epatchtwo.eclass" ; ec="$?"
+		#source "${PORTDIR}/eclass/epatch3.eclass" ; ec="$?"
+		#inherit epatch
+		#ec="$?"
+		if test "$ec" -ne "0"; then
+			#set +xv
+			die "sourcing epatch_user code from 'pre_src_prepare' failed! See /etc/portage/bashrc"
+			#else
+			#  ewarn "sourced epatch!"
+		fi
+		#PORTDIR is /var/db/repos/gentoo  (was /usr/portage)
+	fi
+	#ewarn "!! PORTDIR=$PORTDIR" #/var/db/repos/gentoo
+
+	#    #ewarn "here1" #this is reached even with EAPI=5, oh right, it's only reached for EAPI [0..5] !
+	#    #set
+	epatch_user
+	ec="$?"
+	#    #set +xv
+	##    set +evx
+	#
+	#    #for name in $names; do
+	#    #  unset $name
+	#    #done
+	#  else
+	#    #ewarn "here2"
+	#    epatch_user
+	#    ec="$?"
+	#  fi
+
+	if test "$ec" -ne "0"; then #doneTODO: test for 0,1 and 2 see: /usr/portage/eclass/eutils.eclass
+		if test "$ec" -eq "2"; then
+			ewarn "USER PATCHES already APPLIED by ebuild, above!"
+		elif test "$ec" -eq "1"; then
+			ewarn "NO USER PATCHES APPLIED!!!"
+		elif test "$ec" -eq "127"; then
+			die "epatch_user - 'command not found' exit code: $ec  so NO PATCHES APPLIED, EAPI='$EAPI'"
+		else
+			die "epatch_user - unknown exit code: $ec  probably NO PATCHES APPLIED"
+		fi
+	else
+		ewarn "user patches applied (EAPI='$EAPI')"
+	fi
+
+
+	#unset DEBUG for packages known to break. (this is OLD, see if it still applies? do I even have DEBUG set in make.conf anymore?)
+	if test "$PN" = "gsm" -o "$PN" = "libunique"; then
+		  ewarn "Unsetting DEBUG for this package (see /etc/portage/bashrc )"
+		  unset DEBUG
+	  fi
+	#TODO: make a more general thing here, like package.env is, but this one is for overriding even existing env. vars
+	#set >/tmp/set.txt
+}
+
+
+#thanks to <kerframil> on #gentoo channel of freenode irc for this how to updatedb after emerge (of each package, should be fast because " with mlocate, incremental updates are cheap." "it's because mlocate keeps track of directory modification times."):
+#see also: https://wiki.gentoo.org/wiki/Handbook:AMD64/Portage/Advanced#Using_.2Fetc.2Fportage.2Fbashrc_and_affiliated_files
+if [[ $EBUILD_PHASE == @(postinst|postrm) ]]; then
+  echo ":: current ebuild phase is $EBUILD_PHASE and uid=$(id -u),gid=$(id -g)"
+  #nvmFIXME: this can't be seen on console or in /var/log/emerge.log but it can only be seen inside /tmp/ebuild.logs/build/  eg. /tmp/ebuild.logs/build/sys-devel/gdb-9.1:20200215-193603.log
+  echo ":: Calling updatedb (from $0 aka /etc/portage/bashrc) to update its database" #:: Calling updatedb (from /usr/lib/portage/python3.6/ebuild.sh aka /etc/portage/bashrc) to update its database         
+  #ewarn "`id`" #* uid=0(root) gid=0(root) groups=0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10(wheel),11(floppy),26(tape),27(video)
+  sudo updatedb  #the sudo seems necessary(and there's no password prompt TODO: investigate why) or else: updatedb: can not open a temporary file for `/var/lib/mlocate/mlocate.db'
+  echo ":: Any ccache non-portage user/group files are listed below(should be none unless compiler was ran as root at some point eg. 'install' phase):"
+  #see: https://bugs.gentoo.org/492910#c5
+  find /ccache \( \! -user portage -o \! -group portage \) -a \! -name ccache.conf -a \! -name reperm
+  #TODO: find a way to warn on console, and a way to know if 'find' found anything!
+fi
+
+if [[ $EBUILD_PHASE == postinst ]]; then
+	#echo "Postinst $# $*" # 1 /etc/portage/bashrc
+	#set
+	#MOPREFIX=dnsmasq
+	#P=dnsmasq-2.85
+	#PF=dnsmasq-2.85
+	#PN=dnsmasq
+	#EBUILD_PHASE=postinst
+	#EBUILD_PHASE_FUNC=pkg_postinst
+	#EBUILD_SH_ARGS=postinst
+	#DEFINED_PHASES=' compile configure install postinst preinst prepare pretend setup'
+	if [[ "$PN" == "dnsmasq" ]]; then
+		#because /etc/dnsmasq.conf contains user-defined line: "conf-dir=/etc/dnsmasq.d"  therefore I must ensure that dir exists!
+		if ! test -d "/etc/dnsmasq.d"; then
+			echo "Creating /etc/dnsmasq.d for package '$PN' in '$EBUILD_PHASE' phase, action done from within '$0' aka '$1'" #$1 is /etc/portage/bashrc for wtw reason!
+			mkdir -p "/etc/dnsmasq.d"
+			#TODO: maybe scan /etc/dnsmasq.conf and mkdir -p all such dirs specified in 'conf-dir=' :)
+		fi
+	fi
+fi

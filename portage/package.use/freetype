@@ -1,0 +1,9 @@
+media-libs/freetype infinality harfbuzz
+#emerge: there are no ebuilds built with USE flags to satisfy ">=media-libs/freetype-2.5.0.1:2=[harfbuzz,png,abi_x86_32(-)?,abi_x86_64(-)?,abi_x86_x32(-)?,abi_mips_n32(-)?,abi_mips_n64(-)?,abi_mips_o32(-)?,abi_s390_32(-)?,abi_s390_64(-)?]".
+#!!! One of the following packages is required to complete your request:
+#- media-libs/freetype-2.10.4::gentoo (Change USE: +harfbuzz)
+#(dependency required by "x11-libs/pango-1.48.7::gentoo" [ebuild])
+#(dependency required by "xfce-base/xfwm4-4.16.1::gentoo" [installed])
+#(dependency required by "@selected" [set])
+#(dependency required by "@world" [argument])
+

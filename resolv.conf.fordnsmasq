@@ -1,0 +1,16 @@
+# #from archlinux
+# Resolver configuration file.
+# See resolv.conf(5) for details.
+
+#currently not updated by anything! but could be in the futre by a netctl script which would use resolvconf.conf
+#XXX: 12march2023, not used by dnsmasq due to 'no-resolv' in dnsmasq.conf
+
+#XXX: if the following nameserver line is commented out, then dns fail is instant and you see the following in dnsmasq.log for the query: config error is REFUSED
+#nameserver 127.0.0.21 #XXX: yes this line!
+options ndots:1 timeout:3 attempts:1 rotate
+#nameserver 9.9.9.9
+
+#these won't work, dnsmasq won't accept them:
+#nameserver 9.9.9.9
+#nameserver 8.8.8.8
+nameserver 1.1.1.1

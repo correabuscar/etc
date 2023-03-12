@@ -1,0 +1,60 @@
+# on archlinux it's /usr/bin/mkswap AND /sbin/mkswap
+# on gentoo it's /sbin/mkswap but NOT /usr/bin/mkswap
+#
+# not true://IFF you change this file, to take effect on boot, you have to run update-grub to get the initramfs image updated! (doneTODO: assertion not yet tested to be true - well, it seems to be false on gentoo at least!)
+
+KERNEL=="zram0", SUBSYSTEM=="block", ACTION=="add", ATTR{initstate}=="0", ATTR{comp_algorithm}="zstd", ATTR{disksize}="96G" RUN="/sbin/mkswap -L $name $env{DEVNAME}", TAG+="systemd"
+#cat /sys/block/zram0/max_comp_streams
+#ie. no need for one swap per core! thanks: https://www.phoronix.com/forums/forum/software/mobile-linux/1086709-zram-will-see-greater-performance-on-linux-5-1-it-changed-its-default-compressor?p=1091029#post1091029  and https://www.kernel.org/doc/Documentation/blockdev/zram.txt
+#KERNEL=="zram1", SUBSYSTEM=="block", ACTION=="add", ATTR{initstate}=="0", ATTR{comp_algorithm}="zstd", ATTR{disksize}="8G" RUN="/usr/bin/mkswap -L $name $env{DEVNAME}", TAG+="systemd"
+#KERNEL=="zram2", SUBSYSTEM=="block", ACTION=="add", ATTR{initstate}=="0", ATTR{comp_algorithm}="zstd", ATTR{disksize}="8G" RUN="/usr/bin/mkswap -L $name $env{DEVNAME}", TAG+="systemd"
+#KERNEL=="zram3", SUBSYSTEM=="block", ACTION=="add", ATTR{initstate}=="0", ATTR{comp_algorithm}="zstd", ATTR{disksize}="8G" RUN="/usr/bin/mkswap -L $name $env{DEVNAME}", TAG+="systemd"
+#KERNEL=="zram1", ATTR{disksize}="512M" RUN="/usr/bin/mkswap /dev/zram1", TAG+="systemd"
+#^ https://wiki.archlinux.org/index.php/Improving_performance#Swap_on_zRAM_using_a_udev_rule
+
+
+#32G zram wastes 32M
+#Note: https://www.kernel.org/doc/Documentation/blockdev/zram.txt
+#There is little point creating a zram of greater than twice the size of memory
+#since we expect a 2:1 compression ratio. Note that zram uses about 0.1% of the
+#size of the disk when not in use so a huge zram is wasteful.
+KERNEL=="zram1", SUBSYSTEM=="block", ACTION=="add", ATTR{initstate}=="0", ATTR{comp_algorithm}="zstd", ATTR{disksize}="192G", RUN+="/sbin/mkfs.ext4 -O ^has_journal -E lazy_itable_init=0,lazy_journal_init=0,root_owner=0:0 -L $name $env{DEVNAME}"
+#, RUN+="/bin/mount /tmp", RUN+="/bin/chown --changes --no-dereference -- root:root /tmp", RUN+="/bin/chmod --changes -- 1777 /tmp", RUN+="/bin/umount /tmp"
+#without disabling the 'lazy' stuff, you get "mount: /tmp: /dev/zram1 already mounted or mount point busy."
+
+#KERNEL=="zram2", SUBSYSTEM=="block", ACTION=="add", ATTR{comp_algorithm}="lz4", ATTR{disksize}="512M", RUN+="/sbin/mkfs.ext4 -O ^has_journal -L $name $env{DEVNAME}"
+#KERNEL=="zram2", SUBSYSTEM=="block", ACTION=="add", ATTR{disksize}="512M", RUN+="/sbin/mkfs.ext4 -O ^has_journal -L $name $env{DEVNAME}", TAG+="systemd"
+#KERNEL=="zram2", ATTR{disksize}="512M", RUN="/sbin/mkfs.ext4 -O ^has_journal -L $name $env{DEVNAME}", TAG+="systemd"
+KERNEL=="zram2", SUBSYSTEM=="block", ACTION=="add", ATTR{initstate}=="0", ATTR{comp_algorithm}="zstd", ATTR{disksize}="192G", RUN+="/sbin/mkfs.ext4 -O ^has_journal -E lazy_itable_init=0,lazy_journal_init=0,root_owner=0:0 -L $name $env{DEVNAME}"
+#XXX: can't mount/umount here because it runs concurrently with other zram devices' RUN commands! and since they depend on each other eg. /var/tmp must be mounted before /var/tmp/portage, then I can't do mount/umount inside RUN! ergo, will have to do stuff in /etc/init.d/localmount script owned by openrc !
+#, RUN+="/bin/mount /var/tmp", RUN+="/bin/chmod --changes -- 1777 /var/tmp", RUN+="/bin/umount /var/tmp"
+#RUN+="/bin/chown --changes --no-dereference -- root:root /var/tmp", RUN+="/bin/chmod --changes -- 1777 /var/tmp", RUN+="/bin/umount /var/tmp"
+#^ https://wiki.gentoo.org/wiki/Zram
+
+KERNEL=="zram3", SUBSYSTEM=="block", ACTION=="add", ATTR{initstate}=="0", ATTR{comp_algorithm}="zstd", ATTR{disksize}="192G", RUN+="/sbin/mkfs.ext4 -O ^has_journal -E lazy_itable_init=0,lazy_journal_init=0,root_owner=0:0 -L $name $env{DEVNAME}"
+#, RUN+="/bin/mount /var/tmp", RUN+="/bin/mount /dev/zram3 /var/tmp/portage -t ext4 -o defaults,auto,rw,exec,nodev,nosuid,strictatime,discard,delalloc,block_validity,user_xattr,acl,nojournal_checksum,barrier,x-mount.mkdir=775", RUN+="/bin/chown --changes --no-dereference -- portage:portage /var/tmp/portage", RUN+="/bin/chmod --changes -- a-rwx,u+rwx,g+rwx,o+rx /var/tmp/portage", RUN+="/bin/umount /var/tmp"
+#RUN+="/bin/chmod --changes -- 1777 /var/tmp", RUN+="/bin/umount /var/tmp/portage", RUN+="/bin/umount /var/tmp", RUN+="/bin/mount /tmp", RUN+="/bin/chown --changes --no-dereference -- root:root /tmp", RUN+="/bin/chmod --changes -- 1777 /tmp", RUN+="/bin/umount /tmp"
+#XXX: note that something else(dno what) was already ensuring 1777 for /tmp ! but not for /var/tmp
+#we let /etc/init.d/localmount do the actual mounting!
+# The order is this:
+# * Starting udev ...
+#rc sysinit logging stopped at Mon Apr 13 21:34:31 2020
+#rc boot logging started at Mon Apr 13 21:34:31 2020
+# * Mounting local filesystems ...
+
+#  chown --changes --no-dereference -- portage:portage /var/tmp/portage
+#  chmod --changes -- a-rwx,u+rwx,g+rwx,o+rx /var/tmp/portage
+#
+
+
+#19G ~/.ccache/ folder inside an ext4 with discard
+#lz4 18784522240/7638748319=2.45910998183785036418
+#zstd 18841092096/5194645553=3.62702169065585907551
+
+#after it gets mounted from /etc/fstab
+#doesn't work:
+#DEVPATH=="/fs/ext4/zram2", ACTION=="add", RUN+="chmod 1777 -- /var/tmp"
+
+#XXX it gets proper chmod 1777 now for some reason, maybe due to initramfs?! no idea who does it though! on Gentoo also but only /tmp not /var/tmp ! FIXME: need /var/tmp too!
+#all relevant files: /etc/fstab /etc/udev/rules.d/99-zram.rules /etc/modules-load.d/zram.conf /etc/modprobe.d/zram.conf
+#run `zramctl` to see stats, it's from package util-linux

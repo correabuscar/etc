@@ -1,0 +1,385 @@
+#!/sbin/openrc-run
+# Copyright (c) 2007-2015 The OpenRC Authors.
+# See the Authors file at the top-level directory of this distribution and
+# https://github.com/OpenRC/openrc/blob/master/AUTHORS
+#
+# This file is part of OpenRC. It is subject to the license terms in
+# the LICENSE file found in the top-level directory of this
+# distribution and at https://github.com/OpenRC/openrc/blob/master/LICENSE
+# This file may not be copied, modified, propagated, or distributed
+# except according to the terms contained in the LICENSE file.
+
+#this should be symlinked in /etc/runlevels/shutdown/pre_shutdown via cmd: # rc-config add pre_shutdown shutdown
+
+description="run script at shutdown"
+
+depend()
+{
+	after killprocs savecache mount-ro
+	#keyword -docker -lxc -openvz -prefix -systemd-nspawn -vserver
+  #^wtf is that?
+}
+
+start()
+{
+	local ret=0
+
+	# Flush all pending disk writes now
+	sync
+
+  runlevel="$(who -r | awk '{print $2}')"
+	ebegin "Running pre-shutdown script, this is '$0', runlevel='$RUNLEVEL' aka '$runlevel' aka '$(runlevel)'"
+	eindent
+
+  main
+  ret="$?"
+
+	eoutdent
+
+	eend $ret
+}
+
+main() {
+date_log_started="`date`"
+#actually I just run that myself below: sysctl kernel.sysrq=1  //XXX: MUST NOT BE: kernel.sysrq = 16  which is default on manjaro unless you manually set it, ie. /etc/sysctl.d/99-sysctl.conf which has this line: kernel.sysrq=1
+#exec 1> >(logger -s -t $(basename $0)) 2>&1
+#^ this won't send to dmesg!
+
+exec 1>/dev/kmsg 2>&1
+set -x
+
+source "/swcode/swcode.bash"
+
+echo "Hello, this is '$0' or '${BASH_SOURCE[0]}' running as user id '`/usr/bin/id`', runlevel='$RUNLEVEL' aka '$(runlevel)'"
+
+PATH="$PATH:/usr/sbin:/sbin:/usr/bin" #for hdparm and sysctl (at least) and cpupower
+
+#XXX: seen args:
+#reboot
+#poweroff
+#
+echo "Script args($#): $*"
+
+set
+
+#function within function works! at least in bash GNU bash, version 5.0.17(1)-maint (x86_64-pc-linux-gnu) some git version (ah, it's 5.0.r699.ge76c7327-1 on archlinux)
+flushy() {
+  #flush drive cache:
+  for dev in /dev/sd{a,b,c,d,e,f,g}; do
+    hdparm -F "$dev"
+    hdparm -f "$dev"
+  done
+#
+#  hdparm -F /dev/sdb
+#  hdparm -f /dev/sdb
+#
+#  hdparm -F /dev/sdc
+#  hdparm -f /dev/sdc
+
+  sleep 1
+}
+
+onint() {
+  echo "${0}: Ignored C-c!"
+}
+trap onint sigint SIGHUP SIGALRM SIGTERM
+#FIXME: this script will get interrupted by systemd via SIGTERM if there are too many pagecache pages(like 1.2mil) and some timeout(dno what) happens which triggers a SIGALRM in systemd(or somewhere) which then triggers that SIGTERM - and thus it will hang on the 'Synchronizing SCSI cache' because this script didn't get the chance to turn off drive cache(due to SIGTERM) - unsure if the above will keep it from being terminated!
+
+sysctl kernel.sysrq=1
+
+#speed up
+showgov() {
+  cpupower frequency-info|grep --color=always -E '(The governor |current policy: frequency should be within|current CPU frequency:)'
+	if is_z575; then
+		boost="$(cat /sys/devices/system/cpu/cpufreq/boost)"
+	else
+		boost=""
+	fi
+  echo "Boost setting is: $boost $(cpupower frequency-info|grep -i Active:)"
+  echo "CPU Idle Governor is: $(cat /sys/devices/system/cpu/cpuidle/current_governor_ro)"
+}
+
+showgov
+if is_z575; then
+  ##go max speed:
+  #cpupower frequency-set --related --governor performance --min 1400MHz --max 1400MHz
+  ##XXX: 18 March 2017: ^ gov. performance is not built into kernel, only userspace is, so also try:
+  #cpupower frequency-set --related --governor userspace --min 1400MHz --max 1400MHz
+  #we will actually go min speed (which currently is 1.4Ghz - yes that 800Mhz is an 1.4Ghz overclock):
+  cpupower frequency-set --related --governor performance --min 800MHz --max 800MHz
+  ##XXX: 18 March 2017: ^ gov. performance is not built into kernel, only userspace is, so also try:
+  cpupower frequency-set --related --governor userspace --min 800MHz --max 800MHz
+  showgov
+fi
+
+mount -o remount,rw /
+#echo "Current user='$USER' home='$HOME'" #empty env. vars!!
+
+#XXX save summary.log accross reboots! done in /etc/init.d/pre_mount-ro because /tmp is gone when we're here!
+
+#XXX: this block is not part of ~/bin/savevboxconfig_ifneeded script and runs as --user systemd service!
+##XXX: this is why it's important to have home and root in the same subvol!(btrfs) - or I guess we could temp remount,rw home here too.
+##XXX: this virtualbox config file changes if you add/remove VMs and it remains in /tmp thus lost if not saved.
+##it's a symlink if not changed
+#asymlinkifnotchanged="${HOME}/.config/VirtualBox/VirtualBox.xml"
+#if ! test -h "$asymlinkifnotchanged" -o -L "$asymlinkifnotchanged"; then
+#  #if it's not a symlink, then it changed and must be saved!
+#  #XXX: doesn't exist because, before running this script: [ 1374.362170] systemd[1]: Unmounted /tmp.  [ 1374.881182] systemd-shutdown[1]: All filesystems unmounted.
+#  #FIXME: should not allow systemd to unmount /tmp and /var/tmp because this script might still run things that use those locations and don't want them hitting the disk!
+#  #XXX: if tmp.mount is masked(sudo systemctl mask tmp.mount), then /tmp is still unmounted a bit later(but still before $0 is ran)[and not mounted on next boot, even tho exists in /etc/fstab also): [ 7033.908602] systemd-shutdown[1]: Unmounting file systems.
+##[ 7033.909911] systemd-shutdown[1]: Remounting '/tmp' read-only with options 'size=12699880k'.
+##[ 7033.911181] systemd-shutdown[1]: Unmounting /tmp.
+#
+#  echo "Saving changed(non-symlink) VirtualBox config file: $asymlinkifnotchanged"
+#  cp -a "$asymlinkifnotchanged" "${HOME}/bin/confHOME/$asymlinkifnotchanged"
+#fi
+
+
+#systemctl status tmp.mount #systemctl[7511]: Failed to connect to bus: Connection refused
+df #remained: /dev/shm /sys/fs/cgroup /run /dev /
+lsblk
+
+#TODO: if Qubes:
+#time /usr/bin/qvm-shutdown --verbose --wait --all --timeout 600; echo "exit code: $?"
+##/usr/bin/xl list & #it's blocking! so added &
+#/usr/bin/ps axuw #/usr/bin/ps: write error : Invalid argument
+
+sysctl -a|grep -i sysrq
+sysctl -w kernel.sysrq=1
+sysctl -a|grep -i sysrq
+
+echo d > /proc/sysrq-trigger
+#'d' - Shows all locks that are held.
+#src: /home/z/build/1packages/kernel/linuxgit/makepkg_pacman/linux-git/src/linux-git/Documentation/sysrq.txt
+
+#echo l > /proc/sysrq-trigger
+echo h > /proc/sysrq-trigger
+#[ 4527.376142] sysrq: SysRq : HELP : loglevel(0-9) reboot(b) crash(c) terminate-all-tasks(e) memory-full-oom-kill(f) kill-all-tasks(i) thaw-filesystems(j) sak(k) show-backtrace-all-active-cpus(l) show-memory-usage(m) nice-all-RT-tasks(n) poweroff(o) show-registers(p)  show-all-timers(q) unraw(r) sync(s) show-task-states(t) unmount(u) force-fb(V) show-blocked-tasks(w) 
+echo m > /proc/sysrq-trigger
+#echo t > /proc/sysrq-trigger
+echo w > /proc/sysrq-trigger
+echo 9 > /proc/sysrq-trigger
+
+
+
+#src: https://bbs.archlinux.org/viewtopic.php?pid=1066560#p1066560
+#tested, no effect:
+echo -n 'Before:';  cat /sys/block/sda/device/queue_depth
+#echo 1 > /sys/block/sda/device/queue_depth
+echo -n 'After:';  cat /sys/block/sda/device/queue_depth
+
+#info:
+hdparm -W /dev/sda
+hdparm -C /dev/sda
+hdparm -W /dev/sdb
+hdparm -C /dev/sdb
+
+set|grep PATH
+export|grep PATH
+#^ TODO: see if the PATH is good for having 'tee'
+
+#don't have tee or sysctl, have sudo(apparently)
+#workaround for: https://bugzilla.kernel.org/show_bug.cgi?id=151621#c2
+echo 'sync first'
+time sync
+echo "Before:"
+echo m > /proc/sysrq-trigger #has no effect: ; dmesg|grep -F "pagecache pages"|tail -1
+echo 'manually Freeing pagecache pages'
+#don't have sysctl: time sysctl vm.drop_caches=1
+#//XXX: comment out the following drop_caches line(s) to test deactivate_super's speed(it lingers at "Unmounting /oldroot")
+#To free pagecache(works fine: 51640 pagecache pages freed/sec + 10 sec spent in deactivate_super):
+#time echo 1 >/proc/sys/vm/drop_caches
+#To free dentries and inodes(untested):
+#time echo 2 >/proc/sys/vm/drop_caches
+#To free pagecache, dentries and inodes(41479 pagecache pages freed/sec):
+echo '---------------------------------------------------'
+time echo 3 >/proc/sys/vm/drop_caches
+echo '---------------------------------------------------'
+#sleep 1
+echo "After :"
+echo m > /proc/sysrq-trigger #has no effect: ;dmesg|grep -F "pagecache pages"|tail -1
+
+#//XXX: temporary!!!
+#  time sync && sdparm --command=sync /dev/sda && sleep 1
+#  echo 'Manual shutdown attempt via sysrq(sleep 15) so it hangs on stopdisk'
+#  echo o > /proc/sysrq-trigger ; sleep 15
+#//XXX: end temp.
+
+if is_z575; then
+  ls /sys/bus/pci/devices/0000:00:1{2,3}*/power/runtime_status
+  cat /sys/bus/pci/devices/0000:00:1{2,3}*/power/runtime_status
+  #echo 'on' > /sys/bus/pci/devices/0000:00:12.0/power/control
+  #echo 'on' > /sys/bus/pci/devices/0000:00:12.2/power/control
+  #echo 'on' > /sys/bus/pci/devices/0000:00:13.0/power/control
+  #echo 'on' > /sys/bus/pci/devices/0000:00:13.2/power/control
+  #cat /sys/bus/pci/devices/0000:00:1{2,3}*/power/runtime_status
+fi
+
+echo 'end of log'
+
+logfile='/dmesg_shutdown.log'
+#echo "//---Shutdown logfile started at: `date`" >> "$logfile"
+rnd_log_tag="$(TMPDIR= /usr/bin/mktemp --dry-run --tmpdir="'" -t --quiet XXXXXXXXXXXXXX | /usr/bin/cut -f2 -d'/')"
+#echo "//--- /usr/lib/systemd/system-shutdown/debug.sh started execution on: '$date_log_started' tag:${rnd_log_tag}" >> "$logfile"
+echo "//--- '$0' started execution on: '$date_log_started' tag:${rnd_log_tag}" >> "$logfile"
+
+bootlogfile='/var/log/boot.log'
+if ! test -e '$bootlogfile'; then
+  bootlogfile='/run/initramfs/boot.log' #needs systemd patch: boot_log_to_file_and_syslog.patch
+fi
+echo "//--- here's $bootlogfile eg. what you see systemd spew on console: " >> "$logfile"
+ls -la "$bootlogfile" >> "$logfile"
+cat "$bootlogfile" >> "$logfile"
+#this /var/log/boot.log was apparently only generated by dracut, src: https://github.com/systemd/systemd/issues/11343#issuecomment-451747778
+echo "//--- end of $bootlogfile" >> "$logfile"
+dmesg >> "$logfile"
+#echo "//---Shutdown logfile ended at: `date`"
+echo "//--- '$0' generated '$logfile' on: '`date`' tag:${rnd_log_tag}" >> "$logfile"
+
+time sync || sync
+for dev in /dev/sd{a,b,c,d,e,f,g}; do
+  sdparm --command=sync "$dev"
+done
+#sdparm --command=sync /dev/sdb
+#sdparm --command=sync /dev/sdc
+#&& sleep 1  #don't need this one here because we got another one down below!
+
+#echo 'Powering down Samsung:'
+#hdparm -F /dev/sdb
+#hdparm -f /dev/sdb
+#hdparm -W0 /dev/sdb
+#hdparm -W /dev/sdb
+#hdparm -W0 /dev/sdb
+#hdparm -F /dev/sdb
+#hdparm -f /dev/sdb
+#sleep 1
+#hdparm -C /dev/sdb
+#hdparm -Y /dev/sdb
+#^ issuing this a second time results in 'active/idle' if the first one was 'standby'
+#sleep 1
+#hdparm -C /dev/sdb
+#^ brings it up! after getting its current (=standby) status!
+
+mount -o remount,ro /
+
+sync
+flushy
+#^ yeah let's flush before turning off cache too! because crazy!
+
+#src: https://unix.stackexchange.com/questions/55281/how-to-stop-waking-all-attached-drives-on-reboot-deactivating-swap/55417#55417
+#turn off drive cache, workaround for https://bugzilla.kernel.org/show_bug.cgi?id=151631
+#//XXX: comment out following line to prevent rebooting from happening(due to aforementioned bug just 1 line above) after deactivate_super finished(aka when "Unmounting /oldroot" is done) to see the printk's time(uptime) so you can calc. the difference manually
+#This turns off drive cache, so poweroff/reboot will not hang (but poweroff will still hang when attempting to stop drive which is its 2nd step after cache flushing)
+#//XXX: temporarily commented out:
+for dev in /dev/sd{a,b,c,d,e,f,g}; do
+  ## hdparm -W0 "$dev"  #commented out to NOT disable write cache (read below why!)
+  hdparm -W "$dev"
+  #XXX: WARNING: disabling write cache is remembered if doing a reboot!!
+  #so, dmesg shows:
+  #[    2.542956] sd 1:0:0:0: [sda] Write Protect is off
+  #[    2.543623] sd 1:0:0:0: [sda] Write cache: disabled, read cache: enabled, doesn't support DPO or FUA; mp='8' o='16' d.h_l='8' d.b_l='8' b[o+2]='0000000
+  #when enabled via hdparm -W1 /dev/sda
+  #[  205.497027] sd 1:0:0:0: [sda] Write cache: enabled, read cache: enabled, doesn't support DPO or FUA; mp='8' o='16' d.h_l='8' d.b_l='8' b[o+2]='00000100
+done
+#hdparm -W0 /dev/sdb
+#hdparm -W /dev/sdb
+#hdparm -W0 /dev/sdc
+#hdparm -W /dev/sdc
+#^turned off drive cache!
+
+flushy
+
+#this is not necessary(for clean reboot!):
+#make drive sleep(not suspend/shutdown)
+##hdparm -y /dev/sda
+#if test "$@" == "poweroff"; then
+#  echo 'manually powering off /dev/sda'
+#  hdparm -Y /dev/sda
+#  #XXX: ^ this works but systemd is waking it up from sleep as soon as this $0 script is done! so, it's useless to suspend it here! unless I force shutdown of system myself(dno how really)
+#fi
+#hdparm -C /dev/sda
+
+#deactivate_super runs after this script, when you see: "shutdown[1]: Unmounting /oldroot." this frees: 22342 pagecache pages per second (if the above manual freeing didn't happen - but sync was called like always)
+
+  echo "The premature End of '$0'" #because the rest was meant to be run on a systemd distro.
+  return 0
+
+##this won't run: (sleep 30 ; echo 'autorebooting'; sleep 1; echo b > /proc/sysrq-trigger ) &
+#if ! test "$1" == "poweroff"; then #aka NOT poweroff
+#  #it's reboot, or something else(if ever possible)
+#  #//XXX: the following 3 lines should be commented out! temporarily allowing them now:
+#  #echo 'sleep 30' # then manual shutdown via sysrq'
+#  #sleep 30
+#  #  echo o > /proc/sysrq-trigger ; sleep 5
+#  #FIXME: Intel AND Kingston(10jan2019, connected on CDROM bay) SSDs need this manual poweroff here before reboot, else POR_Recovery_Count (or Unsafe_Shutdown_Count on Kingston) increases, but not so on Samsung ! (it's not the 1 sec delay! it's the -Y for sure!) [for Kingston, at least, I'm running with kernel patch sync_cache_debug_and_disable_stopdisk.patch which actually doesn't bypass any disk stopping because that code's hit by ESATA-connected drives and needed to power them off!)
+#  echo 'Manually powering off /dev/sda:'
+#  hdparm -Y /dev/sda
+#  sleep 1 #moved here but not needed
+#  echo 'Manual reboot via sysrq:'
+#  #XXX: none of these work:
+##  #/dev/tty no such device or address
+##  read -u 0 -t 200 -s -r -p 'Press Enter to issue the reboot...'
+##  echo #after read!
+##  echo 'Using sed, press Enter'
+##  sed -n q
+##  echo "$PATH"
+##  echo 'Using something else, press Enter' #src: https://stackoverflow.com/questions/92802/what-is-the-linux-equivalent-to-dos-pause/24046880#24046880
+##  (   trap "stty $(stty -g;stty -icanon)" EXIT
+##    LC_ALL=C dd bs=1 count=1 >/dev/null 2>&1
+##  )
+#
+##  echo 'Waiting 2000 seconds. Or you can press SysRq+b yourself'
+##  #time sleep 2000 #gets interrupted by systemd after 1.5mins? guessing; used to work on 238.133-1, but not now on 238.133-2 !
+##  sleep 30
+#  echo b > /proc/sysrq-trigger ; sleep 5
+#  echo "End of '$0' (looks like manual reboot failed - since you're still up!)"
+#else
+#  #it's poweroff aka shutdown
+#  echo 'NOT Manually powering off /dev/sd{a,b,c}:'
+#  #//XXX: temp commented out!
+##  echo 'Manually powering off /dev/sda,b,c:'
+##  hdparm -Y /dev/sd{a,b,c}
+#  #XXX: ^ works without this line because sd_start_stop_device(sdkp, 0); is allowed in kernel, as opposed to commented out, currently due to patch sync_cache_debug_and_disable_stopdisk.patch
+#  #hdparm -Y /dev/sd{a,c}
+#  #XXX: do not power them down yourself, it will have the opposite effect when sysrq+o(supposedly) is doing the(subsequent) powerdown command which just wakes them up (see: POR_Recovery_Count); ok this doesn't affect /dev/sda which is currently root and Intel SSD; does affect /dev/sdb which is Samsung 1TB (unused currently), so when you hdparm -Y /dev/sdb here, it will increase its POR_Recovery_Count, but when you sda it won't increase Unsafe_Shutdown_Count, only POR_Recovery_Count which makes sense! ok all this is true only when used kernel patch sync_cache_debug_and_disable_stopdisk.patch AND it had the line 'sd_start_stop_device(sdkp, 0);' commented out!, because with it allowed, there's no issues doing hdparm -Y /dev/sd{a,b,c}, will not increase POR_Recovery_Count or Unsafe_Shutdown_Count; my guess is that something(in kernel) wakes up the disk(s) after my hdparm -Y above, and then if allowed to put them to sleep(again) aka the sd_start_stop_device then all is well.
+##  hdparm -Y /dev/sdb
+##  hdparm -Y /dev/sdc
+#
+##  echo 'Manually powering off /dev/sda:'
+##  hdparm -Y /dev/sda #XXX no effect on Kingston: with or without this it still increases Unsafe_Shutdown_Count, even with kernel patch sync_cache_debug_and_disable_stopdisk.patch which does the sd_start_stop_device(sdkp, 0); - but funnily enough, this power off is needed during reboot!
+##  sleep 1
+#  #check the  current  IDE power mode status:
+#  #hdparm -C /dev/sd{a,b,c}
+#  #XXX: ^ do not check, because this brings the drive(Samsung one at least) back online in 'active/idle' after correctly getting the current status of 'standby'
+#  #sleep 10 #sleep 1;will this maybe avoid POR_Recovery Count increase for sdb(1TB Samsung) ? nope, no effect on that!
+#  #poweroff by sysrq - this still needs kernel patch to not stop disk in kernel because that'd fail the same way!
+#  #sleep 30
+#  echo 'Manual shutdown via sysrq:'
+#  #XXX: they don't work:
+##  #read -n 1 -s -r -p 'press any key'
+##  read -u 0 -t 200 -s -r -p 'Press Enter to issue...'  </dev/tty
+##  #this is so you can shift+pgup to scroll up and see the messages! you have 200 seconds(timeout)! -u 0 aka file descriptor 0(stdin) is needed, or else it won't read/wait at all, but will still exit code 0! like echo|read -t 200 -s -r -p 'Press Enter to issue...'  (shows nothing and instantly exits! unless you add -u 0 to read!) well the -u 0 doesn't work in this context! trying </dev/tty ... still nothing! (on normal prompt -u 0 , -u 1 and -u 2 all work the same!)//nevermind this 'if' branch was never hit! since I was doing a 'reboot'; ok they don't work anyway!
+##  echo #after read!
+##  echo 'Using sed, press Enter'
+##  sed -n q </dev/tty
+##  echo "$PATH"
+##  echo 'Using something else, press Enter' #src: https://stackoverflow.com/questions/92802/what-is-the-linux-equivalent-to-dos-pause/24046880#24046880
+##  (   trap "stty $(stty -g;stty -icanon)" EXIT
+##    LC_ALL=C dd bs=1 count=1 >/dev/null 2>&1
+##  )   </dev/tty
+##  #//XXX: temp commented out!
+#
+##  echo 'Waiting 2000 seconds. Or you can press SysRq+o yourself'
+##  #time sleep 2000 #gets interrupted by systemd after (approx/guessing) 1.5mins?
+##  sleep 30
+#  echo o > /proc/sysrq-trigger ; sleep 15
+#  #FIXME: is reading these commands somehow waking up the disk again?!
+#  echo "End of '$0' (looks like shutdown failed - since you're still up!)"
+#  if is_z575; then
+#    ls /sys/bus/pci/devices/0000:00:1{2,3}*/power/runtime_status
+#    cat /sys/bus/pci/devices/0000:00:1{2,3}*/power/runtime_status
+#  fi
+#  echo "End of '$0'"
+#fi
+}
+

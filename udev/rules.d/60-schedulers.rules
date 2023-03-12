@@ -1,0 +1,23 @@
+# card reader - does this have to be first?                                     
+#ACTION=="add|change", KERNEL=="sdd", ATTR{queue/scheduler}="none"
+#^ has no effect, it's bfq when sdd is plugged in later on, and nonexistent before that.
+#NOTE: if things freeze during disk-to-disk writes, then switch to bfq! they do that with mq-deadline on laptop, at least!
+
+# set deadline scheduler for non-rotating disks eg. SSDs
+ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="mq-deadline" 
+#mouse-freeze during ungoogled-chromium package instalation! so switchiing back to bfq
+#^ https://www.phoronix.com/scan.php?page=article&item=linux5-io-sched&num=1
+#tested bfq and it froze vlc video playing for at least 2 seconds due to firefox compilation-finished writing! ok bfq is better than 'none' ! put back bfq!
+#ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="bfq"
+#^ too slow compilation even tho it's from ccache! 3-6 files/sec   or maybe I'm wrong and this is normal at the beginning... keeping for now!  ok it's slower by 1 minute when it takes about 16-17mins to ccache-compile compared to mq-deadline! keeping mq-deadline then, because that is somewhat significant!
+
+# set cfq scheduler for rotating disks and for SDCard in card reader Bus 001 Device 003: ID 04cf:8819 Myson Century, Inc. USB 2.0 SD/MMC Reader  when sd[a-z] is present
+#ACTION=="add|change", KERNEL=="sd[a-ce-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"
+#^ https://www.phoronix.com/scan.php?page=article&item=linux-50hdd-io&num=1
+#XXX: maybe bfq is making card reader writes non-constant peak-shy 1.6M/sec avg! switching to mq-deadline 20sept2019
+ACTION=="add|change", KERNEL=="sd[a-ce-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="mq-deadline"
+
+# card reader Bus 001 Device 003: ID 04cf:8819 Myson Century, Inc. USB 2.0 SD/MMC Reader; the other slots remain on bfq(from the above line) though!
+#ACTION=="add|change", KERNEL=="sdd", ATTR{queue/scheduler}="none"
+ACTION=="add|change", KERNEL=="sdd", ATTR{queue/scheduler}="mq-deadline"
+#^ explicitly set just in case you want to change only this one!

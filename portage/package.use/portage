@@ -1,0 +1,10 @@
+#sys-apps/portage -python2_7
+#^ it's not a USE flag!
+#sys-apps/portage -python_targets_python2_7 python_targets_python3_6
+#^ but these are
+#can't use -python_targets_python2_7 python_targets_python3_6   but could -python_targets_python2_7 python_targets_python3_7
+
+#sys-apps/portage -python_targets_python2_7
+#same ^  conflict!
+
+#sys-apps/portage -python_targets_python2_7 python_targets_python3_8

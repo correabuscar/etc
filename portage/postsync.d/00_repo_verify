@@ -1,0 +1,4 @@
+#!/bin/bash
+
+gemato verify /var/db/repos/gentoo -K /usr/share/openpgp-keys/gentoo-release.asc --one-file-system --require-signed-manifest --no-refresh-keys --keep-going
+

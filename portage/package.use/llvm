@@ -1,0 +1,7 @@
+#sys-devel/llvm debug #XXX 1of2
+#//you have to also emerge clang for "debug" above to be allowed! or else it will want to emerge a prev. llvm version due to clang already requiring a "-debug" version of llvm when clang was built with "-debug"! Uhm, nvm, clang also needs the same "debug" or "-debug" anyway! So:
+#sys-devel/clang debug #XXX 2of2
+
+#the following are needed by USE=-experimental 'zig' aka dev-lang/zig-9999
+sys-devel/llvm llvm_targets_AArch64 llvm_targets_ARM llvm_targets_AVR llvm_targets_Hexagon llvm_targets_Lanai llvm_targets_MSP430 llvm_targets_Mips llvm_targets_PowerPC llvm_targets_RISCV llvm_targets_Sparc llvm_targets_SystemZ llvm_targets_WebAssembly llvm_targets_XCore
+

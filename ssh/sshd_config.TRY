@@ -1,0 +1,26 @@
+#from: https://midnight-commander.org/ticket/3921#comment:11
+
+Port 22
+AddressFamily inet
+ListenAddress 127.0.0.1
+Protocol 2
+PermitRootLogin no
+AuthenticationMethods keyboard-interactive
+PasswordAuthentication no
+KbdInteractiveAuthentication yes
+ChallengeResponseAuthentication yes
+UsePAM yes
+LogLevel VERBOSE
+StrictModes yes
+MaxAuthTries 5
+Subsystem sftp /usr/lib/openssh/sftp-server
+#^ this doesn't exist so it causes 'mc' to hang in SYSCALL_CANCEL like this: https://gist.github.com/howaboutsynergy/70b6a98c225ffeeef9036ff33d1bfc20
+But this exists so it doesn't hang anymore:
+#Subsystem      sftp    /usr/lib/ssh/sftp-server                                                                                 
+
+
+#Ciphers aes256-ctr
+#MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-512
+#KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
+#HostKey /etc/ssh/ssh_host_rsa_key
+#LoginGraceTime 30s

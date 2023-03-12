@@ -1,0 +1,4 @@
+#%wheel ALL=(root:root) NOPASSWD: /usr/bin/hdparm -W /dev/sda
+#^ true on ArchLinux
+%wheel ALL=(root:root) NOPASSWD: /sbin/hdparm -W /dev/sda
+#^ true on Gentoo and ArchLinux!

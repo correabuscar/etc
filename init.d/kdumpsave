@@ -1,0 +1,60 @@
+#!/sbin/openrc-run
+# Copyright 2021 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+#name="kdumpsave daemon"
+#command=/usr/bin/kdumpsave
+#command_args="${kdumpsave_args}"
+
+description="Saves kernel dump. Supposed to run in 'kdump' runlevel eg. softlevel=kdump in /proc/cmdline"
+
+depend()
+{
+	after *
+	keyword -timeout
+}
+
+start() {
+  ebegin 'Starting kernel crash dump /etc/init.d/kdumpsave'
+  #show me all the commands:
+  set -vx
+
+  echo "Welcome to '$0', inside kdump kernel (presumably)!"
+  echo "PATH=$PATH"
+  mount / -o remount,rw,strictatime,lazytime,async,suid,exec,dev,datasum,datacow,compress-force=zstd:3,ssd,clear_cache,space_cache=v1,autodefrag,commit=50
+  #had to make sure it's at least compressed, it wasn't on archlinux and it's lots of gigabytes!
+
+  echo "starting....`date`.........." >> /dmesg_kexec_before.log
+  dmesg >> /dmesg_kexec_before.log
+  mount | grep -w / | tee -a /dmesg_kexec_before.log
+  free -wlt | tee -a /dmesg_kexec_before.log
+  cat /proc/meminfo
+  df
+  vmstat
+  mkdir -p /var/crash/
+  datee="$(date +%F-%T | tr : _ )" #on systemd the % was %% !
+  #TODO: install makedumpfile from something like: https://gentoo.zugaina.org/sys-apps/makedumpfile
+  #TODO: ensure path is ok for makedumpfile
+  #XXX: warning if filename already exists, dump will fail and thus just exit
+  makedumpfile -d 1,31 /proc/vmcore "/var/crash/crashdump-${datee}"
+  v="$(uname -r)" #ie. 5.9.11-gentoo-x86_64
+  cp -a "/lib/modules/${v}/build/vmlinux" "/var/crash/vmlinux-${v}-${datee}" #this was on archlinux I guess, on gentoo that 'build' symlink points to /tmp/.../ (aka $kerneloutdir of /swcode/regenkernel script)
+  #XXX ^ we allow that 'cp' just in case I ever change where kernel was being built, so the 'build' symlink isn't broken! but upon 'regenkernel' script from /swcode/ , the script /etc/kernel/postinst.d/10-save-vmlinux-for-kdump will actually make a vmlinux* file in /var/crash for later use! (root:root a+r,u+w)
+  echo "starting..`date`....." >> /dmesg_kexec_after.log
+  dmesg >> /dmesg_kexec_after.log
+  free -wlt | tee -a /dmesg_kexec_before.log
+  echo "done...`date`" | tee -a /dmesg_kexec_before.log /dmesg_kexec_after.log
+  sync
+  btrfs filesystem sync /
+  /usr/bin/sync
+  /bin/sync
+  sync
+  eend
+  echo "Rebooting in 10 sec... unless you C-c (if you can)"
+  sleep 10
+  /sbin/shutdown -r now
+}
+
+stop() {
+  return 0
+}

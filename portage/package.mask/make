@@ -1,0 +1,5 @@
+#>=sys-devel/make-4.3
+#^ until this is fixed: https://bugs.gentoo.org/705974#c11
+#TODO: that's fixed, when all is good, then attempt to remove this limit, to see if rebuilding everything still works! maybe rebuild everything before removal too?!
+#tring with commented out now 08march2022
+

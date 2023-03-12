@@ -1,0 +1,16 @@
+##see https://bugs.gentoo.org/487384#c4  for the -n arg to halt in /etc/inittab  which means don't sync
+#c1:12345:respawn:/sbin/agetty 115200 --noclear --autologin user tty1 linux
+c1:12345:respawn:/sbin/agetty 115200 --noclear tty1 linux
+c2:2345:respawn:/sbin/agetty 115200 --noclear tty2 linux
+c3:2345:respawn:/sbin/agetty 115200 --noclear tty3 linux
+c4:2345:respawn:/sbin/agetty 115200 --noclear tty4 linux
+c5:2345:respawn:/sbin/agetty 115200 --noclear tty5 linux
+c6:2345:respawn:/sbin/agetty 115200 --noclear tty6 linux
+#allow startx on 7; c7:2345:respawn:/sbin/agetty 115200 --noclear tty7 linux
+c8:2345:respawn:/sbin/agetty 115200 --noclear tty8 linux
+c9:2345:respawn:/sbin/agetty 115200 --noclear tty9 linux
+c10:0123456:respawn:/bin/dmesg --level info,notice,warn,err,crit,alert,emerg --follow >/dev/tty10
+c11:0123456:respawn:/bin/dmesg --level debug,notice,warn,err,crit,alert,emerg --follow >/dev/tty11
+c12:0123456:respawn:/bin/dmesg --level notice,warn,err,crit,alert,emerg --follow >/dev/tty12
+c13:0123456:once:/bin/dmesg --console-level notice
+

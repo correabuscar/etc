@@ -1,0 +1,2 @@
+>=sys-libs/libblockdev-2.25 cryptsetup
+#^ needed to can install: lxqt-base/lxqt-powermanagement

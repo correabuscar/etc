@@ -1,0 +1,9 @@
+
+# required by app-text/sigil-1.9.2-r1::gentoo
+# required by app-text/sigil (argument)
+#>=dev-qt/qtwebengine-5.15.5_p20220618 widgets
+# required by dev-qt/qtwebengine-5.15.5_p20220618::gentoo
+# required by app-text/sigil-1.9.2-r1::gentoo
+# required by app-text/sigil (argument)
+#>=dev-qt/qtwebchannel-5.15.5 qml
+#temp disabled due to sigil not being installed, on 07feb2023

@@ -1,0 +1,18 @@
+#as per: eselect news read 2022-07-29-pipewire-sound-server
+
+media-video/pipewire sound-server extra
+#!!! The ebuild selected to satisfy "media-video/pipewire[sound-server(+)]" has unmet requirements.
+#- media-video/pipewire-0.3.65-r3::gentoo USE="X dbus ffmpeg gstreamer readline sound-server ssl -bluetooth -doc -echo-cancel -extra -flatpak -gsettings -jack-client -jack-sdk -lv2 -modemmanager -pipewire-alsa (-system-service) -systemd -test -v4l -zeroconf" ABI_X86="(64) -32 (-x32)"
+#
+#  The following REQUIRED_USE flag constraints are unsatisfied:
+#    ffmpeg? ( extra )
+#
+#  The above constraints are a subset of the following complete expression:
+#    ffmpeg? ( extra ) bluetooth? ( dbus ) jack-sdk? ( !jack-client ) modemmanager? ( bluetooth ) system-service? ( systemd ) !sound-server? ( !pipewire-alsa ) jack-client? ( dbus )
+#
+#(dependency required by "media-libs/libpulse-16.1-r2::gentoo" [ebuild])
+#(dependency required by "media-sound/pulseaudio-16.1::gentoo" [installed])
+#(dependency required by "app-emulation/virtualbox-7.0.6-r2::gentoo[pulseaudio]" [ebuild])
+#(dependency required by "@selected" [set])
+#(dependency required by "@world" [argument])
+

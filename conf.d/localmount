@@ -1,0 +1,15 @@
+# Stop the unmounting of certain points.
+# This could be useful for some NFS related work.
+#no_umounts="/dir1:/var/dir2"
+#
+# Mark certain mount points as critical.
+# This contains a space separated list of mount points which should be
+# considered critical. If one of these mount points cannot be mounted,
+# localmount will fail.
+# By default, this is empty.
+#critical_mounts="/home /var"
+
+rc_need="udev-settle"
+#^ or else zram mounts will fail because mkfs.ext4 is still in progress when localmount is ran
+#thanks to grknight on freenoce irc #gentoo channel, otherwise I would've put udev-settle in sysinit runlevel!
+

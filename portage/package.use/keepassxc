@@ -1,0 +1,1 @@
+>=app-admin/keepassxc-2.6.2 autotype ccache -network -browser -keeshare -yubikey test

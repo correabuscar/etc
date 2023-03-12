@@ -1,0 +1,4 @@
+sys-apps/systemd-utils -udev
+#read this news 2022-04-19-systemd-utils
+# basically because using eudev, you need -udev here!
+#

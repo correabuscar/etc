@@ -1,0 +1,5 @@
+# /etc/conf.d/dnsmasq: config file for /etc/init.d/dnsmasq
+
+# See the dnsmasq(8) man page for possible options to put here.
+DNSMASQ_OPTS="--user=dnsmasq --group=dnsmasq --log-debug --stop-dns-rebind"
+#--stop-dns-rebind see man 8 dnsmasq, also in /etc/dnsmasq.conf look for bogus-nxdomain=0.0.0.0 which is needed for NextDNS !

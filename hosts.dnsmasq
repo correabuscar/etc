@@ -1,0 +1,107 @@
+# the /etc/hosts that is used for dnsmasq (which means /etc/hosts itself is NOT used!)
+#XXX changes in here are not automatically picked up by dnsmasq (as they were when using /etc/hosts, when no-hosts and addn-hosts are NOT specified on dnsmasq.conf !) so you have to run:
+#sudo pkill --signal SIGHUP '^dnsmasq$'
+#)
+127.0.0.1	localhost.localdomain	localhost
+::1		localhost.localdomain	localhost
+127.0.1.1	thislh.localdomain thislh
+
+#127.1.2.3 stuff.com
+#1.1.1.1 dns
+# MAPS.ME
+##same IPs even now on 05 march 2020:
+#172.217.16.115 metaserver-search.mapswithme.com
+#217.69.139.134 v2s-1.mapswithme.com
+#50.7.149.10 v2s-2.mapswithme.com
+#185.30.177.97 v2s-3.mapswithme.com
+#217.69.135.105 maps-dl-ru3.mapswithme.com
+#50.7.149.10 maps-dl-eu2.mapswithme.com
+##new: on 05march2020:
+#185.30.177.97 maps-dl-ams1.mapswithme.com
+#217.69.134.40 maps-dl-ru1.mapswithme.com
+#192.240.109.114 maps-dl-us1.mapswithme.com
+#217.69.137.143 maps-dl-ru2.mapswithme.com
+#185.205.76.32 node1.download.mapsdata.org
+
+
+
+
+
+
+#176.9.1.211 europe.pool.ntp.org
+#178.62.16.103 europe.pool.ntp.org
+#77.72.146.250 europe.pool.ntp.org
+#89.111.54.85 europe.pool.ntp.org
+
+#176.9.1.211 a
+#172.217.18.78 redirector.gvt1.com
+#172.217.16.110 redirector.gvt1.com
+#172.217.16.110 dl.google.com
+
+#google translate app, just can't download the stuff (for android 4.2+, the v5 google translate app)
+#172.217.22.110 dl.google.com
+#172.217.23.174 translate.google.com
+#172.217.23.142 clients1.google.com
+#172.217.16.138 translate.googleapis.com
+
+
+
+#bible downloads (hopefully ONLY this):
+#52.85.17.18 static.bibliajfa.com.br
+#52.85.17.34 static.bibliajfa.com.br
+#52.85.17.75 static.bibliajfa.com.br
+#52.85.17.89 static.bibliajfa.com.br
+
+# Dear Translate — free English translation_v3.8.4_apkpure.com.apk
+#54.193.92.62 dict.youdao.com
+#54.183.211.222 dict.youdao.com
+#163.171.132.117 codown.youdao.com
+##useless
+
+# OsmAnd — Offline Travel Maps Navigation_v3.5.3_apkpure.com.apk
+#88.198.46.27 download.osmand.net
+#88.198.16.57 dl2.osmand.net
+#51.159.29.78 dl9.osmand.net
+#51.159.29.14 dl7.osmand.net
+#51.159.29.76 dl8.osmand.net
+##useless
+
+#DEX
+#67.199.248.10 bit.ly
+#67.199.248.11 bit.ly
+#172.217.23.138 firebaseremoteconfig.googleapis.com
+#192.168.137.1 bit.ly firebaseremoteconfig.googleapis.com
+#173.236.243.196 dex.adrianvintu.net
+#http://dex.adrianvintu.net/db/dex.dict
+#192.168.137.1 dexservices.adrianvintu.net
+#127.0.137.1 dexservices.adrianvintu.net
+#^ these don't work when I host http server locally, probably due to my bad firewall/forwarding rules!
+
+#unknown:
+#127.0.0.123 mayitek.com
+
+#for Textfairy
+#151.101.112.133 raw.githubusercontent.com
+
+# Hungarian Romanian dictionary_v3.95_apkpure.com.apk
+#185.178.46.92 www.dicref.com
+#78.46.3.198 dictoref.com.dedi998.your-server.de.
+#16.44MB is the database taken via http ! unzipped is: 42MB (comment out the hosts when unzipping starts!)
+
+# Romanian English dictionary_v3.97_apkpure.com.apk
+# doesn't work
+#185.178.46.92 www.dicref.com
+#78.46.3.198 www.dictoref.com
+
+# Learn Hungarian 50 languages_v11.2_apkpure.com.apk
+#46.30.213.251 www.50lingue.com
+#tlsv1 alert, ssl handshake aborted! failure in ssl library
+#77.111.240.39 www.50langu.com
+
+# 'Speak Hungarian Learn Hungarian Language Offline_v1.0.12_apkpure.com.apk'
+#216.58.206.20 1-dot-inapppackages.appspot.com
+#216.58.207.80 storage.googleapis.com
+#172.217.23.170 firestore.googleapis.com
+
+0.0.0.0 bruh2
+

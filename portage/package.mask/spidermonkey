@@ -1,0 +1,3 @@
+#=dev-lang/spidermonkey-78.11.0
+#^ AttributeError: module 'collections' has no attribute 'Sequence'
+#^ https://bugs.gentoo.org/793683

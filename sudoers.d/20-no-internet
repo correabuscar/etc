@@ -1,0 +1,4 @@
+
+#src: https://askubuntu.com/questions/45072/how-to-control-internet-access-for-each-program
+%wheel ALL=(:no-internet) NOPASSWD: ALL
+#see ~/bin/ni

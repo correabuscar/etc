@@ -1,0 +1,13 @@
+sys-boot/grub -themes debug mount device-mapper -fonts
+#added device-mapper on 10dec2020 in advance, assuming I'll eventually use lvm2+btrfs soonish...
+#multislot
+#^ doesn't exist since >grub-2.02-r4.ebuild
+
+# + + mount                    : Build and install the grub-mount utility 
+# seen via: equery u grub
+# grub-mount - export GRUB filesystem with FUSE
+
+# multislot to get grub2-mkconfig instead of grub-mkconfig !
+# FIXME: great multislot is ignored!!!!!! ergo the binary remains: grub2-mkconfig  actually it's now(18jan2020) grub-mkconfig and these use flags don't appear to be effet(so no multislot is set): USE="mount -device-mapper -doc -efiemu -fonts -libzfs -nls -sdl (-test) -themes -truetype"  ok multislot got removed since the last grub that had it which was grub-2.02-r4.ebuild and since I'm on ~amd64 I can't see any news about it, yet.
+# note: a change from device-mapper to -device-mapper wasn't ignored!
+

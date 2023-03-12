@@ -1,0 +1,19 @@
+#!/bin/bash
+
+ec=0
+for i in $(find /var/db/repos/gentoo/eclass \! -uid 0 -or \! -gid 0); do
+  echo "!! Found non-root:root owned eclass '$i'" >&2
+  ec="1"
+done
+if test "$ec" -ne "0"; then
+  echo "!! exiting as per above ^" >&2
+  exit "$ec"
+fi
+
+#set -e
+#pushd /var/db/repos/gentoo
+#chown -Rc root:root eclass
+#popd
+#set +e
+
+#see 60_non-root_check  which does all of this and more!

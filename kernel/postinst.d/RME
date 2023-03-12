@@ -1,0 +1,10 @@
+these are ignored by genkernel!(is it because u+x and no g+x,o+x ?)
+no idea who is meant to use them (debianutils?)
+
+XXX: don't make files with whitespace in them because they are passed to 'for' and thus treated as multiple filenames(as separated by whitespace) !!
+
+make executable files for group portage g+x or else they won't get executed!
+however, this:
+-rwxr-xr-x 1 root root     787 29.01.2021 00:23 10-save-vmlinux-for-kdump*
+did get executed!  on 11 march 2023.
+therefore g+x for root user also works

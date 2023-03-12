@@ -1,0 +1,9 @@
+#mask all packages in all repos, just in case any get added later via layman -a repo
+#*/*::*
+#^ doesn't work! ie. no effect!
+
+#masked all packages in the poly-c layman repo, so they don't get suggested when emerge --update ...ing!
+*/*::poly-c
+
+#obsolete:
+*/*::tox-overlay

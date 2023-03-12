@@ -1,0 +1,2 @@
+sys-apps/iproute2 -berkdb -ipv6 -minimal -atm
+#not 'minimal' or else /sbin/ss won't exist, the netstat replacer!

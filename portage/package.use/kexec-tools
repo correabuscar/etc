@@ -1,0 +1,6 @@
+sys-apps/kexec-tools lzma zlib
+#zlib was already on, maybe not needed
+
+#XXX: lzma is needed because /swcode/regenkernel is using xz(aka lzma) compression (but only for initramfs, dno if relevant!) as per: https://wiki.gentoo.org/wiki/Kernel_Crash_Dumps which says:
+#If the kernel is not loading when kexec is called, check to to see if kernel compression was set to xz (lzma) format.
+#If xz compression is used the sys-apps/kexec-tools package will need to be re-emerged with the lzma USE flag enabled.

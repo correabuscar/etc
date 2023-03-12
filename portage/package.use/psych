@@ -1,0 +1,13 @@
+# required by dev-ruby/rdoc-6.4.0::gentoo[ruby_targets_ruby30]
+# required by dev-ruby/bundler-2.3.8::gentoo[doc,ruby_targets_ruby30]
+# required by dev-lang/ruby-3.0.3::gentoo
+# required by virtual/ruby-ssl-12::gentoo[ruby_targets_ruby30]
+# required by dev-ruby/racc-1.5.2-r2::gentoo
+>=dev-ruby/psych-4.0.3 ruby_targets_ruby30
+# required by dev-ruby/psych-4.0.3::gentoo[ruby_targets_ruby30]
+# required by dev-ruby/rdoc-6.4.0::gentoo[ruby_targets_ruby26]
+# required by dev-ruby/bundler-2.3.8::gentoo[doc,ruby_targets_ruby30]
+# required by dev-lang/ruby-3.0.3::gentoo
+# required by virtual/ruby-ssl-12::gentoo[ruby_targets_ruby30]
+# required by dev-ruby/racc-1.5.2-r2::gentoo
+>=dev-ruby/stringio-3.0.1 ruby_targets_ruby30

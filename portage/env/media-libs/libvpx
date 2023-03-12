@@ -1,0 +1,6 @@
+CFLAGS="$CFLAGS -Wno-error"
+#
+#or else:
+#Requested extra CFLAGS '-march=skylake -mtune=skylake -mprefer-vector-width=128 -O2 -pipe -frecord-gcc-switches -ggdb -fvar-tracking-assignments -fno-omit-frame-pointer -ftrack-macro-expansion=2 -fstack-protector-all -Wno-trigraphs -fno-schedule-insns2 -fno-delete-null-pointer-checks -D_FORTIFY_SOURCE=2 -rdynamic -flifetime-dse=1' not supported by compiler
+#which is due to this: (seen in config.log)
+#<command-line>: error: "_FORTIFY_SOURCE" redefined [-Werror]

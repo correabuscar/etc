@@ -1,0 +1,2 @@
+=dev-util/cmake-3.19.0
+#XXX: need to mask this version or it will cause some failure to compile in sys-libs/compiler-rt-sanitizers-11.0.0 as per https://bugs.gentoo.org/756034#c3

@@ -1,0 +1,6 @@
+should run this prior:
+/etc/hosts.d.gen/genhosts.bash
+so that /etc/hosts is fresh!
+
+then you can run this:
+/etc/dnsmasq.d/dnsmasq_noPTR_generator.bash

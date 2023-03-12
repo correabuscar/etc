@@ -1,0 +1,25 @@
+#
+=sys-kernel/git-sources-4.7_rc1:4.7_rc1::gentoo
+=sys-kernel/git-sources-4.6_rc1
+=sys-kernel/git-sources-4.6_rc2
+=sys-kernel/git-sources-4.6_rc3
+=sys-kernel/git-sources-4.6_rc4
+=sys-kernel/git-sources-4.6_rc5
+=sys-kernel/git-sources-4.6_rc6
+#=sys-kernel/gentoo-sources-5.18.0
+#=sys-kernel/gentoo-sources-5.18.1*
+#=sys-kernel/gentoo-sources-5.18.2*
+#=sys-kernel/gentoo-sources-5.18.3*
+#=sys-kernel/gentoo-sources-5.18.4*
+#=sys-kernel/gentoo-sources-5.18.5*
+#>=sys-kernel/gentoo-sources-5.19.0
+#sys-kernel/gentoo-sources-5.19.? #invalid atom!
+#=sys-kernel/gentoo-sources-5.19*
+
+=sys-kernel/gentoo-sources-5.15.67
+#^ this wants to get in now on 15 sept 2022 and a few days ago also! odd, maybe because I did this above: >=sys-kernel/gentoo-sources-5.19.0
+<=sys-kernel/gentoo-sources-5.16
+#^ else wants sys-kernel/gentoo-sources-5.15.65
+#>=sys-kernel/gentoo-sources-5.20.0
+=sys-kernel/gentoo-sources-6.2.0
+#^too new

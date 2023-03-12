@@ -1,0 +1,15 @@
+# required by app-containers/docker-20.10.16::gentoo[container-init]
+# required by app-containers/docker (argument)
+>=sys-process/tini-0.19.0-r1 static
+
+app-containers/docker hardened
+# - - hardened       : Activate default security enhancements for toolchain (gcc, glibc, binutils)
+#  - - overlay        : Enables dependencies for the "overlay" graph driver, including necessary kernel flags.
+#   + - container-init : Makes the a staticly-linked init system tini available inside a container.
+
+app-containers/containerd hardened device-mapper
+# - - device-mapper : Support for device mapper snapshot driver 
+
+app-containers/runc hardened
+
+app-containers/docker-cli hardened 

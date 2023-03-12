@@ -1,0 +1,35 @@
+#!/bin/bash
+
+#-H to follow command line paths symlinks, of which /etc/portage/patches is one! otherwise I'd have to use a / at the end of it like: /etc/portage/patches/
+ec="0"
+for i in $(find -H -L /var/db/repos/gentoo/ /var/cache/distfiles /etc/portage/patches -xtype l -and \( \! -uid 0 -or \! -gid 0 \) ); do
+  echo "!! Found symlink which points to non-root owned file/dir, as '$i' -> '$(realpath -- "$i")'" >&2
+  #this will be bad when chown-ing because it will follow symlinks and chown the dest instead!
+  ec="1"
+done
+#don't exit now
+#if test "$ec" -ne "0"; then
+#  exit "$ec"
+#fi
+
+#XXX: the / at the end of the path in 'find' is necessary in case any of the dirs are actualyl symlinks (since -L isn't used)  OR, you can use -H ! heck, using both!
+#when using -userfetch and -usersync  all in these 2 dirs would be root:root
+#ec="0" #keep prev. exit code
+for i in $(find -H /var/db/repos/gentoo/ /var/cache/distfiles/ /etc/portage/patches/ \! -uid 0 -or \! -gid 0); do
+  echo "!! Found non-root(either user or group) owned file/dir '$i'" >&2
+  ec="2"
+done
+if test "$ec" -ne "0"; then
+  echo "!! exiting as per above ^" >&2
+  exit "$ec"
+fi
+
+#set -e
+#pushd /var/db/repos
+#chown --no-dereference -Rc root:root gentoo
+#popd
+#pushd /var/cache
+#chown --no-dereference -Rc root:root distfiles
+#popd 
+#set +e
+

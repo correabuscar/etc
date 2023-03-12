@@ -1,0 +1,9 @@
+#on 28 Sept 2022, and a few days earlier.
+#The following USE changes are necessary to proceed:
+# (see "package.use" in the portage(5) man page for more details)
+# required by sys-apps/xdg-desktop-portal-1.15.0::gentoo
+# required by gui-libs/xdg-desktop-portal-lxqt-0.2.0::gentoo
+# required by lxqt-base/lxqt-meta-1.1.0::gentoo[desktop-portal]
+# required by @selected
+# required by @world (argument)
+>=sys-fs/fuse-3.12.0 suid

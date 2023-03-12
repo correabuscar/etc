@@ -1,0 +1,3 @@
+# required by media-gfx/graphviz-5.0.0::gentoo
+# required by media-gfx/graphviz (argument)
+>=media-libs/gd-2.3.3-r1 fontconfig truetype

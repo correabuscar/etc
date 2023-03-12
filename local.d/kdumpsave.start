@@ -1,0 +1,50 @@
+#!/bin/bash
+#XXX now living as new file in /etc/init.d/kdumpsave for 'kdump' runlevel
+exit 0
+
+#XXX this is /etc/local.d/kdumpsave.start which runs in 'default' and 'nonetwork' runlevels! hence why I had to use kernel arg 'kdumpsavedangit' to figure out whether or not it was started by kdump crash kernel or normal kernel!
+#But now I could make it a service and only add it to run in the 'kdump' runlevel (because kdump crash kernel will pass softlevel=kdump to enter that runlevel instead of the 'default' runlevel!!)
+
+#don't exit on failures:
+set +e
+
+#kdumpsavedangit
+if ! grep kdumpsavedangit /proc/cmdline ; then
+  echo "'$0' says you're not running inside the kdump kernel, so it does nothing!"
+  exit 0
+fi
+
+#show me all the commands:
+set -vx
+
+echo "Welcome to '$0', inside kdump kernel (presumably)!"
+echo "PATH=$PATH"
+mount / -o remount,rw,strictatime,lazytime,async,suid,exec,dev,datasum,datacow,compress-force=zstd:3,ssd,clear_cache,space_cache=v1,autodefrag,commit=50
+#had to make sure it's at least compressed, it wasn't on archlinux and it's lots of gigabytes!
+
+echo "starting....`date`.........." >> /dmesg_kexec_before.log
+dmesg >> /dmesg_kexec_before.log
+mount | grep -w / | tee -a /dmesg_kexec_before.log
+free -wlt | tee -a /dmesg_kexec_before.log
+cat /proc/meminfo
+df
+vmstat
+mkdir -p /var/crash/
+datee="$(date +%%F-%%T | tr : _ )"
+#TODO: install makedumpfile from something like: https://gentoo.zugaina.org/sys-apps/makedumpfile
+#TODO: ensure path is ok for makedumpfile
+makedumpfile -d 1,31 /proc/vmcore "/var/crash/crashdump-${datee}"
+v="$(uname -r)" #ie. 5.9.11-gentoo-x86_64
+cp -a "/lib/modules/${v}/build/vmlinux" "/var/crash/vmlinux-${v}-${datee}"
+echo "starting..`date`....." >> /dmesg_kexec_after.log
+dmesg >> /dmesg_kexec_after.log
+free -wlt | tee -a /dmesg_kexec_before.log
+echo "done...`date`" | tee -a /dmesg_kexec_before.log /dmesg_kexec_after.log
+sync
+btrfs filesystem sync /
+/usr/bin/sync
+/bin/sync
+sync
+echo "Rebooting in 10 sec... unless you C-c"
+sleep 10
+/sbin/shutdown -r now

@@ -1,0 +1,16 @@
+
+media-sound/pulseaudio sox -webrtc-aec -zeroconf udev ssl -jack -daemon
+#^ those are gone now because package got split into two hmm... 28may2022 yup they're on media-sound/pulseaudio-daemon now!
+#sox is something I had to manually add, used by some of my ~/bin/ scripts to record voice I think!
+#we never need jack: https://jackaudio.org/faq/pulseaudio_and_jack.html
+#04june2022 removing daemon use flag so that pipewire can be used which means this would allow media-sound/pulseaudio-daemon to be removed (with media-sound/paprefs-1.2-r1 too!)
+
+media-sound/pulseaudio-daemon sox -webrtc-aec -zeroconf udev ssl -tcpd -systemd -ipv6 glib -equalizer X alsa alsa-plugin dbus elongind gdbm -jack
+#-equalizer on 03 june 2022 because wiki says it's unsabled and likely to be removed in the future, https://wiki.gentoo.org/wiki/PulseAudio#Equalizer
+
+media-libs/libpulse X glib -tcpd -systemd
+#^ USE="dbus asyncns" are on now by their defaults, 28may2022
+
+
+
+

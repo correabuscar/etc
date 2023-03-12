@@ -1,0 +1,7 @@
+net-firewall/iptables ipv6
+# required by app-emulation/libvirt-7.0.0::gentoo[virt-network]
+# required by app-emulation/libvirt-glib-3.0.0::gentoo
+# required by app-emulation/virt-manager-3.2.0::gentoo
+# required by virt-manager (argument)
+#>=net-firewall/iptables-1.8.7 ipv6
+

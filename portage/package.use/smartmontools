@@ -1,0 +1,18 @@
+sys-apps/smartmontools minimal update_drivedb
+#* WARNING: There's already a drive database in '//var/db/smartmontools'!
+# * Because we cannot determine if this database is untouched
+# * or was modified by the user you have to manually update the
+# * drive database:
+# * 
+# * a) Replace '//var/db/smartmontools/drivedb.h' by the database shipped with this
+# *    release which can be found in '//usr/share/smartmontools/drivedb.h', i.e.
+# * 
+# *      cp "//usr/share/smartmontools/drivedb.h" "//var/db/smartmontools"
+# * 
+# * b) Run the following command as root:
+# * 
+# *      /usr/sbin/update-smart-drivedb
+# * 
+# * However, 'update-smart-drivedb' requires that you re-emerge smartmontools
+# * with USE='update_drivedb'.
+

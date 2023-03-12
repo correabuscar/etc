@@ -1,0 +1,12 @@
+#>www-client/firefox-84.0_rc2
+#>www-client/firefox-88.0.1
+#>www-client/firefox-89.0
+#>www-client/firefox-97.0.2
+#>www-client/firefox-106.0.5
+#masked because otherwise it will pick up the one from gentoo repo which isn't modified/patched etc.! So, the priority thing (man portage) has effect only if same version?! not for same package name ?
+
+#This is just so I don't go back to prev. ones:
+#<www-client/firefox-97.0.2
+#<www-client/firefox-106.0.5
+www-client/firefox::gentoo
+#^ a better way, without the need to version-guess, thanks to comments on: https://bugs.gentoo.org/show_bug.cgi?id=879815

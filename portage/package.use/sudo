@@ -1,0 +1,2 @@
+app-admin/sudo -sendmail pam -secure-path
+#secure-path is good, but I'm counting on 'sudo cmd' inheriting user's PATH or else 'sudo update-grub' will fail for example. However I'm aware that anyone able to place any executables inside /home/user/bin/binprio , since this is first in PATH, will hack me easily :)

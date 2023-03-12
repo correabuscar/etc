@@ -1,0 +1,2 @@
+>=net-misc/iputils-20211215 filecaps
+#filecaps since 05 Aug 2022 because otherwise 'ping' cmdline is suid root and thus in logs is UID=0 and can't be iptables firewalled by restricting uid

@@ -1,0 +1,24 @@
+auth		optional	pam_faildelay.so delay=500000
+#^ works but some other module is causing a minimum of 2sec delay! it's pam_faillock.so see PR 296 for nodelay added https://github.com/linux-pam/linux-pam/pull/296/files
+#src: https://unix.stackexchange.com/questions/40954/how-does-one-change-the-delay-that-occurs-after-entering-an-incorrect-password/40962#40962
+#XXX: this delay= and 3 other nodelay are needed for the delay to be this 0.5 sec! else it will be 2sec! or the value of FAIL_DELAY from /etc/login.defs
+#
+auth		required	pam_env.so
+auth		requisite	pam_faillock.so preauth deny=0 nodelay
+#you can put deny=0 here or inside /etc/security/faillock.conf
+auth		[success=1 default=ignore]	pam_unix.so   try_first_pass nodelay
+#^ nodelay required here for pam_unix too or else it's 2 sec!
+auth		[default=die]	pam_faillock.so authfail nodelay
+#XXX: nodelay is required in two places for pam_faillock.so
+#auth		optional	pam_permit.so
+account		required	pam_unix.so
+account         required        pam_faillock.so
+#account         optional        pam_permit.so
+password	required	pam_passwdqc.so config=/etc/security/passwdqc.conf
+password	required	pam_unix.so try_first_pass use_authtok  sha512 shadow
+#password	optional	pam_permit.so
+session		required	pam_limits.so
+session		required	pam_env.so
+session		required	pam_unix.so
+#session		optional	pam_permit.so
+#4x pam_permit were removed in updated sys-auth/pambase-20210201::gentoo

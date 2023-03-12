@@ -1,0 +1,33 @@
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/bin/false
+daemon:x:2:2:daemon:/sbin:/bin/false
+adm:x:3:4:adm:/var/adm:/bin/false
+lp:x:4:7:lp:/var/spool/lpd:/bin/false
+sync:x:5:0:sync:/sbin:/bin/sync
+shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+halt:x:7:0:halt:/sbin:/sbin/halt
+news:x:9:13:news:/var/spool/news:/bin/false
+uucp:x:10:14:uucp:/var/spool/uucp:/bin/false
+operator:x:11:0:operator:/root:/sbin/nologin
+portage:x:250:250:System user; portage:/var/lib/portage/home:/sbin/nologin
+nobody:x:65534:65534:nobody:/var/empty:/bin/false
+man:x:13:15:System user; man:/dev/null:/sbin/nologin
+sshd:x:22:22:User for ssh:/var/empty:/sbin/nologin
+user:x:1000:1000::/home/user:/bin/bash
+cron:x:16:16:A user for sys-process/cronbase:/var/spool/cron:/sbin/nologin
+messagebus:x:101:101:System user; messagebus:/dev/null:/sbin/nologin
+polkitd:x:102:102:System user; polkitd:/var/lib/polkit-1:/sbin/nologin
+ntp:x:123:123:user for ntp daemon:/dev/null:/sbin/nologin
+nullmail:x:88:88:A user for the nullmailer:/var/spool/nullmailer:/sbin/nologin
+tcpdump:x:999:999:added by portage for tcpdump:/dev/null:/sbin/nologin
+dictd:x:998:998:uid for app-text/dictd:/dev/null:/sbin/nologin
+logcheck:x:997:997:User for app-admin/logcheck; user account removed @ 2022-08-15:/dev/null:/sbin/nologin
+_kernelbuilder:x:1002:1005::/home/_kernelbuilder:/sbin/nologin
+at:x:25:25:added by portage for at:/var/spool/at/atjobs:/sbin/nologin
+sddm:x:996:996:A user for x11-misc/sddm:/var/lib/sddm:/sbin/nologin
+pcap:x:377:377:User for capturing network traffic:/dev/null:/sbin/nologin
+dnsmasq:x:275:275:User for net-dns/dnsmasq:/dev/null:/sbin/nologin
+apache:x:81:81:added by portage for apache:/var/www:/sbin/nologin
+geoclue:x:351:351:User for running the GeoClue D-Bus geolocation service; user account removed @ 2022-11-27:/var/lib/geoclue:/sbin/nologin
+flatpak:x:313:313:System user; flatpak; user account removed @ 2022-06-07:/dev/null:/sbin/nologin
+colord:x:350:350:User for running the colord service:/var/lib/colord:/sbin/nologin

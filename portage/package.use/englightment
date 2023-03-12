@@ -1,0 +1,7 @@
+# required by x11-wm/enlightenment-0.25.4::gentoo[wayland]
+# required by x11-wm/enlightenment (argument)
+#>=dev-libs/efl-1.26.3 drm
+# required by media-video/rage-0.4.0-r1::gentoo
+# required by media-video/rage (argument)
+#>=dev-libs/efl-1.26.3 gstreamer
+#temp commented out the above, as enlightenment isn't installed! 07feb2023

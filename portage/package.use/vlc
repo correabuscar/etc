@@ -1,0 +1,42 @@
+#>=media-video/vlc-9999 X opus dbus debug -optimisememory -run-as-root -lua -httpd -vnc -lirc -samba -sftp -gnome -cddb -aalib -libcaca pulseaudio -skins -upnp qt4 -qt5 -libav ffmpeg -kde -alsa -xml vorbis vpx -bidi avcodec avformat
+#no effect ^ webm still no sound!
+
+#still locked up with just having disabled 'Accelerated video output(Overlay)' in Video in Prferences, but seems to be not locking up(YET! 1st feb 2016) with also selecting Output: X11 video output(XCB) instead of the 'Automatic' which was on previously.
+#//re-added(25th jan 2016): live (no effect on .mp4 pericope files gotten via youtube-dl)
+#still locks up my entire system(in radeon driver no doubt!) but due to radeon.lockup_timeout=999000 it doesn't lock up my mouse so I can still sysrq sync, umount and reboot (S,U,B) but man I'm pissed because I lost a file I was editing with mousepad!! thus, removing vlc for good! (ok let's be fair, with this attitude I won't get anywhere...)
+#disabled(on 16th jan 2016): live dvd bluray opengl v4l rdp rtsp ncurses mtp gcrypt gnutls gme dvb
+#added(on 16 jan 2016): -encode -dvbpsi
+#can't remove postproc without removing ffmpeg too!
+#XXX: disabled 'debug' (28 dec 2015)
+#XXX: enabled debug 19july2020
+media-video/vlc X avcodec ffmpeg avformat dbus debug -optimisememory -run-as-root lua -httpd -vlm -vnc -dc1394 -ieee1394 -linsys -lirc -live dvd bluray -opencv -opengl -samba -sftp -v4l -gnome -vcdx -cddb -rdp -rtsp faad -aalib -libcaca pulseaudio libsamplerate -chromaprint -skins -libtar matroska -ncurses ogg opus -projectm -udev -upnp -gnutls x264 x265 xv -zeroconf zvbi -wma-fixed vpx vorbis -vlm -vdpau -vaapi twolame truetype -tremor theora taglib swscale svg -speex -sid -shout sdl sdl-image -schroedinger qt4 qt5 postproc png -omxil -musepack -mtp modplug mp3 mpeg libtiger libnotify -libav libass -kde kate jpeg -jack -growl -gme -gcrypt fontconfig -fluidsynth flac -fdk -dvb -directfb cpu_flags_x86_mmx cpu_flags_x86_sse -cdda -bidi -audioqueue -atmo -alsa a52 xml -encode dvbpsi -ssl srt aribsub gstreamer -dav1d aom archive
+# 24 march 2022: removed dav1d to see if compile errors go away; worked!
+# 16 may 2021: enabled: dvbpsi archive taglib #one of these(ok it's 'taglib' !)  made vlc able to read the tags from within the mp3
+# 08 may 2021 attempting to enable: srt twolame truetype fontconfig vorbis zvbi aribsub libtiger libass kate svg gstreamer dav1d bluray aom ~ one or more of these made subtitles show up!(prolly the fonts, mainly! and 'srt' in case of .srt files with subtitles, but that wasn't the case for me with the file I've tested which had the subs embedded somehow)
+# not yet: vdpau vaapi
+#enabled 'dvd' on 01aug2020
+#note: 'xml' is needed to load playlists! else "main xml reader error: XML reader not found", so enabled on 25 Jan 2021
+
+#do I really need vdpau? or only on manjaro!!
+#XXX: don't need flags: vorbis ogg   (ogg plays fine; oh but opus inside an .ogg doesn't play at all!) so, need USE=ogg
+#XXX: need matroska USE flag or some 251 .webm from youtube has no audio / no sound
+
+
+#XXX USE=lua is enabled 11 may 2021 because .cue files can only be seen/played with a vlc lua plugin (thanks to freenode user <courmisch> on #videolan) NOTE: some .cue files aren't played propely but for all files it seems, the length is set to flac length upon playing it, even though the start is right. When it doesn't work the track won't even start so it's skipped.
+
+
+# required by sys-devel/clang-9999-r100::gentoo
+# required by =clang-9999-r100 (argument)
+#>=sys-devel/llvm-9999 clang
+# required by x11-drivers/xf86-video-ati-7.6.1::gentoo[glamor]
+# required by x11-base/xorg-drivers-1.17::gentoo[video_cards_radeon]
+# required by @selected
+# required by @world (argument)
+>=x11-base/xorg-server-1.17.4 glamor
+# required by dev-texlive/texlive-xetex-2015::gentoo
+# required by app-text/dblatex-0.3.7::gentoo
+# required by app-text/asciidoc-8.6.9-r2::gentoo
+# required by sys-fs/btrfs-progs-4.2.2::gentoo
+# required by @selected
+# required by @world (argument)
+>=app-text/texlive-core-2015 xetex

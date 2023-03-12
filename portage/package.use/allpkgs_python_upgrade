@@ -1,0 +1,229 @@
+#from: # eselect news read 2021-05-05-python3-9
+#First, enable both Python 3.8 and Python 3.9, and then run the upgrade
+#commands:
+
+#    */* PYTHON_TARGETS: -* python3_8 python3_9
+#    */* PYTHON_SINGLE_TARGET: -* python3_8
+
+#emerge -ac
+#Then switch PYTHON_SINGLE_TARGET and run a second batch of upgrades:
+
+#    */* PYTHON_TARGETS: -* python3_8 python3_9
+#    */* PYTHON_SINGLE_TARGET: -* python3_9
+
+#emerge -ac
+#Finally, switch to the final version and upgrade:
+#*/* PYTHON_TARGETS: -* python3_9
+#*/* PYTHON_SINGLE_TARGET: -* python3_9
+##commented out on  17 june 2022, see $ eselect news read 2022-06-13-python3-10
+#emerge -ac
+
+# XXX TODO: You may wish to remove the target overrides after the defaults switch. (on/after 2021-06-01)
+#Alternatively, you can keep them to block the next automatic upgrade
+#to Python 3.10, and upgrade manually then.
+#
+#so...
+#some pkgs require python_targets_python3_9 else they won't emerge now, 05 july 2022, therefore we try this:
+#*/* PYTHON_TARGETS: python3_9 python3_10
+#*/* PYTHON_TARGETS: python3_10
+#python3_11
+#*/* PYTHON_SINGLE_TARGET: python3_10
+#^ this last line is already in effect btw.
+##ok this doesn't work, it somehow removes any other than 3.9 targets! wait, actually I didn't see it right, it's all about "!!! The following binary packages have been ignored due to non matching USE:"  this is where it seemed like only 3.9 was kept! but above this 3.10 was used ok!
+#this gets repoman downgraded because it doesn't allow 3.10 anymore, so I've to remove them. 12 july 2022
+
+##The following USE changes are necessary to proceed:
+## (see "package.use" in the portage(5) man page for more details)
+## required by dev-python/nspektr-0.4.0::gentoo
+## required by dev-python/setuptools-63.1.0::gentoo
+## required by dev-python/mako-1.2.1::gentoo
+## required by media-libs/mesa-22.1.3::gentoo
+## required by gui-libs/gtk-4.6.6::gentoo[X]
+## required by gui-libs/libadwaita-1.1.2::gentoo
+## required by media-sound/easyeffects-6.2.6::gentoo
+## required by @selected
+## required by @world (argument)
+#>=dev-python/packaging-21.3-r2 python_targets_python3_9
+## required by dev-python/setuptools-63.1.0::gentoo
+## required by dev-python/mako-1.2.1::gentoo
+## required by media-libs/mesa-22.1.3::gentoo
+## required by gui-libs/gtk-4.6.6::gentoo[X]
+## required by gui-libs/libadwaita-1.1.2::gentoo
+## required by media-sound/easyeffects-6.2.6::gentoo
+## required by @selected
+## required by @world (argument)
+#>=dev-python/tomli-2.0.1-r1 python_targets_python3_9
+## required by dev-python/setuptools_scm-7.0.4::gentoo
+## required by dev-python/pluggy-1.0.0-r2::gentoo
+## required by dev-python/hatchling-1.4.1::gentoo[-test]
+## required by dev-python/soupsieve-2.3.2_p1::gentoo
+## required by dev-python/beautifulsoup4-4.11.1::gentoo
+## required by @selected
+## required by @world (argument)
+#>=dev-python/typing-extensions-4.3.0 python_targets_python3_9
+## required by dev-python/PySocks-1.7.1-r2::gentoo
+## required by dev-python/urllib3-1.26.9-r3::gentoo
+## required by dev-python/dulwich-0.20.44::gentoo
+## required by app-text/sigil-1.9.2-r1::gentoo[python_single_target_python3_10,plugins]
+## required by @selected
+## required by @world (argument)
+#>=dev-python/gpep517-6-r1 python_targets_python3_9
+## required by dev-python/setuptools-63.1.0::gentoo
+## required by dev-python/mako-1.2.1::gentoo
+## required by media-libs/mesa-22.1.3::gentoo
+## required by gui-libs/gtk-4.6.6::gentoo[X]
+## required by gui-libs/libadwaita-1.1.2::gentoo
+## required by media-sound/easyeffects-6.2.6::gentoo
+## required by @selected
+## required by @world (argument)
+#>=dev-python/wheel-0.37.1-r1 python_targets_python3_9
+## required by dev-python/ordered-set-4.1.0::gentoo
+## required by dev-python/setuptools-63.1.0::gentoo
+## required by dev-python/mako-1.2.1::gentoo
+## required by media-libs/mesa-22.1.3::gentoo
+## required by gui-libs/gtk-4.6.6::gentoo[X]
+## required by gui-libs/libadwaita-1.1.2::gentoo
+## required by media-sound/easyeffects-6.2.6::gentoo
+## required by @selected
+## required by @world (argument)
+#>=dev-python/flit_core-3.7.1 python_targets_python3_9
+## required by dev-python/requests-2.28.1::gentoo
+## required by app-portage/gemato-16.2::gentoo[gpg]
+## required by net-misc/rsync-3.2.4-r3::gentoo[verify-sig]
+## required by sys-apps/portage-3.0.30-r5::gentoo[-build]
+## required by app-portage/gentoopm-0.4::gentoo
+## required by app-portage/smart-live-rebuild-1.4.0::gentoo
+## required by @selected
+## required by @world (argument)
+#=dev-python/certifi-3021.3.16-r2 python_targets_python3_9
+## required by dev-python/requests-2.28.1::gentoo
+## required by app-portage/gemato-16.2::gentoo[gpg]
+## required by net-misc/rsync-3.2.4-r3::gentoo[verify-sig]
+## required by sys-apps/portage-3.0.30-r5::gentoo[-build]
+## required by app-portage/gentoopm-0.4::gentoo
+## required by app-portage/smart-live-rebuild-1.4.0::gentoo
+## required by @selected
+## required by @world (argument)
+#>=dev-python/charset_normalizer-2.1.0 python_targets_python3_9
+## required by dev-python/urllib3-1.26.9-r3::gentoo
+## required by dev-python/dulwich-0.20.44::gentoo
+## required by app-text/sigil-1.9.2-r1::gentoo[python_single_target_python3_10,plugins]
+## required by @selected
+## required by @world (argument)
+#>=dev-python/PySocks-1.7.1-r2 python_targets_python3_9
+## required by dev-python/urllib3-1.26.9-r3::gentoo
+## required by dev-python/dulwich-0.20.44::gentoo
+## required by app-text/sigil-1.9.2-r1::gentoo[python_single_target_python3_10,plugins]
+## required by @selected
+## required by @world (argument)
+#>=dev-python/six-1.16.0-r1 python_targets_python3_9
+## required by dev-python/setuptools-63.1.0::gentoo
+## required by dev-python/mako-1.2.1::gentoo
+## required by media-libs/mesa-22.1.3::gentoo
+## required by gui-libs/gtk-4.6.6::gentoo[X]
+## required by gui-libs/libadwaita-1.1.2::gentoo
+## required by media-sound/easyeffects-6.2.6::gentoo
+## required by @selected
+## required by @world (argument)
+#>=dev-python/appdirs-1.4.4-r2 python_targets_python3_9
+## required by dev-python/setuptools-63.1.0::gentoo
+## required by dev-python/mako-1.2.1::gentoo
+## required by media-libs/mesa-22.1.3::gentoo
+## required by gui-libs/gtk-4.6.6::gentoo[X]
+## required by gui-libs/libadwaita-1.1.2::gentoo
+## required by media-sound/easyeffects-6.2.6::gentoo
+## required by @selected
+## required by @world (argument)
+#>=dev-python/jaraco-text-3.8.0 python_targets_python3_9
+## required by dev-python/setuptools-63.1.0::gentoo
+## required by dev-python/mako-1.2.1::gentoo
+## required by media-libs/mesa-22.1.3::gentoo
+## required by gui-libs/gtk-4.6.6::gentoo[X]
+## required by gui-libs/libadwaita-1.1.2::gentoo
+## required by media-sound/easyeffects-6.2.6::gentoo
+## required by @selected
+## required by @world (argument)
+#>=dev-python/more-itertools-8.13.0 python_targets_python3_9
+## required by dev-python/setuptools-63.1.0::gentoo
+## required by dev-python/mako-1.2.1::gentoo
+## required by media-libs/mesa-22.1.3::gentoo
+## required by gui-libs/gtk-4.6.6::gentoo[X]
+## required by gui-libs/libadwaita-1.1.2::gentoo
+## required by media-sound/easyeffects-6.2.6::gentoo
+## required by @selected
+## required by @world (argument)
+#>=dev-python/nspektr-0.4.0 python_targets_python3_9
+## required by dev-python/setuptools-63.1.0::gentoo
+## required by dev-python/mako-1.2.1::gentoo
+## required by media-libs/mesa-22.1.3::gentoo
+## required by gui-libs/gtk-4.6.6::gentoo[X]
+## required by gui-libs/libadwaita-1.1.2::gentoo
+## required by media-sound/easyeffects-6.2.6::gentoo
+## required by @selected
+## required by @world (argument)
+#>=dev-python/ordered-set-4.1.0 python_targets_python3_9
+## required by dev-python/nspektr-0.4.0::gentoo
+## required by dev-python/setuptools-63.1.0::gentoo
+## required by dev-python/mako-1.2.1::gentoo
+## required by media-libs/mesa-22.1.3::gentoo
+## required by gui-libs/gtk-4.6.6::gentoo[X]
+## required by gui-libs/libadwaita-1.1.2::gentoo
+## required by media-sound/easyeffects-6.2.6::gentoo
+## required by @selected
+## required by @world (argument)
+#>=dev-python/jaraco-context-4.1.1-r2 python_targets_python3_9
+## required by dev-python/nspektr-0.4.0::gentoo
+## required by dev-python/setuptools-63.1.0::gentoo
+## required by dev-python/mako-1.2.1::gentoo
+## required by media-libs/mesa-22.1.3::gentoo
+## required by gui-libs/gtk-4.6.6::gentoo[X]
+## required by gui-libs/libadwaita-1.1.2::gentoo
+## required by media-sound/easyeffects-6.2.6::gentoo
+## required by @selected
+## required by @world (argument)
+#>=dev-python/jaraco-functools-3.5.0-r2 python_targets_python3_9
+#
+##The following USE changes are necessary to proceed:
+## (see "package.use" in the portage(5) man page for more details)
+## required by dev-python/packaging-21.3-r2::gentoo
+## required by dev-python/hatchling-1.4.1::gentoo[-test]
+## required by dev-python/soupsieve-2.3.2_p1::gentoo
+## required by dev-python/beautifulsoup4-4.11.1::gentoo
+## required by @selected
+## required by @world (argument)
+#>=dev-python/pyparsing-3.0.9 python_targets_python3_9
+## required by dev-python/gpep517-6-r1::gentoo
+## required by dev-python/mako-1.2.1::gentoo
+## required by media-libs/mesa-22.1.3::gentoo
+## required by gui-libs/gtk-4.6.6::gentoo[X]
+## required by gui-libs/libadwaita-1.1.2::gentoo
+## required by media-sound/easyeffects-6.2.6::gentoo
+## required by @selected
+## required by @world (argument)
+#>=dev-python/installer-0.5.1-r1 python_targets_python3_9
+#
+#
+# required by dev-python/importlib_metadata-4.12.0::gentoo
+# required by dev-python/nspektr-0.4.0::gentoo[-python_targets_python3_8,python_targets_python3_9,-python_targets_pypy3]
+# required by dev-python/setuptools-63.1.0::gentoo
+# required by @selected
+# required by @world (argument)
+#>=dev-python/zipp-3.8.1 python_targets_python3_9
+
+#First, enable both Python 3.9 and Python 3.10, and then run the upgrade
+#commands:
+
+#    */* PYTHON_TARGETS: -* python3_9 python3_10
+#    */* PYTHON_SINGLE_TARGET: -* python3_9
+
+#without these 2 + 1 repoman line(s) 12 july 2022 it will give many conflicts which are ignored or so. And with them lines it wants to Total: 83 packages (83 reinstalls, 83 binaries), Size of downloads: 0 KiB   Commenting out the 3 lines then. The thing is, that all those conflicts are already installed and needing python3_9 as PYTHON_TARGETS hmm... so, this blows... re-allowing the 3 lines then.
+*/* PYTHON_TARGETS: -* python3_9 python3_10
+#*/* PYTHON_SINGLE_TARGET: -* python3_10
+
+#app-emulation/virtualbox PYTHON_SINGLE_TARGET:  -* python3_10
+#app-eselect/eselect-repository PYTHON_SINGLE_TARGET:  -* python3_10
+
+# required by @selected
+# required by @world (argument)
+>=app-portage/repoman-3.0.3-r2 -python_targets_python3_10
+

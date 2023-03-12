@@ -1,0 +1,5 @@
+#
+x11-drivers/nvidia-drivers tools -kernel-open -wayland
+# already USE=tools by default, but just making sure!
+#already -kernel-open by default
+#-wayland for testing, 30Nov2022

@@ -1,0 +1,4 @@
+
+# required by @selected
+# required by @world (argument)
+#>=app-portage/repoman-3.0.3-r2 -python_targets_python3_10

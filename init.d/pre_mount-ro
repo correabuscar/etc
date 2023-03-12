@@ -1,0 +1,83 @@
+#!/sbin/openrc-run
+# Copyright (c) 2007-2015 The OpenRC Authors.
+# See the Authors file at the top-level directory of this distribution and
+# https://github.com/OpenRC/openrc/blob/master/AUTHORS
+#
+# This file is part of OpenRC. It is subject to the license terms in
+# the LICENSE file found in the top-level directory of this
+# distribution and at https://github.com/OpenRC/openrc/blob/master/LICENSE
+# This file may not be copied, modified, propagated, or distributed
+# except according to the terms contained in the LICENSE file.
+
+#this should be symlinked in /etc/runlevels/shutdown/pre_mount-ro via cmd: # rc-config add pre_mount-ro shutdown
+#XXX: needs change in /etc/init.d/localmount so that /tmp isn't umount when localmount is stop()-ed which it is by the time runlevel 'shutdown' is reached! else it can't see files in /tmp which were visible before shutdown was initiated!
+
+description="run script before /tmp is lost or unmounted"
+
+depend()
+{
+  #XXX: ok well this doesn't really matter, because it's /etc/init.d/localmount which doesn't the umount of /tmp, unless changed(which currently is!)
+	before killprocs savecache mount-ro
+	#keyword -docker -lxc -openvz -prefix -systemd-nspawn -vserver
+  #^wtf is that?
+}
+
+start()
+{
+	local ret=0
+
+	# Flush all pending disk writes now
+	sync
+
+  runlevel="$(who -r | awk '{print $2}')"
+	ebegin "Running pre_mount-ro script, this is '$0', runlevel='$RUNLEVEL' aka '$runlevel' aka '$(runlevel)'"
+	eindent
+
+  main
+  ret="$?"
+
+	eoutdent
+
+	eend $ret
+}
+
+main() {
+date_log_started="`date`"
+#actually I just run that myself below: sysctl kernel.sysrq=1  //XXX: MUST NOT BE: kernel.sysrq = 16  which is default on manjaro unless you manually set it, ie. /etc/sysctl.d/99-sysctl.conf which has this line: kernel.sysrq=1
+#exec 1> >(logger -s -t $(basename $0)) 2>&1
+#^ this won't send to dmesg!
+
+#exec 1>/dev/kmsg 2>&1
+set -x
+
+onint() {
+  echo "${0}: Ignored C-c!"
+}
+trap onint sigint SIGHUP SIGALRM SIGTERM
+
+source "/swcode/swcode.bash"
+
+echo "Hello, this is '$0' or '${BASH_SOURCE[0]}' running as user id '`/usr/bin/id`', runlevel='$RUNLEVEL' aka '$(runlevel)'"
+
+PATH="$PATH:/usr/sbin:/sbin:/usr/bin" #for hdparm and sysctl (at least) and cpupower
+
+#XXX: seen args:
+#reboot
+#poweroff
+#
+echo "Script args($#): $*"
+
+set
+
+#save summary.log accross reboots!
+#FIXME: this seems to be gone by the time we get here: this /tmp/ebuild.logs/elog/summary.log  OR emerge was never run in this session?!!! retest this!
+if test -e "/tmp/ebuild.logs/elog/summary.log" ; then
+  cat "/tmp/ebuild.logs/elog/summary.log" >> "/var/log/portage/elog/summary.log"
+  echo "--- this is '$0' who appended the above($(ls -la /tmp/ebuild.logs/elog/summary.log 2>&1)) due to reboot or shutdown on `date`" >> "/var/log/portage/elog/summary.log"
+#^ due to /etc/portage/make.conf the summary.log is there in PORTAGE_LOGDIR (also due to some FEATURES="split-log split-elog") instead of in /var/log because I moved PORTAGE_LOGDIR to tmpfs/zram so it doesn't sync every line to disk!
+else
+  echo "--- this is '$0' who detected no /tmp/ebuild.logs/elog/summary.log file at this time(maybe emerge wasn't run in this session) and was ran due to a reboot or shutdown command on `date`" >> "/var/log/portage/elog/summary.log"
+fi
+
+}
+

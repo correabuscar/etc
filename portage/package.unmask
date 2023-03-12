@@ -1,0 +1,56 @@
+# required by virtualbox-guest-additions (argument)
+# /usr/portage/profiles/features/64bit-native/package.mask:
+# AMD64 Team <amd64@gentoo.org>
+# Mask packages that rely on amd64 multilib
+>=app-emulation/virtualbox-guest-additions-5.0.0
+# required by =app-emulation/virtualbox-guest-additions-5.0.2 (argument)
+# /usr/portage/profiles/features/64bit-native/package.mask:
+# AMD64 Team <amd64@gentoo.org>
+# Mask packages that rely on amd64 multilib
+=app-emulation/virtualbox-guest-additions-5.0.2
+# required by >=sys-devel/gcc-5.2 (argument)
+# /etc/portage/package.mask/gcc:
+=sys-devel/gcc-5.2.0
+# required by >=chromium-47 (argument)
+# /usr/portage/profiles/package.mask:
+# Pawel Hajdan, Jr. <phajdan.jr@gentoo.org> (28 Jul 2015)
+# Dev channel releases are only for people who are developers or want more
+# experimental features and accept a more unstable release.
+>=www-client/chromium-47.0.2498.0
+
+# required by virtualbox (argument)
+# /usr/portage/profiles/features/64bit-native/package.mask:
+# AMD64 Team <amd64@gentoo.org>
+# Mask packages that rely on amd64 multilib
+>=app-emulation/virtualbox-5.0.4
+# required by winetricks (argument)
+# /usr/portage/profiles/features/64bit-native/package.mask:
+# AMD64 Team <amd64@gentoo.org>
+# Mask packages that rely on amd64 multilib
+=app-emulation/winetricks-20160109
+
+>=net-libs/gnutls-3.5.0
+
+#*/*::gentoo
+#^ this will unmask a lot of shieee, I shouldn't be using it, even if masking everything from every repo(except gentoo) worked!
+
+#unmask only what I want from poly-c repo
+#media-libs/gstreamer::poly-c
+#media-libs/gst-plugins*::poly-c
+
+=sys-kernel/gentoo-sources-5.9.10
+#^ unmasking because not using XFS so no corruption!
+
+#>=dev-lang/rust-9999
+#=app-shells/bash-99999
+#^ !!! The following installed packages are masked:
+#- app-shells/bash-99999::localrepo (masked by: package.mask)
+#/var/db/repos/gentoo/profiles/package.mask:
+## Lars Wendler <polynomial-c@gentoo.org> (2020-12-07)
+## Masked for testing
+
+#=virtual/libcrypt:0/1
+
+#because patched locally(patches are no good, kernel compilation fails still):
+=sys-apps/gawk-5.2.0
+

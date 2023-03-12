@@ -1,0 +1,4 @@
+>=net-misc/wget-1.21.3-r1 debug test
+#05 aug 2022, added 'debug' to can use 'wget --debug' to see what happens when a 302 redirect happens that the file gets appended to rather than continued.
+#added USE=test on 05 Aug 2022 so I can see the tests are passing(after adding my own patch and,soon, test), and they are!
+

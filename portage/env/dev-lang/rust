@@ -1,0 +1,9 @@
+#
+#CXXFLAGS="$CXXFLAGS -DHAVE_SYSTEMLLVM_PATCH_FOR_TARGET_CPUS"
+#XXX ^ has no effect even with patch because it won't reach the command which is:
+#  running: "x86_64-pc-linux-gnu-g++" "-O3" "-ffunction-sections" "-fdata-sections" "-fPIC" "-m64" "-ffunction-sections" "-fdata-sections" "-fPIC" "-m64" "-m64" "-I/usr/lib/llvm/11/include" "-std=c++14" "-D_GNU_SOURCE" "-D__STDC_CONSTANT_MACROS" "-D__STDC_FORMAT_MACROS" "-D__STDC_LIMIT_MACROS" "-DLLVM_COMPONENT_AMDGPU" "-DLLVM_COMPONENT_ASMPARSER" "-DLLVM_COMPONENT_BITREADER" "-DLLVM_COMPONENT_BITWRITER" "-DLLVM_COMPONENT_COVERAGE" "-DLLVM_COMPONENT_INSTRUMENTATION" "-DLLVM_COMPONENT_IPO" "-DLLVM_COMPONENT_LINKER" "-DLLVM_COMPONENT_LTO" "-DLLVM_COMPONENT_NVPTX" "-DLLVM_COMPONENT_X86" "-DNDEBUG" "-o" "/var/tmp/portage/dev-lang/rust-1.48.0/work/rustc-1.48.0-src/build/x86_64-unknown-linux-gnu/stage0-rustc/x86_64-unknown-linux-gnu/release/build/rustc_llvm-9e1b6229ec46ae1e/out/llvm-wrapper/PassWrapper.o" "-c" "llvm-wrapper/PassWrapper.cpp"
+#  #so I'm modifying the patch to unconditionally do that code instead!
+
+#for RUSTFLAGS_STAGE_NOT_0 and RUSTFLAGS_STAGE_0, RUSTFLAGS_STAGE_1, RUSTFLAGS_STAGE_2 (when compiling rust) see also: https://github.com/rust-lang/rust/pull/47836/files and doc: https://github.com/rust-lang/rustc-dev-guide/pull/728/files
+
+RUST_BACKTRACE=1

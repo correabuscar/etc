@@ -1,0 +1,2 @@
+app-misc/mc sftp -unicode slang -samba
+# * "unicode" USE flag only takes effect when the "slang" USE flag is disabled.

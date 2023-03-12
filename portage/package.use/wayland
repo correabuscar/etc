@@ -1,0 +1,39 @@
+#!!! The ebuild selected to satisfy ">=media-libs/gst-plugins-base-1.4.5:1.0" has unmet requirements.
+#- media-libs/gst-plugins-base-1.20.3::gentoo USE="X introspection ogg opengl orc pango vorbis wayland -alsa -egl -gbm -gles2 -ivorbis -nls -test -theora" ABI_X86="(64) -32 (-x32)"
+#
+#  The following REQUIRED_USE flag constraints are unsatisfied:
+#    opengl? ( wayland? ( egl ) )
+#
+#  The above constraints are a subset of the following complete expression:
+#    ivorbis? ( ogg ) theora? ( ogg ) vorbis? ( ogg ) opengl? ( any-of ( egl X ) any-of ( gbm wayland X ) wayland? ( egl ) gbm? ( egl ) ) gles2? ( egl any-of ( gbm wayland X ) wayland? ( egl ) gbm? ( egl ) )
+#
+#(dependency required by "media-video/vlc-3.0.17.4-r2::gentoo[gstreamer]" [ebuild])
+#(dependency required by "@selected" [set])
+#(dependency required by "@world" [argument])
+media-libs/gst-plugins-base egl
+
+#!!! The ebuild selected to satisfy "x11-wm/mutter" has unmet requirements.
+##- x11-wm/mutter-42.5::gentoo USE="elogind introspection wayland -doc -gnome -screencast -sysprof -systemd -test -udev" ABI_X86="(64)" INPUT_DEVICES="-wacom" VIDEO_CARDS="-nvidia"
+#
+##  The following REQUIRED_USE flag constraints are unsatisfied:
+#    wayland? ( udev )
+###
+#  The above constraints are a subset of the following complete expression:
+#    wayland? ( exactly-one-of ( elogind systemd ) udev ) test? ( wayland )
+x11-wm/mutter udev
+
+#The following USE changes are necessary to proceed:
+# (see "package.use" in the portage(5) man page for more details)
+# required by dev-libs/libgusb-0.4.2::gentoo
+# required by x11-misc/colord-1.4.6::gentoo
+# required by gnome-base/gnome-settings-daemon-42.2-r4::gentoo[colord]
+# required by x11-wm/mutter-42.5::gentoo
+# required by x11-wm/mutter (argument)
+>=virtual/libusb-1-r2 udev
+# required by virtual/libusb-1-r2::gentoo
+# required by dev-libs/libgusb-0.4.2::gentoo
+# required by x11-misc/colord-1.4.6::gentoo
+# required by gnome-base/gnome-settings-daemon-42.2-r4::gentoo[colord]
+# required by x11-wm/mutter-42.5::gentoo
+# required by x11-wm/mutter (argument)
+>=dev-libs/libusb-1.0.26 udev

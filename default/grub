@@ -1,0 +1,584 @@
+#! /bin/sh
+#XXX This file is sourced in a bash(actually a  #! /bin/sh ) script, see: /usr/bin/grub-mkconfig , line: ". ${sysconfdir}/default/grub"
+#
+# GRUB boot loader configuration
+# XXX modifying this requires running update-grub to take effect! because it generates /boot/grub/grub.cfg which is what's actually used by grub
+
+#------ defining functions and vars here:
+source /swcode/swcode.bash
+#--user defined vars:
+
+#XXX: this options is specific to /etc/default/grub here, not to be confused with kernel arg mitigations which takes =off for example!
+mitigations=0
+#0 to turn off meltdown/spectre etc. mitigations! XXX: you've to change CONFIG_RETPOLINE in kernel .config too (and thus recompile kernel)!
+#1 to not touch defaults (ie. don't add any args one way or the other)
+#2 to force fuller mitigations - "for better securing the system against these vulnerabilities but also hitting the performance even more severely due to HT/SMT being disabled among other measures." https://www.phoronix.com/scan.php?page=news_item&px=Linux-Improve-CPU-Spec-Switches
+#--end of user defined vars
+
+#-- nothing to change below:
+
+addargs() {
+  #XXX don't use += since it's not available in 'POSIX sh' (even tho we're /usr/bin/sh currently points to 'bash'
+  GRUB_CMDLINE_LINUX="${GRUB_CMDLINE_LINUX} $*"
+}
+addarg() { #alias
+  addargs "$@"
+}
+
+#----------
+
+#GRUB_DEFAULT=saved
+GRUB_DEFAULT=0
+#GRUB_TIMEOUT=5
+GRUB_TIMEOUT=1
+GRUB_DISTRIBUTOR='Arch'
+#GRUB_CMDLINE_LINUX_DEFAULT="audit=0 loglevel=3 quiet splash resume=UUID=theuuidfortheswappartitionhere"
+#removed swap partition:GRUB_CMDLINE_LINUX_DEFAULT="resume=UUID=theuuidfortheswappartitionhere"
+GRUB_CMDLINE_LINUX_DEFAULT=""
+#GRUB_CMDLINE_LINUX=""
+#GRUB_CMDLINE_LINUX=""
+GRUB_CMDLINE_LINUX=""
+#XXX: see Documentation/x86/x86_64/boot-options.txt and Documentation/admin-guide/kernel-parameters.txt
+addargs "root_trim=yes rd.luks.allow-discards rd.luks.options=discard"
+addargs "ipv6.disable=1 ipv6.disable_ipv6=1 ipv6.autoconf=0"
+#^ see Documentation/networking/ipv6.txt 
+addargs "loglevel=15 log_buf_len=16M"
+addargs "ignore_loglevel" #so then loglevel=15 has no effect!
+addargs "printk.always_kmsg_dump=y printk.time=y printk.devkmsg=on"
+#printk.devkmsg=on (aka no rate limiting) https://patchwork.kernel.org/patch/9216393/ XXX NOTE: this is the reason why systemd-sysctl fails with "[    5.267760] systemd-sysctl[246]: Couldn't write 'on' to 'kernel/printk_devkmsg': Invalid argument" , see Documentation/sysctl/kernel.txt line 837
+addargs "fbcon=scrollback:4096k fbcon=font:ProFont6x11"
+#^ the scrollback has no effect since 5.8.10 or 5.9
+addargs "net.ifnames=0"
+#XXX: setting net.ifnames=0 disables NamePolicy= in /etc/systemd/network/10-macspoof.link and thus allows Name= to apply, see 'man 5 systemd.link', it's also the only place I can currently find(with kernel 5.0) that has 'ifnames' (it's not in kernel source tree! or commit history!)
+#addargs "pax_sanitize_slab=full" #this has no effect on ArchLinux, was from Gentoo pax days!
+#addargs "net.ifnames=1" #on archlinux this made no difference! it was still eth0 and net0
+#ok, net.ifnames=1 will give you enp1s0, and =0 will give eth0! unless /etc/systemd/network/10-macspoof.link exists which will rename it to net0, or if /etc/udev/rules.d/10-network.rules exists that will do that too!
+
+#addargs "video=vesafb vga=795 nomodeset" #didn't work, 13feb2023
+#vga=795 similarly vga=0x031b => 1280x1024, 24 bit
+#first is in decimal! second is same value but in hex!
+#The following is for integrated gfx card which is current framebuffer(not for nvidia which the above is trying to target):
+#[i87k ~]# hwinfo --framebuffer
+#02: None 00.0: 11001 VESA Framebuffer
+#  [Created at bios.459]
+#  Unique ID: rdCR.jAflqJSco38
+#  Hardware Class: framebuffer
+#  Model: "Intel(R) SKL/KBL Mobile/Desktop Graphics Controller"
+#  Vendor: "Intel Corporation"
+#  Device: "Intel(R) SKL/KBL Mobile/Desktop Graphics Controller"
+#  SubVendor: "Intel(R) SKL/KBL Mobile/Desktop Graphics Chipset Accelerated VGA BIOS"
+#  SubDevice:
+#  Revision: "Hardware Version 0.0"
+#  Memory Size: 63 MB + 960 kB
+#  Memory Range: 0x00000000-0x03feffff (rw)
+#  Mode 0x033c: 1920x1440 (+1920), 8 bits
+#  Mode 0x034d: 1920x1440 (+3840), 16 bits
+#  Mode 0x035c: 1920x1440 (+7680), 24 bits
+#  Mode 0x033a: 1600x1200 (+1600), 8 bits
+#  Mode 0x034b: 1600x1200 (+3200), 16 bits
+#  Mode 0x035a: 1600x1200 (+6400), 24 bits
+#  Mode 0x0307: 1280x1024 (+1280), 8 bits
+#  Mode 0x031a: 1280x1024 (+2560), 16 bits
+#  Mode 0x031b: 1280x1024 (+5120), 24 bits
+#  Mode 0x0305: 1024x768 (+1024), 8 bits
+#  Mode 0x0317: 1024x768 (+2048), 16 bits
+#  Mode 0x0318: 1024x768 (+4096), 24 bits
+#  Mode 0x0312: 640x480 (+2560), 24 bits
+#  Mode 0x0314: 800x600 (+1600), 16 bits
+#  Mode 0x0315: 800x600 (+3200), 24 bits
+#  Mode 0x0301: 640x480 (+640), 8 bits
+#  Mode 0x0303: 800x600 (+832), 8 bits
+#  Mode 0x0311: 640x480 (+1280), 16 bits
+#  Mode 0x037d: 0x0 (+0), 8 bits
+#  Mode 0x037e: 0x0 (+0), 16 bits
+#  Mode 0x037f: 0x0 (+0), 24 bits
+#  Config Status: cfg=new, avail=yes, need=no, active=unknown
+
+addargs "nolvm"
+addargs "dobtrfs"
+addargs "gk.log.keep=true"
+#^ gentoo specific? yes : dolvm dobtrfs noefi gk.*   see `man 8 genkernel`
+addargs "console=tty1"
+addargs "earlyprintk=vga"
+#addargs "audit=1" # =1 is useful to see why openssh-8.1_p1-r1 (on Gentoo) was getting killed due to missing __NR_clock_nanosleep
+addargs "audit=0"
+#^ audit=0 from https://www.redhat.com/archives/linux-audit/2014-January/msg00126.html to avoid messages like this: [ 2307.128850] audit: type=1326 audit(1466449936.963:193): auid=1000 uid=1000 gid=1000 ses=1 pid=5833 comm="chromium" exe="/usr/lib/chromium/chromium" sig=0 arch=c000003e syscall=273 compat=0 ip=0x7f3264cac414 code=0x50000
+addargs "systemd.log_target=kmsg systemd.journald.forward_to_console=1"
+
+addargs "enforcing=0"
+#^ enforcing [SELINUX] Set initial enforcing status. 0 -- permissive (log only, no denials). | 1 -- enforcing (deny and log). | Default value is 0. | Value can be changed at runtime via /selinux/enforce.
+
+addargs "udev.children-max=1256 rd.udev.children-max=1256"
+addargs "nohz=on"
+addargs "oops=panic"
+if is_Z575; then
+  #addargs "crashkernel=128M" #running out of memory!
+  addargs "crashkernel=512M" #now 389M free via 'vmstat'(command)
+  #addargs "crashkernel=256M" # trying! apparently not good enough! oom seen by sysrq+c induced crash with zram tho!
+  #64M of memory should be enough to handle crash dumps on machines with up to 12G of RAM. Some systems require more reserved memory. In case if dump capture kernel unable not load try to increase the memory to 256M or even to 512M, but note that this memory is unavailable to system kernel. src: https://wiki.archlinux.org/index.php/Kdump#Setup_kdump_kernel
+elif is_i87k; then
+  #addargs "crashkernel=256M" #this brings keyboard leds back, screen is unchanged though, but no /var/crash/ files generated! Looks like because /usr/bin/makedumpfile doesn't exist!
+  #addargs "crashkernel=512M" # is this enough? testing... seems enough but the dump is at least 29G with -d 1,31 (and -d 31) - UNLESS I also startx; it's enough for ArchLinux(and 32G RAM total), not for Gentoo(with 64G RAM)! it will OOM agetty and you can't login(with the openrc variants of services!) when using 'default' runlevel!!!
+  #addargs "crashkernel=1024M" # testing.... works ok. on Archlinux! not on Gentoo! still OOMs at 13% kdump saved!
+  #addargs "crashkernel=5120M" # testing.... because 4.3G is used in normal startup to console! that was prior to 'kdump' runlevel implementation! it seems to be using less than 512M with 'kdump' runlevel! TODO: try 768M
+  #addargs "crashkernel=768M" # we do have 64G RAM so... more M being needed here is normal now! not good enough! oom-triggered!
+  #addargs "crashkernel=1024M" # testing... nope, makedumpfile got killed!
+  addargs "crashkernel=1536M" # testing... this worked!!
+fi
+#addargs "panic=30" #reboot after 60 seconds
+addargs "panic=0" #reboot never
+addargs "print_fatal_signals=1" #thanks to Dr. David Alan Gilbert here: https://bugzilla.mozilla.org/show_bug.cgi?id=1582222#c24
+#^ also $ sudo sysctl -w kernel.print-fatal-signals=1
+
+#######addargs "panic=-1" #reboot immediately
+#doneTODO: reduce the crashkernel=256M ; done reduced to 128M which is required for firefox compilation(linking actually!) to not get oom-killed (with le9d.patch) while outdir is in /tmp and about 11-12G in size! 
+#crashkernel=256M@16M" seems not detected when appended? trying prepending! nope, that wasn't it! it was lacking some KEXEC .config setting!
+#crashkernel=64M is for system kernel when using kdump see: https://wiki.archlinux.org/index.php/Kdump#Setup_kdump_kernel
+addargs "psi=1"
+addargs "sysrq_always_enabled"
+addargs "random.trust_cpu=off"
+addargs "logo.nologo"
+addargs "lpj=0"
+#^ Sets loops_per_jiffy to given constant, thus avoiding
+#      time-consuming boot-time autodetection (up to 250 ms per
+#      CPU). 0 enables autodetection (default).
+addargs "mce=bootlog"
+addargs "reboot=force,cold"
+addargs "noexec=on"
+addargs "nohibernate"
+addargs "scsi_mod.use_blk_mq=1"
+#XXX scsi_mod.use_blk_mq=1 is from /etc/default/tlp "# Note: multiqueue (blk-mq) may need kernel boot option 'scsi_mod.use_blk_mq=1' #   and modprobe mq-deadline-iosched/kyber"
+addargs "consoleblank=120"
+#^ consoleblank=n where n is seconds, [KNL] The console blank (screen saver) timeout in seconds. A value of 0 disables the blank timer. Defaults to 0.
+
+#addargs "noiotrap"
+#^ noiotrap  [SH] Disables trapped I/O port accesses.
+
+if test "$mitigations" == "0"; then
+  #TODO: set CONFIG_RETPOLINE=y in kernel when re-enabling mitigations!
+  #Temp disable all meltdown/spectre CPU mitigations:
+  addargs "mitigations=off" #src: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=v4.19.43&id=8cb932aca5d6728661a24eaecead9a34329903ff
+  addargs "nospectre_v1 nospectre_v2 spectre_v2=off nospec_store_bypass_disable kvm-intel.vmentry_l1d_flush=never l1tf=off nopti pti=off no_stf_barrier noibrs noibpb ssbd=force-off srbds=off"
+  #nospectre_v1 is only for powerpc, it otherwise always says, for x86, that "Mitigation: __user pointer sanitization" and thus seen as not vuln! and can't be turned off! 
+  #nospectre_v1  [PPC] Disable mitigations for Spectre Variant 1 (bounds
+  #      check bypass). With this option data leaks are possible
+  #      in the system.
+  addargs "spectre_v2_user=off" 
+  addargs "noretpoline" #probably only has any effect on nixos?! since I can't really find this in kernel 5.0 source code! however it seems to be a part of spectre_v2= see Documentation/admin-guide/kernel-parameters.txt
+  #^ this one is useless because it's already overridden (and set to off) by: nospectre_v2
+  #^ some options(nopti pti=off no_stf_barrier) are from here: https://www.phoronix.com/scan.php?page=news_item&px=Global-Switch-Skip-Spectre-Melt
+  #XXX To see effects run ~/bin/vulns or do: $ head /sys/devices/system/cpu/vulnerabilities/*   (src: https://github.com/hcho3/xgboost-fast-hist-perf-lab/issues/4#issue-377407071 )
+  #nopti and pti=off are equivalent!
+  #XXX WARNING: kernel .config option for retpoline is CONFIG_RETPOLINE=y which cannot be disabled from /proc/cmdline, apparently!
+  #nospec_store_bypass_disable [HW] Disable all mitigations for the Speculative Store Bypass vulnerability
+  #spec_store_bypass_disable=on Unconditionally disable Speculative Store Bypass
+  #no_stf_barrier is not documented but still exists, in arch/powerpc/kernel/security.c  so uhm, i guess it's for POWERPC only?!
+  #added noibrs noibpb from https://github.com/speed47/spectre-meltdown-checker/pull/102#issuecomment-359242864  see also reports of it working: https://github.com/coreos/bugs/issues/2412  dis_ucode_ldr to 'disable boot-time microcode updates' dis_ucode_ldr [X86] Disable the microcode loader.
+  #XXX spectre_v2=off and nospectre_v2 are equivalent, see doc: Documentation/admin-guide/kernel-parameters.txt
+  #XXX spectre_v2_user=off Unconditionally disable mitigations. Is enforced by spectre_v2=off
+  #TODO: see if "nofxsr" should also be used Documentation/admin-guide/kernel-parameters.txt it's for x86_32
+  #ssbd [ARM64,HW] Speculative Store Bypass Disable control, force-off: Unconditionally disable mitigation for both kernel and userspace
+
+  addargs "mds=off"
+elif test "$mitigations" == "2"; then #yes 2! because 1 is whatever the defaults are when unspecified! ie. mitigations=auto (aka yes smt) :)
+  addargs "mitigations=auto,nosmt" #src: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=v4.19.43&id=8cb932aca5d6728661a24eaecead9a34329903ff
+  #^ https://www.phoronix.com/scan.php?page=article&item=mds-zombieload-mit&num=10
+  addargs "l1tf=full,force spec_store_bypass_disable=auto spectre_v2=auto spectre_v2_user=auto mds=full,nosmt"
+  # ^ from https://www.phoronix.com/scan.php?page=news_item&px=Linux-Improve-CPU-Spec-Switches
+  #l1tf=full    Provides all available mitigations for the L1TF vulnerability. Disables SMT and enables all mitigations in the hypervisors, i.e. unconditional L1D flushing
+  #^   full,force  Same as 'full', but disables SMT and L1D flush runtime control(via sysfs, that is). Implies the 'nosmt=force' command line option. (i.e. sysfs control of SMT is disabled.)
+  # ^ Documentation/admin-guide/hw-vuln/l1tf.rst
+
+  #mds= Not specifying this option is equivalent to "mds=full".
+  #mds=full,nosmt  The same as mds=full, with SMT disabled on vulnerable CPUs.  This is the complete mitigation.
+
+fi 
+
+#XXX removed more debug (29 aug 2016):
+#addargs "dynamic_debug.verbose=1 dyndbg=\"file arch/x86/kernel/apic/* +pflmt ; file drivers/video/* +pflmt ; file drivers/input/* -pflmt ; file drivers/acpi/* -pflmt\""
+#addargs "apic=debug rd.debug rd.udev.debug rd.memdebug=3 slub_debug=U edac_debug_level=4 pnp.debug=1"
+addargs "pnp.debug=1" #just to see what it does, 23 july 2020
+#addargs "vga=ask" #XXX: never enable this, it won't boot because it says it's deprecated!
+
+#for rd.debug code see: https://git.archlinux.org/mkinitcpio.git/tree/init_functions#n385  linked by dreisner on #archlinux freenode irc. ie. "# rd.debug implies rd.log=console if rd.log(=.*)? isn't present" (that line) also, man 8 mkinitcpio
+#addargs "debug ignore_loglevel"
+#addargs "systemd.log_level=debug" # tons of logging
+#addargs "no665wo" #XXX to disable the amd cpu errata 665 - bad idea! so don't use this! - has no effect on the reboot/shutdown issues here: https://bugzilla.kernel.org/show_bug.cgi?id=151631 and the other two
+#
+#this worked: udev.children-max=256  (default 16) boot is faster by at least 4 seconds(25-26 instead of 29sec which is so slow(instead of the usual 9-11sec because lots of debug output is turned on, btw)
+#Has no effect//rd.udev.children-max=256 see: man systemd-udevd
+#
+
+addargs "rd.log=all" #lol "all" also. FIXME: can't use "|" due to:
+#error: syntax error.
+#error: Incorrect command.
+#error: syntax error.
+#Syntax error at line 88
+#Syntax errors are detected in generated GRUB config file.
+#Ensure that there are no errors in /etc/default/grub
+#and /etc/grub.d/* files or please file a bug report with
+#/boot/grub/grub.cfg.new file attached.
+
+
+addargs "noefi"
+#addargs "efi=runtime" #overrides EFI_DISABLE_RUNTIME=y  aka it makes it =n at runtime, otherwise it's disabled! 21 june 2022 +# Linux/x86 5.17.15-gentoo Kernel Configuration
+
+#addargs "cpuidle.governor=menu" #menu is default for me even when teo is compiled in kernel, unless you patch the Makefile and put teo.o first - see use_governor_teo_directly.patch
+#addargs "cpuidle.governor=teo" #testing, stopped using it for now(also disabled patch use_governor_teo_directly.patch and # CONFIG_CPU_IDLE_GOV_TEO is not set) see: https://bugzilla.kernel.org/show_bug.cgi?id=203833#c1
+addargs "cpuidle.governor=menu"
+#^ teo cpuidle governor https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/commit/?h=linux-next&id=b26bf6ab716f27955e2a503ffca1691582127cbb
+
+# ZRAM if you have no swap device on HDD/SSD.
+addargs "zram.num_devices=4" #should be 4 on gentoo, 3 on archlinux
+# in Gentoo only this has effect! so NOT this: /etc/modprobe.d/zram.conf
+#^ https://www.kernel.org/doc/Documentation/blockdev/zram.txt
+
+# ZSWAP if you do have a swap device on HDD/SSD.
+# With zswap, compressed pages are decompressed before being written to disk https://unix.stackexchange.com/a/192155/143394
+#see: grep . /sys/module/zswap/parameters/*
+addargs "zswap.enabled=0" #default is: 0 aka N
+#XXX: setting to 0 aka disabled because using 32G zram as swap instead!
+#^ https://www.kernel.org/doc/Documentation/vm/zswap.txt
+addargs "zswap.same_filled_pages_enabled=1" #default is: 1 aka Y
+addargs "zswap.compressor=zstd" #default is: lzo
+#The maximum percentage of memory that the compressed pool can occupy:
+addargs "zswap.max_pool_percent=40" #default is: 20
+addargs "zswap.zpool=z3fold" #zbud z3fold or zsmalloc # CONFIG_ZBUD CONFIG_Z3FOLD CONFIG_ZSMALLOC
+addargs "vsyscall=none" #this should warn if a program tries to run and requires vsyscall, as per info from CONFIG_X86_VSYSCALL_EMULATION which should be "y" (for the warn to happen)
+
+addargs "apparmor=0" #disable apparmor in advance for Debian/Devuan built kernels, to avoid some slowdown!
+# ^ https://www.phoronix.com/scan.php?page=article&item=linux-55-regression1&num=3
+
+#addargs "usbcore.quirks=0458:00f2:nojgbe" #ec b #see admin-guide/kernel-parameters.txt  // no effect on my Genius DX-ECO issue!
+
+addargs "acpi_force_table_verification" #or else: [    0.078758] ACPI: Early table checksum verification disabled
+#^ well, I've no actual reason for doing this! this is just doing it earlier than usual, it's still being done anyway, even w/o this!
+
+
+addargs "systemd.mask=dhcpcd@" #this is normally only used on archlinux iso to avoid 1m30s delay when booting up, however I'll keep it here just in case I want to copy/paste /proc/cmdline again into /etc/grub.d/40_custom as kernel args for when booting iso-s from local filesystem.
+
+addargs "page_owner=on" #needs CONFIG_PAGE_OWNER , see Documentation/dev-tools/kasan.rst
+addargs "debug_pagealloc=on" # needs CONFIG_DEBUG_PAGEALLOC=y CONFIG_DEBUG_PAGEALLOC_ENABLE_DEFAULT
+#addargs "page_poison=0" #XXX #page_poison=1 needs CONFIG_PAGE_POISONING, TODO: but see if it can interfere with CONFIG_INIT_ON_FREE_DEFAULT_ON=1 aka init_on_free=1
+#FIXME: page_poison=1 gives spam on 5.13.1 (vs 5.12.13) dno why, it's about "page dumped because: pagealloc: corrupted page details"
+#addargs "init_on_free=1 init_on_alloc=1" #XXX
+#init_on_free=0, because page_poison=1  #TODO: make this an if page_poison=1 then init_on_free=0 else init_on_free=1
+#according to this[1] page_poison=1 is obsolete with 5.13 (still, it shouldn't spam tho!) so instead I shoulduse a better fing kyboard... [1] https://www.phoronix.com/forums/forum/software/general-linux-open-source/1264763-kernel-5-13-0-memory-corruption
+#that url is wrong, actual source page[2] mentions v5.3 not v5.13 and thus page_poison=1 should still work. [2] https://kernsec.org/wiki/index.php/Kernel_Self_Protection_Project/Recommended_Settings#kernel_command_line_options
+#alrady havL
+#CONFIG_INIT_ON_ALLOC_DEFAULT_ON=y
+#CONFIG_INIT_ON_FREE_DEFAULT_ON=y
+#addargs "page_poison=1 slub_debug=P"
+addargs "page_poison=1 init_on_free=0 init_on_alloc=0" #re-testing: doesn't work, still getting that "page dumped because: pagealloc: corrupted page details" on 5.13.1 ; removed slub_debug= because nvidia-drivers says it can freeze things!
+#addargs "page_poison=1 init_on_free=0 init_on_alloc=0 slub_debug=P" #re-testing: doesn't work, still getting that "page dumped because: pagealloc: corrupted page details" on 5.13.1
+#message comes from this commit: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f58bd538e6a2deb2bcdfe527d9ed45643348a4e6
+
+
+addargs "page_table_check=on" #CONFIG_PAGE_TABLE_CHECK_ENFORCED: needs CONFIG_PAGE_TABLE_CHECK=y in kernel
+#Check for invalid mappings in user page tables (PAGE_TABLE_CHECK) [N/y/?] (NEW) ?
+#CONFIG_PAGE_TABLE_CHECK:
+#Check that anonymous page is not being mapped twice with read write
+#permissions. Check that anonymous and file pages are not being
+#erroneously shared. Since the checking is performed at the time
+#entries are added and removed to user page tables, leaking, corruption
+#and double mapping problems are detected synchronously.
+
+addargs "numa_balancing=disable" "numa=off" #already not compiled-in kernel however by having CONFIG_NUMA_BALANCING=n
+
+if is_i87k; then
+  #-----
+  #addargs "i915.alpha_support=1" #XXX: stopped using this so kernel doesn't show as tainted!
+
+  #addargs "i915.fastboot=1" #i see no change when I flip this from 1 to 0 ; i see no difference in output also! disabling! hmm maybe it needs the alpha_support=1 above? hmm unsure! Oh well, it's enabled by default anyway(supposedly!)
+  #^ https://www.phoronix.com/scan.php?page=article&item=linux-51-features&num=1
+
+  #if intel microcode prevents proper booting, can be bypassed by:
+  #addarg "dis_ucode_ldr"  #src: https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files/issues/1#issuecomment-494886911
+
+  #TODO: see if CONFIG_X86_SMAP is y and maybe make it 'n' ? because performance cost! To read: https://www.phoronix.com/scan.php?page=news_item&px=Linux-Protect-Special-CR4-Bits It's N on z575 because it's an intel-only feature!
+  #-----
+
+  #addargs "drm.debug=0x1e" #src: https://bugs.freedesktop.org/show_bug.cgi?id=109522#c9  XXX very many messages!
+  #doneTODO? i915.disable_power_well=0
+  #addargs "i915.disable_power_well=0" #https://bugs.freedesktop.org/show_bug.cgi?id=105998#c5  ok so 0 means power wells always on, see ./drivers/gpu/drm/i915/i915_params.c  (I double-checked this doesn't work!)
+  #addargs "i915.disable_power_well=1" #my idea, (1=power wells disabled when possible) #same, doesn't work either, still getting -110
+  #addargs "drm.debug=0xe" #src: https://bugs.freedesktop.org/show_bug.cgi?id=109522#c32
+  #addargs "cgroup_no_v1=memory" #https://gist.github.com/constantoverride/84eba764f487049ed642eb2111a20830#gistcomment-2965622
+  #addargs "systemd.unified_cgroup_hierarchy=1" #make systemd use cgroups v2, thanks d9k on #systemd freenode irc! see `man 1 systemd` tried it but didn't work on: https://gist.github.com/constantoverride/84eba764f487049ed642eb2111a20830#gistcomment-2965869
+
+  addargs "i915.enable_fbc=1"
+  # [    0.300736] Setting dangerous option i915.enable_fbc - tainting kernel
+  # ^ Making use of Framebuffer compression (FBC) can reduce power consumption while reducing memory bandwidth needed for screen refreshes. 
+  # default: -1 (use per-chip default)
+  # via $ modinfo -p i915|less
+  # via https://wiki.archlinux.org/index.php/Intel_graphics#Module-based_options
+  # XXX: see which options are active: $ systool -m i915 -av
+  #^ only works when i915 is compiled as kernel module  instead of built into kernel, apparently!
+  
+  addargs "i915.verbose_state_checks=1"
+  #^ verbose_state_checks:Enable verbose logs (ie. WARN_ON()) in case of unexpected hw state conditions. (bool)
+
+  addargs "i915.enable_hangcheck=1" "i915.error_capture=1"
+  # ^ enable_hangcheck:Periodically check GPU activity for detecting hangs. WARNING: Disabling this can cause system wide hangs. (default: true) (bool)
+  #[    0.301667] Setting dangerous option i915.enable_hangcheck - tainting kernel
+  # ^ error_capture:Record the GPU state following a hang. This information in /sys/class/drm/card<N>/error is vital for triaging and debugging hangs. (bool)
+
+
+  #i915.reset=1 i915.modeset=-1 i915.force_reset_modeset_test=true
+  #^ used in /etc/systemd/system/kdump.service
+
+  addargs "nvme.poll_queues=6"
+  #^ because 'nvme' module isn't =M aka built as module in kernel, we try this!
+  # was =4, warning: =16 doesn't work, tried and it's =0 instead! [    0.174178] Booting kernel: `16' invalid for parameter `nvme.poll_queues'
+  #without the above =4 this is the default:
+  #[    1.468584] nvme nvme1: 8/0/0 default/read/poll queues
+  #[    1.476567] nvme nvme0: 8/0/0 default/read/poll queues
+  #or, as per src: https://itpeernetwork.intel.com/tuning-performance-intel-optane-ssds-linux-operating-systems/
+  #[i87k ~]# systool -vm nvme
+  #Module = "nvme"
+  #
+  #  Attributes:
+  #    uevent              = <store method only>
+  #    version             = "1.0"
+  #
+  #  Parameters:
+  #    io_queue_depth      = "1024"
+  #    max_host_mem_size_mb= "128"
+  #    poll_queues         = "0"
+  #    sgl_threshold       = "32768"
+  #    use_cmb_sqes        = "Y"
+  #    write_queues        = "0"
+  #
+  # systool is from sys-fs/sysfsutils-2.1.0
+  # -v			Show all attributes with values
+  #	-m <module_name>	Show a specific module
+
+
+
+  true #avoids this:
+#/etc/default/grub: line 204: syntax error near unexpected token `fi'
+#/etc/default/grub: line 204: `fi'
+fi
+
+
+if is_z575; then
+  #add Z575 specific config options
+  #-----
+  addargs "acpi_backlight=vendor"
+  addargs "CPUunderclocking"
+  addargs "tsc=unstable"
+#XXX: on Z575, can use 'tsc=unstable' to mark TSC as unstable, otherwise it will be detected and marked as such anyway: $ dmesg|grep -i tsc
+#[    0.000000] tsc: Fast TSC calibration using PIT
+#[    0.000000] tsc: Detected 1397.433 MHz processor
+#[    0.547576] clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles: 0x1424a760980, max_idle_ns: 440795223681 ns
+#[    0.657645] TSC synchronization [CPU#0 -> CPU#1]:
+#[    0.657645] Measured 137046476 cycles TSC warp between CPUs, turning off TSC clock.
+#[    0.657645] tsc: Marking TSC unstable due to check_tsc_sync_source faile
+  addargs "radeon.audio=0 radeon.lockup_timeout=999000 radeon.test=0 radeon.agpmode=-1 radeon.benchmark=0 radeon.tv=0 radeon.hard_reset=1 radeon.msi=1 radeon.pcie_gen2=-1 radeon.no_wb=1 radeon.dynclks=0 radeon.r4xx_atom=0 radeonfb radeon.fastfb=1 radeon.dpm=1 radeon.runpm=1 radeon.modeset=1"
+  addargs "pcie_aspm=off"
+  #addargs "pcie_aspm=force" #yeah this has no effect even with aspm_attempt.patch(which should be present in 5.8+ kernel)
+  #XXX: also when pcie_aspm=off!//no pcie_aspm=force because log says things like: [    1.358855] ACPI FADT declares the system doesn't support PCIe ASPM, so disable it
+  #and later says: [    2.114433] acpi PNP0A08:00: _OSC: OS supports [ExtendedConfig ASPM ClockPM Segments MSI]
+  #[    2.137253] acpi PNP0A08:00: FADT indicates ASPM is unsupported, using BIOS configuration
+  addargs "radeon.aspm=0"
+  #Also: setting this old one radeon.aspm=1 to 0 because: - The radeon.aspm=0 kernel module parameter has been introduced for disabling ASPM support. PCI Express Active-State Power Management (PCI-E ASPM) was added for the open Radeon driver as part of the DPM changes, but for certain motherboards it will lead to hangs. For those that remember the ASPM power issues Phoronix uncovered in years prior, this shouldn't be a big surprise, but now if you're hitting hangs there is this workaround. 
+  #
+
+  addargs "rcu_nocbs=1-${cpu_cores_minus_1}" #eg. rcu_nocbs=1-3 on a 4 core AMD
+  #TODO: do I even need this ^ on i87k?
+  #XXX: currently I don't even have RCU stuff enabled, or so it seems! but if I do enable CONFIG_RCU_PERF_TEST=y then it will poweroff on boot, on archlinux, by the time I get to the login prompt.
+
+
+
+  #TODO: see if on Intel with hyperthreading enabled you still have 12 cores reported instead of 6 with maybe 12 siblings? probably 12 else it doesn't make sense!
+  #TODO: then, make that whole (new)line available on all hosts, not just on z575
+  #-----
+
+  #addargs "pci=noearly" #don't reset EHCI to workaround CPU Not Responding when moving mouse during linux booting... Just to test if this is what confused the Genius DX-ECO mouse... nope, it has no effect on this mouse issue! which only happens after rebooting from Linux, even with just sysrq+b kinda of reboot! Doesn't happen when shutdown and turn on!
+
+  addargs "r8169.debug=16"  #r8169 is builting module(named 'r8169', this arg is seen by modinfo r8169)
+  #XXX ^ doesn't seem to be working:
+  #$ sudo ethtool  net0 |grep 'Current message level'
+  #Current message level: 0x0000ffff (65535)
+  #unless I do(after boot): $ sudo ethtool -s net0 msglvl  16
+  #then it's:
+  #Current message level: 0x00000010 (16)
+  #but more importantly no new/debug messages on dmesg!
+  #hmm, without r8169.debug=16 I get:
+  #Current message level: 0x00000033 (51)
+  #that tells me that it is working!
+fi  #z575
+
+addargs "enable_mtrr_cleanup" #might be needed?
+#	enable_mtrr_cleanup [X86]
+#			The kernel tries to adjust MTRR layout from continuous
+#			to discrete, to make X server driver able to add WB
+#			entry later. This parameter enables that.
+#also already have these:
+#CONFIG_MTRR=y
+#CONFIG_MTRR_SANITIZER=y
+#CONFIG_MTRR_SANITIZER_ENABLE_DEFAULT=0
+#CONFIG_MTRR_SANITIZER_SPARE_REG_NR_DEFAULT=1
+#lspci -vv:
+#01:00.0 VGA compatible controller: NVIDIA Corporation TU104 [GeForce RTX 2060] (rev a1) (prog-if 00 [VGA controller])
+#	Subsystem: NVIDIA Corporation TU104 [GeForce RTX 2060]
+#	Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B- DisINTx+
+#	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
+#	Latency: 0
+#	Interrupt: pin A routed to IRQ 145
+#	IOMMU group: 2
+#	Region 0: Memory at de000000 (32-bit, non-prefetchable) [size=16M]
+#	Region 1: Memory at 2fe0000000 (64-bit, prefetchable) [size=256M]
+#	Region 3: Memory at 2ff0000000 (64-bit, prefetchable) [size=32M]
+#	Region 5: I/O ports at e000 [size=128]
+#	Expansion ROM at df000000 [virtual] [disabled] [size=512K]
+#	Capabilities: <access denied>
+#	Kernel driver in use: nvidia
+#	Kernel modules: nvidia_drm, nvidia
+#
+#00:02.0 VGA compatible controller: Intel Corporation CoffeeLake-S GT2 [UHD Graphics 630] (prog-if 00 [VGA controller])
+#	DeviceName:  Onboard IGD
+#	Subsystem: ASUSTeK Computer Inc. CometLake-S GT2 [UHD Graphics 630]
+#	Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B- DisINTx+
+#	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
+#	Latency: 0, Cache Line Size: 64 bytes
+#	Interrupt: pin A routed to IRQ 129
+#	IOMMU group: 0
+#	Region 0: Memory at 2ffe000000 (64-bit, non-prefetchable) [size=16M]
+#	Region 2: Memory at c0000000 (64-bit, prefetchable) [size=256M]
+#	Region 4: I/O ports at f000 [size=64]
+#	Expansion ROM at 000c0000 [virtual] [disabled] [size=128K]
+#	Capabilities: <access denied>
+#	Kernel driver in use: i915
+#------before:
+#$ sudo cat /proc/mtrr
+#reg00: base=0x0c0000000 ( 3072MB), size= 1024MB, count=1: uncachable
+#reg01: base=0x0a0000000 ( 2560MB), size=  512MB, count=1: uncachable
+#reg02: base=0x09c000000 ( 2496MB), size=   64MB, count=1: uncachable
+#reg03: base=0x09b800000 ( 2488MB), size=    8MB, count=1: uncachable
+#reg04: base=0x2000000000 (131072MB), size=65536MB, count=1: uncachable
+#-------after(no diff):
+#$ sudo cat /proc/mtrr
+#reg00: base=0x0c0000000 ( 3072MB), size= 1024MB, count=1: uncachable
+#reg01: base=0x0a0000000 ( 2560MB), size=  512MB, count=1: uncachable
+#reg02: base=0x09c000000 ( 2496MB), size=   64MB, count=1: uncachable
+#reg03: base=0x09b800000 ( 2488MB), size=    8MB, count=1: uncachable
+#reg04: base=0x2000000000 (131072MB), size=65536MB, count=1: uncachable
+#with disabled Above 4G Decoding in BIOS (and mtrr cleanup enabled):
+#$ sudo cat /proc/mtrr
+#reg00: base=0x0c0000000 ( 3072MB), size= 1024MB, count=1: uncachable
+#reg01: base=0x0a0000000 ( 2560MB), size=  512MB, count=1: uncachable
+#reg02: base=0x09c000000 ( 2496MB), size=   64MB, count=1: uncachable
+#reg03: base=0x09b800000 ( 2488MB), size=    8MB, count=1: uncachable
+#nvidia lspci -vv:
+#	Region 0: Memory at de000000 (32-bit, non-prefetchable) [size=16M]
+#	Region 1: Memory at c0000000 (64-bit, prefetchable) [size=256M]
+#	Region 3: Memory at d0000000 (64-bit, prefetchable) [size=32M]
+#	intel:
+#	Region 0: Memory at dd000000 (64-bit, non-prefetchable) [size=16M]
+#	Region 2: Memory at b0000000 (64-bit, prefetchable) [size=256M]
+
+addargs "delayacct" #see: /usr/src/linux-6.0.9-gentoo/Documentation/accounting/delay-accounting.rst
+#Compile the kernel with::
+#
+#  CONFIG_TASK_DELAY_ACCT=y
+#    CONFIG_TASKSTATS=y
+#
+#    Delay accounting is disabled by default at boot up.
+#    To enable, add::
+#
+#       delayacct
+#
+# * Messages for package sys-process/iotop-0.6_p20230124:
+# * Log file: /tmp/ebuild.logs/build/sys-process/iotop-0.6_p20230124:20230207-014129.log
+#
+# * Since Linux 5.14, sysctl kernel.task_delayacct should be enabled
+# * This can be enabled by running: 'sysctl kernel.task_delayacct=1'
+# * And can be made persistent by adding 'kernel.task_delayacct = 1' to /etc/sysctl.conf
+
+addargs "mminit_loglevel=4" #needs loglevel=8(or, ignore_loglevel) to see the logs
+addargs "memory_corruption_check_period=60" #every 60sec is the default!
+addargs "memory_corruption_check=1"
+#if is_Z575; then
+#  addargs "memory_corruption_check_size=64k" #default is 64k, yes K or k are the same here, see: lib/cmdline.c:152
+#else
+addargs "memory_corruption_check_size=600K" #memtest86+(if not the other one) detects corruption of low 1M memory during test, iirc, on i87k only! but maybe it's memtest86 bug?  do not use 1M here(or anything over 605K, but 600K works, didn't test (600-605K) tho), or it will panic with "Real mode trampoline was not allocated", or if using my patch(panic_earlier.patch) with "No sub-1M memory is available for the trampoline", tested =600K to work here but 605K to not work!
+#fi
+#addargs "vmalloc=8192M" #8192 without qualifier, or even 8192M, won't make module test_vmalloc not complain like "vmap allocation for size 8192 failed: use vmalloc=<size> to increase size" and "vmalloc_test/0: vmalloc: allocation failure: 4096 bytes, mode:0xdc0(GFP_KERNEL|__GFP_ZERO), nodemask=(null),cpuset=/,mems_allowed=0" FIXME: somehow!
+addargs "randomize_kstack_offset=on" #CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT=y, now it's RANDOMIZE_KSTACK_OFFSET=Y
+addargs "memtest=3"
+#0=disable; change this to   from 1 to 17 see CONFIG_MEMTEST or Documentation/admin-guide/kernel-parameters.txt  =17 takes 157 seconds! =1 takes 11 seconds and uses pattern 0000000000000000! =2 takes 23 sec! uses patterns ffffffffffffffff then 0000000000000000  that was on Z575 with 16GB RAM! on i87k it takes 9seconds for 32GB RAM!
+
+
+# If you want to enable the save default function, uncomment the following
+# line, and set GRUB_DEFAULT to saved.
+# Uncomment to make GRUB remember the last selection. This requires
+# setting 'GRUB_DEFAULT=saved' above.
+#GRUB_SAVEDEFAULT=true
+GRUB_SAVEDEFAULT=false
+
+# Preload both GPT and MBR modules so that they are not missed
+#GRUB_PRELOAD_MODULES="part_gpt part_msdos"
+#no GPT lately (march 2017)
+GRUB_PRELOAD_MODULES="part_msdos"
+
+# Uncomment to enable booting from LUKS encrypted devices
+#GRUB_ENABLE_CRYPTODISK=y
+
+# Set to 'countdown' or 'hidden' to change timeout behavior,
+# press ESC key to display menu.
+GRUB_TIMEOUT_STYLE=menu
+# Uncomment to enable Hidden Menu, and optionally hide the timeout count
+#GRUB_HIDDEN_TIMEOUT=5
+#GRUB_HIDDEN_TIMEOUT_QUIET=true
+
+# Uncomment to use basic console
+GRUB_TERMINAL_INPUT=console
+
+# Uncomment to disable graphical terminal
+#GRUB_TERMINAL_OUTPUT=console
+GRUB_TERMINAL_OUTPUT="console" #gfxterm vga_text spkmodem
+
+# The resolution used on graphical terminal
+# note that you can use only modes which your graphic card supports via VBE
+# you can see them in real GRUB with the command `vbeinfo'
+GRUB_GFXMODE=auto
+#GRUB_GFXMODE=1024x768
+#GRUB_GFXMODE=1280x1024
+#src: https://wiki.gentoo.org/wiki/Talk:NVIDIA/nvidia-drivers#.3Envidia-drivers-340_.2B_framebuffer
+
+# Uncomment to allow the kernel use the same resolution used by grub
+GRUB_GFXPAYLOAD_LINUX=keep
+
+# Uncomment if you want GRUB to pass to the Linux kernel the old parameter
+# format "root=/dev/xxx" instead of "root=/dev/disk/by-uuid/xxx"
+#GRUB_DISABLE_LINUX_UUID=true
+GRUB_DISABLE_LINUX_UUID=false
+
+# Uncomment to disable generation of recovery mode menu entries
+#GRUB_DISABLE_RECOVERY=true
+GRUB_DISABLE_RECOVERY=false
+
+# Uncomment and set to the desired menu colors.  Used by normal and wallpaper
+# modes only.  Entries specified as foreground/background.
+GRUB_COLOR_NORMAL="light-gray/black"
+GRUB_COLOR_HIGHLIGHT="green/black"
+
+# Uncomment one of them for the gfx desired, a image background or a gfxtheme
+#GRUB_BACKGROUND="/usr/share/grub/background.png"
+#GRUB_THEME="/path/to/gfxtheme"
+GRUB_THEME="/usr/share/grub/themes/starfield"
+
+# Uncomment to get a beep at GRUB start
+#GRUB_INIT_TUNE="480 440 1"
+#GRUB_INIT_TUNE="312 262 3 247 3 262 3 220 3 247 3 196 3 220 3 220 3 262 3 262 3 294 3 262 3 247 3 220 3 196 3 247 3 262 3 247 5 220 1 220 5"
+#^ don't! it's speakers-loud and takes time!
+#see also: https://wiki.archlinux.org/index.php/User:Eschwartz/Grub#Write_the_configuration_from_scratch  and https://wiki.archlinux.org/index.php/GRUB/Tips_and_tricks#Multiple_entries
+
+
+GRUB_TIMEOUT_STYLE=menu
+GRUB_DISABLE_OS_PROBER=true
+GRUB_ENABLE_CRYPTODISK=n
+
+GRUB_DISABLE_SUBMENU=y
+

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#this is executed as root
+set -vx
+
+logfile='/var/log/grub2-mkconfig_lasttime.log'
+#XXX: ^ don't put it in /boot because it has only one extent and thus can't be defragmented into lzo from zstd, so it will remain zstd!
+exe="grub2-mkconfig"
+if ! test -e "$exe"; then
+  exe="grub-mkconfig"
+fi
+mkdir -p /boot/grub/ #or else: /usr/sbin/grub-mkconfig: line 256/276: /boot/grub/grub.cfg.new: No such file or directory
+"$exe" -o /boot/grub/grub.cfg > "$logfile" 2>&1 ; ec="$?"
+cat "$logfile"
+echo "!! exit code: $ec"
+exit $ec

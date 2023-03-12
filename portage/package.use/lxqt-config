@@ -1,0 +1,13 @@
+#for vim
+#=lxqt-base/lxqt-config-1.2.0 -monitor
+#^ because:
+#In file included from /usr/include/KF5/KScreen/KScreen/Config:1,
+#                 from /var/tmp/portage/lxqt-base/lxqt-config-1.2.0/work/lxqt-config-1.2.0/lxqt-config-monitor/managesavedsettings.h:28,
+#                 from /var/tmp/portage/lxqt-base/lxqt-config-1.2.0/work/lxqt-config-1.2.0/lxqt-config-monitor/managesavedsettings.cpp:20:
+#/usr/include/KF5/KScreen/kscreen/config.h:197:32: error: 'std::optional' has not been declared
+#  197 |     void adjustPriorities(std::optional<OutputPtr> keep = std::nullopt);
+#      |                                ^~~~~~~~
+#/usr/include/KF5/KScreen/kscreen/config.h:197:40: error: expected ',' or '...' before '<' token
+#  197 |     void adjustPriorities(std::optional<OutputPtr> keep = std::nullopt);
+#      |
+

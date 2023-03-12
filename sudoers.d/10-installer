@@ -1,0 +1,9 @@
+#%wheel ALL=(ALL) ALL
+#^ orig
+
+#%wheel ALL=(root:_ipt_ntpdate) ALL
+%wheel ALL=(ALL:ALL) ALL
+#^ that fixes this:
+#$ updclock 
+#Sorry, user user is not allowed to execute '/usr/bin/ntpdate -4vs 0.arch.pool.ntp.org' as root:_ipt_ntpdate on Z575.
+#which is what happens with just "%wheel ALL=(ALL) ALL"

@@ -1,0 +1,19 @@
+#=sys-apps/kmod-28
+#^ nvm, having kmod-27 in @world doesn't affect that genkernel still wants kmod-28 !
+#
+#genkernel fails with:
+#checking for libzstd... no
+#configure: error: Package requirements (libzstd >= 1.4.4) were not met:
+#
+#Package 'libzstd', required by 'virtual:world', not found
+#
+#Consider adjusting the PKG_CONFIG_PATH environment variable if you
+#installed software in a non-standard prefix.
+#
+#Alternatively, you may set the environment variables libzstd_CFLAGS
+#and libzstd_LIBS to avoid the need to call pkg-config.
+#See the pkg-config man page for more details.
+#* ERROR: Command './configure --prefix=/usr --build=x86_64-pc-linux-gnu --host=x86_64-pc-linux-gnu --mandir=/usr/share/man --infodir=/usr/share/info --datadir=/usr/share --sysconfdir=/etc --localstatedir=/var/lib --disable-dependency-tracking --disable-silent-rules --docdir=/usr/share/doc/kmod-28 --htmldir=/usr/share/doc/kmod-28/html --with-sysroot='/var/tmp/genkernel/gk_tX05rmtU/kmod/buildroot/usr:/' --enable-static --disable-python --disable-tools --with-xz --with-zlib --with-zstd --without-openssl' failed!
+#* ERROR: create_initramfs(): append_data(): append_eudev(): populate_binpkg(): populate_binpkg(): gkbuild(): Failed to create binpkg of kmod-28!
+#* Please consult '/var/log/genkernel.log' for more information and any
+#* errors that were reported above.

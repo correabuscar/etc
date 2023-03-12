@@ -1,0 +1,34 @@
+## required by sys-kernel/git-sources (argument)
+#>=sys-kernel/git-sources-4.2_rc4 freedist
+## required by sys-kernel/linux-firmware (argument)
+#>=sys-kernel/linux-firmware-20150320 freedist
+## required by hardened-sources (argument)
+#>=sys-kernel/hardened-sources-4.1.6 freedist
+## required by app-arch/rar (argument)
+##>=app-arch/rar-5.2.1 RAR
+## required by app-arch/unrar (argument)
+##>=app-arch/unrar-5.3.2 unRAR
+## required by =www-client/google-chrome-unstable-47.0.2508.0_p1 (argument)
+##>=www-client/google-chrome-unstable-47.0.2508.0_p1 google-chrome
+## required by games-simulation/openttd-1.6.0::gentoo[-dedicated,openmedia]
+## required by openttd (argument)
+#>=games-misc/opensfx-0.2.3 CC-Sampling-Plus-1.0
+## required by sys-kernel/genkernel-3.5.3.3::gentoo[firmware]
+## required by >=sys-kernel/genkernel-3.4.51.2 (argument)
+#=sys-kernel/linux-firmware-20190620 linux-fw-redistributable no-source-code
+
+#from: $ eselect news read 2019-05-23-accept_license
+sys-kernel/linux-firmware @BINARY-REDISTRIBUTABLE
+# required by dictd (argument)
+>=app-text/dictd-1.12.1-r2 ISOC-rfc
+# required by sys-firmware/intel-microcode (argument)
+>=sys-firmware/intel-microcode-20191115_p20200209 intel-ucode
+# required by veracrypt (argument)
+>=app-crypt/veracrypt-1.24_p8 truecrypt-3.0
+# required by sys-fs/rar2fs-1.29.4::gentoo
+# required by sys-fs/rar2fs (argument)
+>=app-arch/unrar-6.0.5 unRAR
+
+#tested something, passthrough, it's not implemented anymore in virtualbox 7:
+#app-emulation/virtualbox-extpack-oracle PUEL-11
+

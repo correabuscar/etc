@@ -1,0 +1,14 @@
+* audio output is muted in the back of the PC, if the front has plugged in a jack!                                                                                  
+* furthermore pavucontrol shows no levels even tho the sound is playing (it
+shows them if the Monitor of * stuffs aren't muted in Input Devices tab!
+03june2022)
+
+* furthermore vlc shows these errors which don't affect the sound output(which
+does work):
+[000062587b189980] main libvlc: Running vlc with the default interface. Use 'cvlc' to use vlc without interface.
+[000062587b240290] main audio output error: too low audio sample frequency (0)
+[000077522cc96330] main decoder error: failed to create audio output
+[000062587b240290] vlcpulse audio output error: digital pass-through stream connection failure: Not supported
+[000062587b240290] main audio output error: module not functional
+[000077522cc96330] main decoder error: failed to create audio output
+[000062587b240290] main audio output error: cannot add user audio filter "binauralizer" (skipped)

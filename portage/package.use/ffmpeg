@@ -1,0 +1,13 @@
+media-video/ffmpeg mp3 openssl libxml2 libsoxr vorbis x264 vpx theora
+#webp vpx (unneeded and no effect) - FIXME: maybe needed for vlc to can view .mp4 saved periscope files?
+#vpx  (no effect)
+#openssl for youtube-dl to download periscope?
+# libxml2                : Uses dev-libs/libxml2 to enable dash demuxing support.
+#04march2022: libsoxr for -filter:a aresample=resampler=soxr:
+
+#The following USE changes are necessary to proceed:
+# (see "package.use" in the portage(5) man page for more details)
+# required by media-video/simplescreenrecorder-0.4.4-r1::gentoo
+# required by @selected
+# required by @world (argument)
+#>=media-video/ffmpeg-4.4.3 vorbis x264 vpx theora

@@ -1,0 +1,36 @@
+#!/bin/bash
+
+#abs path may be unnecessary, own decision to do so:
+/usr/sbin/kexec --load-panic /boot/kernel --initrd=/boot/initramfs --reuse-cmdline --reset-vga --console-vga "--append= irqpoll reset_devices ipv6.disable=1 loglevel=9 zram.num_devices=0 zswap.enabled=0 fstab=no ignore_loglevel single kdumpsavedangit softlevel=kdump"
+#removed nr_cpus=1 maxcpus=1
+#softlevel=kdump  don't know what it does! added 26jan2021! maybe it uses less memory!
+#'single' (assuming it means single user, so only alt+f1 = one console) added from https://wiki.gentoo.org/wiki/Kernel_Crash_Dumps
+#XXX maybe --elf64-core-headers is needed (if kexec doesn't boot the crash kernel), unsure, see: https://forums.gentoo.org/viewtopic-p-8183894.html?sid=81a419de001c7e2268ea5ccbdbda3880#8183894
+
+
+#comments below from archlinux:
+#fstab=no so it doesn't try to mount zram devices from /etc/fstab which seem to always fail! ffs :) tmpfs works tho !
+#--debug  is removed due to noisiness
+#ExecStart=/usr/bin/kexec -p /boot/vmlinuz-linux-git --initrd=/boot/initramfs-linux-git.img --reuse-cmdline --reset-vga --console-vga --debug "--append=systemd.unit=kdump-save.service irqpoll nr_cpus=1 reset_devices ipv6.disable=1 loglevel=9  zram.num_devices=3 zswap.enabled=0"
+#ExecStart=/usr/bin/kexec -p /boot/vmlinuz-linux-git --initrd=/boot/initramfs-linux-git.img --reuse-cmdline --reset-vga --console-vga "--append=systemd.unit=kdump-save.service irqpoll nr_cpus=1 reset_devices ipv6.disable=1 loglevel=9 zram.num_devices=3 zswap.enabled=0"
+#i915.fastboot=0 i915.reset=1 i915.modeset=-1 i915.force_reset_modeset_test=true i915.verbose_state_checks=1 i915.enable_hangcheck=1 i915.error_capture=1 zram.num_devices=3 zswap.enabled=0"
+#--reuseinitrd doesn't work [    6.421923] kexec[718]: unrecoverable error: current boot didn't retain the initrd for reuse.
+#
+#ExecStart=/usr/bin/kexec -p /boot/vmlinuz-linux-git --initrd=/boot/initramfs-linux-git.img --reuse-cmdline --reset-vga --console-vga "--append=root=UUID=2b8b9ab8-7ac5-4586-aa42-d7ffb12de92a systemd.unit=kdump-save.service irqpoll nr_cpus=1 reset_devices ipv6.disable=1 loglevel=9 i915.fastboot=0 i915.reset=1 i915.modeset=-1 i915.force_reset_modeset_test=true i915.verbose_state_checks=1 i915.enable_hangcheck=1 i915.error_capture=1 zram.num_devices=3 zswap.enabled=0"
+#TODO: because of --reuse-cmdline I should delete the root=UUID=blah and thus could probably use this same kdump.service on all computers/hosts!
+#TODO: should I use intel_iommu=off ? see: https://wiki.archlinux.org/index.php/Talk:Kdump#Intel_iommu_can_cause_problems
+#XXX: not using kexec arg: --debug
+
+
+#//XXX: kdump kernel didn't boot with maxcpus=1 when normal kernel panic'd - but maybe this is for a different reason! however, i just switched to using nr_cpus=1 instead! looks like I shouldn't be using "" after --append= as per https://bbs.archlinux.org/viewtopic.php?pid=1425263#p1425263
+#XXX: ok, i forgot to enable kdump service! that's why it didn't load on panic!
+
+#doneTODO: maybe I should use: --reuse-cmdline too
+#try nr_cpus=1 instead of maxcpus=1 if that one didn't work, as per: https://wiki.archlinux.org/index.php/Kdump#Setup_kdump_kernel
+
+#ok creating/makingsureitexists 'kdump' softlevel:
+wantedrunlevelname='kdump'
+install -d "/etc/runlevels/$wantedrunlevelname"
+#doc from: https://wiki.gentoo.org/wiki/OpenRC
+rc-update add kdumpsave kdump
+#kdumpsave is /etc/init.d/kdumpsave (a+x)

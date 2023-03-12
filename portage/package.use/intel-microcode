@@ -1,0 +1,3 @@
+sys-firmware/intel-microcode initramfs split-ucode
+#^ initramfs use will yield /boot/intel-uc.img which grub is happy to use
+

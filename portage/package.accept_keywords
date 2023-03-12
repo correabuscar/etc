@@ -1,0 +1,110 @@
+# required by gcc:5.1 (argument)
+#=sys-devel/gcc-5.1.0 **
+# required by =ffmpeg-9999 (argument)
+#=media-video/ffmpeg-9999 **
+# required by >=sys-devel/gcc-5.2 (argument)
+#=sys-devel/gcc-5.2.0 **
+# required by media-gfx/zgv (argument)
+#=media-gfx/zgv-5.9 **
+# required by media-gfx/zgv-5.9::gentoo
+# required by media-gfx/zgv (argument)
+#=media-libs/svgalib-1.9.25-r4 **
+# required by =app-misc/mc-9999 (argument)
+=app-misc/mc-9999 **
+# required by =x11-libs/cairo-9999 (argument)
+#=x11-libs/cairo-9999 **
+#=sys-boot/grub-9999-r1 **
+
+# required by =x11-libs/cairo-9999 (argument)
+#=x11-libs/cairo-9999 **
+# required by dev-libs/libpcre-8.37-r2::gentoo[readline]
+# required by net-misc/wget-1.16.3-r2::gentoo[pcre,-static]
+# required by @system
+# required by @world (argument)
+#=sys-libs/readline-7.0_alpha **
+# required by =bash-4.4_alpha-r1 (argument)
+#=app-shells/bash-4.4_alpha-r1 **
+# required by net-im/utox-9999::tox-overlay
+# required by utox (argument)
+#=net-libs/tox-9999 **
+# required by utox (argument)
+#=net-im/utox-9999 **
+# required by =vlc-9999 (argument)
+#=media-video/vlc-9999 **
+# required by =ffmpeg-9999 (argument)
+#=media-video/ffmpeg-9999 **
+#XXX: ^ don't unmask this or gst-libav-plugins will fail to compile!
+
+# required by =llvm-9999 (argument)
+#=sys-devel/llvm-9999 **
+# required by dev-libs/libisoburn-1.4.0::gentoo[readline]
+# required by @__auto_slot_operator_replace_installed__ (argument)
+#=sys-libs/readline-7.0_beta **
+
+# required by =clang-9999 (argument)
+#=sys-devel/clang-9999 **
+# required by =clang-9999-r100 (argument)
+#=sys-devel/clang-9999-r100 **
+# required by =llvm-9999 (argument)
+#=sys-devel/llvm-9999 **
+# required by =vim-9999 (argument)
+#=app-editors/vim-9999 **
+# required by app-editors/vim-9999::gentoo[-minimal]
+# required by @selected
+# required by @world (argument)
+#=app-editors/vim-core-9999 **
+
+# required by =libreoffice-9999 (argument)
+#=app-office/libreoffice-9999 **
+# required by app-office/libreoffice-9999::gentoo
+# required by =libreoffice-9999 (argument)
+#=dev-libs/liborcus-9999 **
+# required by =mdds-9999 (argument)
+#=dev-util/mdds-9999 **
+# required by =libixion-9999 (argument)
+#=dev-libs/libixion-9999 **
+## required by =portage-9999 (argument)
+#=sys-apps/portage-9999 **
+# required by =libreoffice-5.0.9999 (argument)
+#=app-office/libreoffice-5.0.9999 **
+#=app-office/libreoffice-9999 **
+# required by =sys-fs/eudev-9999 (argument)
+#=sys-fs/eudev-9999 **
+# required by =wine-9999 (argument)
+#=app-emulation/wine-9999 **
+# required by =sys-libs/readline-7.0_rc1 (argument)
+#>=sys-libs/readline-7.0_rc1 **
+
+# required by dev-libs/liborcus-9999::gentoo[spreadsheet-model]
+# required by =dev-libs/liborcus-9999 (argument)
+#=dev-libs/libixion-9999 **
+# required by =dev-libs/liborcus-9999 (argument)
+#=dev-libs/liborcus-9999 **
+#temp:
+#=sys-apps/portage-9999 **
+#=sys-libs/glibc-9999 **
+
+# required by =busybox-9999 (argument)
+#=sys-apps/busybox-9999 **
+
+#=sys-apps/util-linux-9999 **
+#=app-shells/bash-99999 **
+=app-shells/bash-9999 **
+#^ can't apply patches on bash 5.1_p8:0::gentoo (latest now), but can on master!
+
+=app-misc/tmux-9999 **
+#=sys-libs/compiler-rt-sanitizers-11.0.0.9999 **
+
+#=app-portage/portage-utils-9999 **
+##^ why did I need this?
+
+=dev-util/crash-9999 **
+#^ because https://github.com/crash-utility/crash/issues/74
+#jesus, that's still open! keeping -9999 then.
+
+=dev-lang/zig-9999 **
+#^ nvm disabled for now, 08march2022, reenabled same day
+
+
+#app-admin/keepassxc **
+

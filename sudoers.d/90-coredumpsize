@@ -1,0 +1,19 @@
+#Defaults rlimit_core="12345,34678"
+#^ the right way to set 2 values! (soft,hard) but it just doesn't set them! ok it works but they are in bytes! not 512 byte blocks like bash's ulimit! so 12345 here is 12 in bash!
+#Defaults rlimit_core=10000,10000
+#^ invalid, no quotes!
+#Defaults rlimit_core=10
+#works, it's =10 in bash!
+Defaults rlimit_core=infinity
+#it's a feature to set it to 0,0 as per https://github.com/sudo-project/sudo/issues/173
+#Defaults rlimit_core=default
+#see: man 5 sudoers
+# Resource limits
+#     By default, sudoers uses the operating system's native method of setting resource limits for the target user.  On Linux systems, resource limits are
+#     usually set by the pam_limits.so PAM module.  On some BSD systems, the /etc/login.conf file specifies resource limits for the user.  On AIX systems, re‐
+#     source limits are configured in the /etc/security/limits file.  If there is no system mechanism to set per-user resource limits, the command will run
+#     with the same limits as the invoking user.  The one exception to this is the core dump file size, which is set by sudoers to 0 by default.  Disabling
+#     core dumps by default makes it possible to avoid potential security problems where the core file is treated as trusted input.
+#     ...
+#
+# nvmFIXME: must be a sudo bug, because it acts as if there's a setting here for rlimit_core=0,0 and that's what it applies! #it's a feature to set it to 0,0 as per https://github.com/sudo-project/sudo/issues/173

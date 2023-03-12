@@ -1,0 +1,5 @@
+#for `idle` command to not give:
+#$ idle
+#idle: no python-exec wrapped executable found in /usr/lib/python-exec.
+dev-lang/python tk
+#https://forums.gentoo.org/viewtopic-p-8610234.html#8610234
