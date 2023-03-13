@@ -1,1 +1,1 @@
-gnome-base/gvfs -google -http
+gnome-base/gvfs -google -http mtp fuse

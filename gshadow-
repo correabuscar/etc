@@ -58,4 +58,4 @@ flatpak:!::
 docker:!::
 android:!::
 colord:!::
-pipewire:!::
+pipewire:!::user
