@@ -269,7 +269,12 @@ addargs "debug_pagealloc=on" # needs CONFIG_DEBUG_PAGEALLOC=y CONFIG_DEBUG_PAGEA
 #CONFIG_INIT_ON_ALLOC_DEFAULT_ON=y
 #CONFIG_INIT_ON_FREE_DEFAULT_ON=y
 #addargs "page_poison=1 slub_debug=P"
+#addargs "page_poison=0 init_on_free=1 init_on_alloc=1" #you need heap initialization to get "[   25.467867] test_meminit: all 130 tests passed!" or else you get "[   25.461187] test_meminit: failures: 70 out of 130" see: https://bugzilla.kernel.org/show_bug.cgi?id=217191
+#[   22.533779] mem auto-init: CONFIG_PAGE_POISONING is on, will take precedence over init_on_alloc and init_on_free
+#[   22.535704] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+#XXX: in other words, this might be why init_on_free and init_on_alloc are both 0 or appear to be acting like they're 0, so i've set them to 0 here anyway, thus won't see the above poisoning warning when they're =0
 addargs "page_poison=1 init_on_free=0 init_on_alloc=0" #re-testing: doesn't work, still getting that "page dumped because: pagealloc: corrupted page details" on 5.13.1 ; removed slub_debug= because nvidia-drivers says it can freeze things!
+#again saying, if poison is =1 then those 2 are =0 forced! so im only making that explicit!
 #addargs "page_poison=1 init_on_free=0 init_on_alloc=0 slub_debug=P" #re-testing: doesn't work, still getting that "page dumped because: pagealloc: corrupted page details" on 5.13.1
 #message comes from this commit: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f58bd538e6a2deb2bcdfe527d9ed45643348a4e6
 
