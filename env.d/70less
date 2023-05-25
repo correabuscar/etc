@@ -6,3 +6,4 @@ LESS="-+X -R -+S -+F -+E -I -M --shift 5"
 export LESS
 #-i ignore case when searching
 #-I Like  -i,  but searches ignore case even if the pattern contains uppercase letters.
+
