@@ -1,5 +1,6 @@
 >=net-misc/curl-7.84 curl_ssl_nss -curl_ssl_openssl ftp -openssl -pop3 -samba -smtp ssl -sslv3 -telnet -tftp threads zstd
 >=net-misc/curl-7.85.0 -adns threads
+>=net-misc/curl-8.1.1 nss
 #^done to fix this:
 #!!! Problem resolving dependencies for net-misc/curl from @selected
 #... done!
