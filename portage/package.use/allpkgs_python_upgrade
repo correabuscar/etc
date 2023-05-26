@@ -221,8 +221,8 @@
 #*/* PYTHON_SINGLE_TARGET: -* python3_10
 
 #new upgrade on 25may2023: (but was done upstream earlier `eselect news read 2023-04-02-python3-11`
-*/* PYTHON_TARGETS: -* python3_11
-*/* PYTHON_SINGLE_TARGET: -* python3_11
+#*/* PYTHON_TARGETS: -* python3_11
+#*/* PYTHON_SINGLE_TARGET: -* python3_11
 
 #app-emulation/virtualbox PYTHON_SINGLE_TARGET:  -* python3_10
 #app-eselect/eselect-repository PYTHON_SINGLE_TARGET:  -* python3_10
