@@ -1,10 +1,2 @@
 LESSOPEN="|lesspipe %s"
-#LESS="-R -M --shift 5"
-
-#fixed because wasn't export-ed: the -I here has no effect! when using normal less
-LESS="-+X -R -+S -+F -+E -I -M --shift 5"
-#-i ignore case when searching
-#-I Like  -i,  but searches ignore case even if the pattern contains uppercase letters.
-#export LESS
-#^ can't use that or u get !!! '"/etc/env.d/70less", line 10: Unexpected EOF' during 'emerge -ac'
-
+LESS="-R -M --shift 5"

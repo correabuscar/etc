@@ -1,4 +1,4 @@
-#	$OpenBSD: sshd_config,v 1.97 2015/08/06 14:53:21 deraadt Exp $
+#	$OpenBSD: sshd_config,v 1.104 2021/07/02 05:11:21 dtucker Exp $
 
 # This is the sshd server system-wide configuration file.  See
 # sshd_config(5) for more information.
@@ -10,154 +10,35 @@
 # possible, but leave them commented.  Uncommented options override the
 # default value.
 
-Port 802
-#Port 22  #this adds to the other port so both listen at the same time!
-#^ keeping it under 1024
-
+#Port 22
 #AddressFamily any
-AddressFamily inet
 #ListenAddress 0.0.0.0
-#^ will make ssh root@127.1.1.1 work too, for example.
-ListenAddress selfhostname
-#^ more secure but needs current LAN IP, OR hostname(eg. /etc/hosts hostname pointing to current LAN IP: using selfhostname)
 #ListenAddress ::
-#^ ipv6
 
-# The default requires explicit activation of protocol 1
-Protocol 2
-
-# HostKey for protocol version 1
-#HostKey /etc/ssh/ssh_host_key
-# HostKeys for protocol version 2
-#XXX ^ needed for mc's sftp:// to work (IGNORE THIS, SEE BELOW search 'mc')
 #HostKey /etc/ssh/ssh_host_rsa_key
-#HostKey /etc/ssh/ssh_host_dsa_key
 #HostKey /etc/ssh/ssh_host_ecdsa_key
-HostKey /etc/ssh/ssh_host_ed25519_key
-
-# Lifetime and size of ephemeral version 1 server key
-#KeyRegenerationInterval 1h
-#ServerKeyBits 1024
+#HostKey /etc/ssh/ssh_host_ed25519_key
 
 # Ciphers and keying
 #RekeyLimit default none
 
 # Logging
-# obsoletes QuietMode and FascistLogging
 #SyslogFacility AUTH
 #LogLevel INFO
-LogLevel VERBOSE
-#LogLevel DEBUG3
-LoginGraceTime 30s
-PermitRootLogin yes
-StrictModes yes
-MaxSessions 10
-
-#deprecated:
-#RSAAuthentication no
-##RSAAuthentication yes
-#UseLogin no
-##UsePrivilegeSeparation sandbox               # Default for new installations.
-#UsePrivilegeSeparation sandbox
-# allow the use of the none cipher
-##NoneEnabled no
-#NoneEnabled no
-#---deprecated^
-
-HostbasedAuthentication no
-IgnoreUserKnownHosts yes
-IgnoreRhosts yes
-PermitEmptyPasswords no
-AllowAgentForwarding no
-GatewayPorts no
-TCPKeepAlive yes
-PermitUserEnvironment no
-#Compression delayed  #means 'yes' now
-#Compression no  #at least for file transfer tests, if not to also obscure what was typed by looking at the compressed packets sizes (maybe?)
-Compression yes
-
-ClientAliveInterval 30
-ClientAliveCountMax 5
-UseDNS no
-PermitTunnel point-to-point
-Ciphers aes256-ctr
-# Set this to the unix group whose members are allowed access
-#AllowGroup ssh
-AllowUsers root user
-DenyUsers portage
-
-
-#for the patch in https://midnight-commander.org/ticket/3921
-MaxAuthTries 1
-#MaxAuthTries 2
-#AuthenticationMethods keyboard-interactive:pam
-#PasswordAuthentication no
-# Set this to 'yes' to enable PAM authentication, account processing,
-# and session processing. If this is enabled, PAM authentication will
-# be allowed through the ChallengeResponseAuthentication and
-# PasswordAuthentication.  Depending on your PAM configuration,
-# PAM authentication via ChallengeResponseAuthentication may bypass
-# the setting of "PermitRootLogin prohibit-password".
-# If you just want the PAM account and session checks to run without
-# PAM authentication, then enable this but set PasswordAuthentication
-# and ChallengeResponseAuthentication to 'no'.
-#UsePAM yes
-UsePAM no
-#^ set PAM to no, because PAM is not used if public key authentication is used! src: https://dev.gentoo.org/~swift/docs/security_benchmarks/openssh.html#item-xccdf_org.gentoo.dev.swift_group_config-default
-#okno: but if PAM is no, then limits.conf is not applied! but keep these 2 as 'no' to disable PAM auth PasswordAuthentication ChallengeResponseAuthentication; OK, that wasn't it, XXX: even with UsePAM no, ulimit -c works, set to unlimited as per limits.conf except in the case when you use '*' instead of '0:' as first field in there! tested!
-
-# Change to no to disable s/key passwords
-#ChallengeResponseAuthentication yes
-ChallengeResponseAuthentication no
-#^ yes = enables TIS Challenge/Response in SSH protocol version 1, and keyboard-interactive in SSH protocol v2
-
-
-
-KexAlgorithms curve25519-sha256@libssh.org
-MACs hmac-sha2-512-etm@openssh.com
-## XXX: temp for mc sftp:// to work:
-#MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-512
-#KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
-##XXX WARNING duplicate MACs and KexAlgorithms values(if not all dup keys in general) will have no effect! ie. only the first encountered ones will have effect! due to: if (options->kex_algorithms == NULL) options->kex_algorithms = xstrdup(arg); in servconf.c  fixed in patch fail_on_2_dup_sshd_config_keys.patch Also do `$ sudo sshd -dddddddd -T`  to see all args and resulting config.
-#HostKey /etc/ssh/ssh_host_rsa_key
-##^ no need to comment out other HostKey`s but this is required for 'mc' sftp:// to work!
-#^ apparently not needed anymore! 04feb2020
-
-AuthenticationMethods publickey
-PasswordAuthentication no
-#^ won't work for mc sftp://
-#this works for mc, XXX: temp:
-#AuthenticationMethods password
-#PasswordAuthentication yes
-
-#AuthenticationMethods password
-##^ won't work if "password,publickey"
-#PasswordAuthentication yes
-#XXX from within mc won't work(with password or publickey either): no matching key exchange method found. Their offer: diffie-hellman-group-exchange-sha256,diffie-hellman-group-exchange-sha1,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1 [preauth]
-#XXX then(if you have KexAlgorithms diffie-hellman-group-exchange-sha256) it won't work due to HostKey like this: no matching host key type found. Their offer: ssh-rsa,ssh-dss [preauth]
-#XXX: then (if you have HostKey /etc/ssh/ssh_host_rsa_key) no matching MAC found. Their offer: hmac-sha2-256,hmac-sha2-512,hmac-sha1,hmac-sha1-96,hmac-md5,hmac-md5-96,hmac-ripemd160,hmac-ripemd160@openssh.com [preauth]
-#XXX: then(if you have MACs hmac-sha2-512) it won't work with publickey, need to use password!
-#ListenAddress 192.168.100.121
-
-
-
 
 # Authentication:
 
 #LoginGraceTime 2m
 #PermitRootLogin prohibit-password
-#PermitRootLogin yes
 #StrictModes yes
 #MaxAuthTries 6
 #MaxSessions 10
 
 #PubkeyAuthentication yes
-PubkeyAuthentication yes
 
 # The default is to check both .ssh/authorized_keys and .ssh/authorized_keys2
 # but this is overridden so installations will only check .ssh/authorized_keys
 #AuthorizedKeysFile	.ssh/authorized_keys
-AuthorizedKeysFile      .ssh/authorized_key
 
 #AuthorizedPrincipalsFile none
 
@@ -173,12 +54,11 @@ AuthorizedKeysFile      .ssh/authorized_key
 #IgnoreRhosts yes
 
 # To disable tunneled clear text passwords, change to no here!
-#PasswordAuthentication no
+#PasswordAuthentication yes
 #PermitEmptyPasswords no
+
 # Change to no to disable s/key passwords
 #KbdInteractiveAuthentication yes
-KbdInteractiveAuthentication no
-
 
 # Kerberos options
 #KerberosAuthentication no
@@ -190,22 +70,26 @@ KbdInteractiveAuthentication no
 #GSSAPIAuthentication no
 #GSSAPICleanupCredentials yes
 
+# Set this to 'yes' to enable PAM authentication, account processing,
+# and session processing. If this is enabled, PAM authentication will
+# be allowed through the KbdInteractiveAuthentication and
+# PasswordAuthentication.  Depending on your PAM configuration,
+# PAM authentication via KbdInteractiveAuthentication may bypass
+# the setting of "PermitRootLogin prohibit-password".
+# If you just want the PAM account and session checks to run without
+# PAM authentication, then enable this but set PasswordAuthentication
+# and KbdInteractiveAuthentication to 'no'.
+#UsePAM no
 
 #AllowAgentForwarding yes
 #AllowTcpForwarding yes
-AllowTcpForwarding yes
 #GatewayPorts no
 #X11Forwarding no
-X11Forwarding no
 #X11DisplayOffset 10
 #X11UseLocalhost yes
 #PermitTTY yes
-PermitTTY yes
-#PrintMotd no
-PrintMotd no # pam does that (what? pam prints Motd? even when it's 'no' here?)
-#PrintLastLog no
-PrintLastLog yes
-
+#PrintMotd yes
+#PrintLastLog yes
 #TCPKeepAlive yes
 #PermitUserEnvironment no
 #Compression delayed
@@ -222,32 +106,12 @@ PrintLastLog yes
 #Banner none
 
 # override default of no subsystems
-#Subsystem	sftp	/usr/lib64/misc/sftp-server
-Subsystem      sftp    /usr/lib64/misc/sftp-server
-
-# the following are HPN related configuration options
-# tcp receive buffer polling. disable in non autotuning kernels
-#TcpRcvBufPoll yes
-
-# disable hpn performance boosts
-#HPNDisabled no
-
-# buffer size for hpn to non-hpn connections
-#HPNBufferSize 2048
-
-
+Subsystem	sftp	/usr/lib64/misc/sftp-server
 
 # Example of overriding settings on a per-user basis
-#XXX: Note: the following uses tabs instead of spaces:
 #Match User anoncvs
 #	X11Forwarding no
 #	AllowTcpForwarding no
 #	PermitTTY no
 #	ForceCommand cvs server
-
-# Allow client to pass locale environment variables #367017
-#AcceptEnv LANG LC_*
-AcceptEnv LANG LC_ALL LC_COLLATE LC_CTYPE LC_MESSAGES LC_MONETARY LC_NUMERIC LC_TIME LANGUAGE LC_ADDRESS LC_IDENTIFICATION LC_MEASUREMENT LC_NAME LC_PAPER LC_TELEPHONE
-
-# Allow client to pass COLORTERM to match TERM. #658540
-AcceptEnv COLORTERM
+Include "/etc/ssh/sshd_config.d/*.conf"

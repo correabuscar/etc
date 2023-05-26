@@ -217,13 +217,19 @@
 #    */* PYTHON_SINGLE_TARGET: -* python3_9
 
 #without these 2 + 1 repoman line(s) 12 july 2022 it will give many conflicts which are ignored or so. And with them lines it wants to Total: 83 packages (83 reinstalls, 83 binaries), Size of downloads: 0 KiB   Commenting out the 3 lines then. The thing is, that all those conflicts are already installed and needing python3_9 as PYTHON_TARGETS hmm... so, this blows... re-allowing the 3 lines then.
-*/* PYTHON_TARGETS: -* python3_9 python3_10
+#*/* PYTHON_TARGETS: -* python3_9 python3_10
 #*/* PYTHON_SINGLE_TARGET: -* python3_10
+
+#new upgrade on 25may2023: (but was done upstream earlier `eselect news read 2023-04-02-python3-11`
+*/* PYTHON_TARGETS: -* python3_11
+*/* PYTHON_SINGLE_TARGET: -* python3_11
 
 #app-emulation/virtualbox PYTHON_SINGLE_TARGET:  -* python3_10
 #app-eselect/eselect-repository PYTHON_SINGLE_TARGET:  -* python3_10
 
 # required by @selected
 # required by @world (argument)
->=app-portage/repoman-3.0.3-r2 -python_targets_python3_10
+#>=app-portage/repoman-3.0.3-r2 -python_targets_python3_10
+##^ obsoleted: https://bugs.gentoo.org/835013
+#
 

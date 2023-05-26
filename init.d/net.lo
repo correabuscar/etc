@@ -225,9 +225,9 @@ _configure_variables()
 	for var in ${_config_vars}; do
 		local v=
 		for t; do
-			eval v=\$${var}_${t}
+			eval v="\"\$${var}_${t}\""
 			if [ -n "${v}" ]; then
-				eval ${var}_${IFVAR}=\$${var}_${t}
+				eval "${var}_${IFVAR}=\"\$${var}_${t}\""
 				continue 2
 			fi
 		done
@@ -659,6 +659,12 @@ start()
 		local MODULES=
 		_load_modules true
 	fi
+
+	for module in ${MODULES}; do
+		if [ "$(command -v "${module}_pre_up")" = "${module}_pre_up" ]; then
+			${module}_pre_up || exit $?
+		fi
+	done
 
 	# We up the iface twice if we have a preup to ensure it's up if
 	# available in preup and afterwards incase the user inadvertently
