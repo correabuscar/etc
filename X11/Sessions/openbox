@@ -1,1 +1,2 @@
-/usr/bin/openbox-session
+#!/bin/sh
+openbox-session

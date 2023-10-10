@@ -1,4 +1,5 @@
+#
 net-print/cups
-acct-group/lp
+#acct-group/lp
 acct-group/lpadmin
 

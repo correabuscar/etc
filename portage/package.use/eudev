@@ -1,4 +1,18 @@
 sys-apps/systemd-utils -udev
 #read this news 2022-04-19-systemd-utils
 # basically because using eudev, you need -udev here!
+#XXX: ok eudev is dead, i guess we have to use udev now!
 #
+# 08 oct 2023, now it needs udev:
+# required by virtual/libudev-251-r1::gentoo[-systemd]
+# required by dev-libs/libinput-1.24.0::gentoo
+# required by dev-qt/qtgui-5.15.10-r2::gentoo[libinput]
+# required by dev-qt/qtwidgets-5.15.10-r3::gentoo
+# required by app-crypt/pinentry-1.2.1-r3::gentoo[qt5]
+# required by app-crypt/gnupg-2.4.3::gentoo
+# required by dev-lang/python-3.12.0::gentoo[verify-sig]
+# required by media-libs/harfbuzz-8.2.0::gentoo
+# required by media-libs/freetype-2.13.2::gentoo[harfbuzz]
+# required by media-libs/fontconfig-2.14.2-r3::gentoo
+# required by x11-libs/cairo-1.18.0::gentoo
+>=sys-apps/systemd-utils-254.5-r1 udev

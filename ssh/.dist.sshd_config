@@ -115,3 +115,4 @@ Subsystem	sftp	/usr/lib64/misc/sftp-server
 #	PermitTTY no
 #	ForceCommand cvs server
 Include "/etc/ssh/sshd_config.d/*.conf"
+# this line is for emulating user-made modifications so that when the next package update happens via emerge it will not simply overwrite these files without telling you to call eg. dispatch-conf to see the changes!

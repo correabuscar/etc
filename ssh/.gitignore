@@ -1,3 +1,4 @@
 #
 *key*
+moduli*
 #and yes the port number is leaked in sshd_config

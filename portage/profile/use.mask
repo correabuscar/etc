@@ -1,0 +1,8 @@
+# WANG Xuerui <xen0n@gentoo.org> (2023-08-28)
+# Breaks multiple high-profile packages depending on outdated proc-macro2 when
+# USE=nightly and using an affected Rust version; keep until revdep problems
+# are gone.
+# See https://github.com/rust-lang/rust/issues/113152
+#>=dev-lang/rust-1.72.0 nightly
+#but i need it for using -Z flag to rustc
+#-nightly

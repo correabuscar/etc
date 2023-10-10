@@ -59,3 +59,4 @@ docker:x:48:
 android:x:174:
 colord:x:350:
 pipewire:x:509:user
+plugdev:x:272:

@@ -4,11 +4,11 @@
 #
 # Home page of code is: https://www.smartmontools.org
 #
-# Copyright (C) 2012-21 Christian Franke
+# Copyright (C) 2012-22 Christian Franke
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 #
-# $Id: smartd_warning.sh.in 5238 2021-10-23 10:22:01Z chrfranke $
+# $Id: smartd_warning.sh.in 5428 2022-12-31 15:55:43Z chrfranke $
 #
 
 set -e
@@ -16,7 +16,7 @@ set -e
 # Set by config.status
 export PATH="/usr/local/bin:/usr/bin:/bin"
 PACKAGE="smartmontools"
-VERSION="7.3"
+VERSION="7.4"
 prefix="/usr"
 sysconfdir="/etc"
 smartdscriptdir="${sysconfdir}"
@@ -26,6 +26,12 @@ os_mailer="mail"
 
 # Plugin directory (disabled if empty)
 plugindir="${smartdscriptdir}/smartd_warning.d"
+
+# Detect accidental use of '-M exec /path/to/smartd_warning.sh'.
+if [ -n "$SMARTD_SUBJECT" ]; then
+  echo "$0: SMARTD_SUBJECT is already set - possible recursion" >&2
+  exit 1
+fi
 
 # Parse options
 dryrun=
@@ -114,6 +120,7 @@ fullmessage=`
       echo "The original message about this issue was sent at ${SMARTD_TFIRST-[SMARTD_TFIRST]}"
     case $SMARTD_NEXTDAYS in
       '') echo "No additional messages about this problem will be sent." ;;
+      0)  echo "Another message will be sent upon next check if the problem persists." ;;
       1)  echo "Another message will be sent in 24 hours if the problem persists." ;;
       *)  echo "Another message will be sent in $SMARTD_NEXTDAYS days if the problem persists." ;;
     esac
