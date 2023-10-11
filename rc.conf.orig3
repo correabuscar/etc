@@ -8,14 +8,12 @@
 # the boot process. Don't file bugs about this unless you can supply
 # patches that fix it without breaking other things!
 #rc_parallel="NO"
-rc_parallel="NO"
 
 # Set rc_interactive to "YES" and you'll be able to press the I key during
 # boot so you can choose to start specific services. Set to "NO" to disable
 # this feature. This feature is automatically disabled if rc_parallel is
 # set to YES.
 #rc_interactive="YES"
-rc_interactive="NO"
 
 # If we need to drop to a shell, you can specify it here.
 # If not specified we use $SHELL, otherwise the one specified in /etc/passwd,
@@ -51,7 +49,6 @@ rc_shell=/sbin/sulogin
 # NOTE: Linux systems require the devfs service to be started before
 # logging can take place and as such cannot log the sysinit runlevel.
 #rc_logger="NO"
-rc_logger="YES"
 
 # Through rc_log_path you can specify a custom log file.
 # The default value is: /var/log/rc.log
@@ -60,7 +57,6 @@ rc_logger="YES"
 # If you want verbose output for OpenRC, set this to yes. If you want
 # verbose output for service foo only, set it to yes in /etc/conf.d/foo.
 #rc_verbose=no
-rc_verbose=yes
 
 # By default we filter the environment for our running scripts. To allow other
 # variables through, add them here. Use a * to allow all variables through.
@@ -73,8 +69,6 @@ rc_verbose=yes
 # waits to check that the daemon is still running after starting here.
 # The default is 0 - no checking.
 #rc_start_wait=100
-rc_start_wait=3000
-#FIXME: this increases startup time, does it not?!!  3 sec wait time
 
 # rc_nostop is a list of services which will not stop when changing runlevels.
 # This still allows the service itself to be stopped when called directly.
@@ -135,7 +129,6 @@ unicode="YES"
 # ulimit command uses a block size of 512 bytes for the -c and -f
 # options
 #rc_ulimit="-u 30"
-rc_ulimit="-c unlimited"
 
 # It's possible to define extra dependencies for services like so
 #rc_config="/etc/foo"
@@ -211,7 +204,6 @@ rc_tty_number=12
 # This is a list of controllers which should be enabled for cgroups version 2
 # when hybrid mode is being used.
 # Controllers listed here will not be available for cgroups version 1.
-# This is a global setting.
 #rc_cgroup_controllers=""
 
 # This variable contains the cgroups version 2 settings for your services.
