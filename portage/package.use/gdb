@@ -1,5 +1,6 @@
 #
-sys-devel/gdb xml
+# move sys-devel/gdb dev-debug/gdb
+dev-debug/gdb xml
 #or else:
 #(gdb) catch syscall connect
 #warning: Can not parse XML syscalls information; XML support was disabled at compile time.

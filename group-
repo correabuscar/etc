@@ -22,7 +22,7 @@ cdrw:x:80:
 usb:x:85:user
 input:x:97:
 users:x:100:user
-portage:x:250:portage,user
+portage:x:250:user
 utmp:x:406:
 nogroup:x:65533:
 nobody:x:65534:
@@ -60,3 +60,5 @@ android:x:174:
 colord:x:350:
 pipewire:x:509:user
 plugdev:x:272:
+openct:x:46:
+pcscd:x:47:

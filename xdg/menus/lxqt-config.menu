@@ -13,7 +13,7 @@
 
     <Menu>
         <Name>LXQt settings</Name>
-        <Directory>lxqt-settings-lxqt.directory</Directory>
+        <Directory>lxqt-settings.directory</Directory>
         <Include>
             <And>
                 <Category>DesktopSettings</Category>

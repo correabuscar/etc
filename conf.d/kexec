@@ -1,6 +1,7 @@
 # Load kexec kernel image into memory during shutdown instead of bootup
 # (default: yes)
 #LOAD_DURING_SHUTDOWN="yes"
+LOAD_DURING_SHUTDOWN="no"
 
 # Additional arguments passed to kexec (8)
 #KEXEC_OPT_ARGS=""
@@ -31,4 +32,4 @@
 #KPARAM="splash=silent,theme:emergence"
 
 # Do not try to mount /boot
-# DONT_MOUNT_BOOT="yes"
+DONT_MOUNT_BOOT="yes"
