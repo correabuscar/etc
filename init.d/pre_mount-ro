@@ -27,6 +27,7 @@ start()
 	local ret=0
 
 	# Flush all pending disk writes now
+  echo "Syncing1 from $0..."
 	sync
 
   runlevel="$(who -r | awk '{print $2}')"
@@ -35,6 +36,10 @@ start()
 
   main
   ret="$?"
+
+	# Flush all pending disk writes now
+  echo "Syncing2 from $0..."
+	sync
 
 	eoutdent
 
@@ -79,5 +84,9 @@ else
   echo "--- this is '$0' who detected no /tmp/ebuild.logs/elog/summary.log file at this time(maybe emerge wasn't run in this session) and was ran due to a reboot or shutdown command on `date`" >> "/var/log/portage/elog/summary.log"
 fi
 
+echo "Copying all build logs too:"
+portagelogdir="$(portageq envvar PORTAGE_LOGDIR)"
+cp -aRuv -- "$portagelogdir/build" "/var/log/portage/"
+echo "Done copying all build logs too!"
 }
 
