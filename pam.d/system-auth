@@ -6,7 +6,7 @@ auth		optional	pam_faildelay.so delay=500000
 auth		required	pam_env.so
 auth		requisite	pam_faillock.so preauth deny=0 nodelay
 #you can put deny=0 here or inside /etc/security/faillock.conf
-auth		[success=1 default=ignore]	pam_unix.so   try_first_pass nodelay
+auth		[success=1 new_authtok_reqd=1 ignore=ignore default=bad]	pam_unix.so   try_first_pass nodelay
 #^ nodelay required here for pam_unix too or else it's 2 sec!
 auth		[default=die]	pam_faillock.so authfail nodelay
 #XXX: nodelay is required in two places for pam_faillock.so

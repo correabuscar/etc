@@ -1,0 +1,3 @@
+#cronie brings this
+sys-apps/debianutils -installkernel
+
