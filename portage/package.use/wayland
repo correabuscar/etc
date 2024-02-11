@@ -37,3 +37,33 @@ x11-wm/mutter udev
 # required by x11-wm/mutter-42.5::gentoo
 # required by x11-wm/mutter (argument)
 >=dev-libs/libusb-1.0.26 udev
+
+#since 11feb2024:
+# required by dev-qt/qtwayland-6.6.1::gentoo
+# required by dev-qt/qtwayland (argument)
+>=dev-qt/qtbase-6.6.1-r4 opengl
+# required by kde-plasma/kwin-5.27.10-r2::gentoo
+# required by kde-plasma/plasma-workspace-5.27.10-r1::gentoo
+# required by kde-plasma/plasma-desktop-5.27.10-r1::gentoo
+# required by kde-plasma/plasma-desktop (argument)
+>=dev-qt/qtgui-5.15.12-r1 accessibility
+# required by kde-plasma/libplasma-5.114.0::gentoo
+# required by kde-plasma/milou-5.27.10::gentoo
+# required by kde-plasma/plasma-workspace-5.27.10-r1::gentoo
+# required by kde-plasma/plasma-desktop-5.27.10-r1::gentoo
+# required by kde-plasma/plasma-desktop (argument)
+>=kde-frameworks/kconfig-5.114.0 qml
+# required by kde-plasma/kwin-5.27.10-r2::gentoo
+# required by kde-plasma/plasma-workspace-5.27.10-r1::gentoo
+# required by kde-plasma/plasma-desktop-5.27.10-r1::gentoo
+# required by kde-plasma/plasma-desktop (argument)
+>=kde-frameworks/kitemmodels-5.114.0 qml
+# required by kde-frameworks/qqc2-desktop-style-5.114.0::gentoo
+# required by kde-plasma/plasma-desktop-5.27.10-r1::gentoo
+# required by kde-plasma/plasma-desktop (argument)
+>=kde-frameworks/sonnet-5.114.0 qml
+# required by kde-plasma/plasma-workspace-5.27.10-r1::gentoo
+# required by kde-plasma/plasma-desktop-5.27.10-r1::gentoo
+# required by kde-plasma/plasma-desktop (argument)
+>=kde-frameworks/prison-5.114.0 qml
+
