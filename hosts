@@ -201,7 +201,7 @@
 ##the following(one line, at least) is needed to can update your firefox extensions!
 0.0.0.0 versioncheck.addons.mozilla.org
 0.0.0.0 services.addons.mozilla.org
-0.0.0.0 addons.mozilla.org
+#0.0.0.0 addons.mozilla.org
 ##gecko handler something:
 0.0.0.0 www.mibbit.com
 0.0.0.0 compose.mail.yahoo.com
