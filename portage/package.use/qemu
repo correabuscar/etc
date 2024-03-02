@@ -1,4 +1,4 @@
-app-emulation/qemu python filecaps -xfs -xen xattr vte vnc virtfs vhost-net -vde uuid -usbredir -usb gnutls tls threads -tci -systemtap -static-user -static-softmmu -static -ssh -spice -snappy -smartcard seccomp sdl sdl2 -sasl -rbd pulseaudio png pin-upstream-blobs opengl -numa -nls -nfs ncurses lzo jpeg -iscsi -infiniband gtk2 gtk -glusterfs fdt -debug curl caps -bluetooth -alsa aio -accessibility qemu_user_targets_x86_64
+app-emulation/qemu python filecaps -xfs -xen xattr vte vnc virtfs vhost-net -vde uuid -usbredir -usb gnutls tls threads -tci -systemtap -static-user -static-softmmu -static -ssh -spice -snappy -smartcard seccomp sdl sdl2 -sasl -rbd pulseaudio png pin-upstream-blobs opengl -numa -nls -nfs ncurses lzo jpeg -iscsi -infiniband gtk2 gtk -glusterfs fdt -debug -curl caps -bluetooth -alsa aio -accessibility qemu_user_targets_x86_64
 
 #10 may 2021: added 'nls', nope not needed!
 
@@ -7,4 +7,6 @@ app-emulation/qemu python filecaps -xfs -xen xattr vte vnc virtfs vhost-net -vde
 #added: gnutls qemu_user_targets_x86_64 sdl2
 
 #XXX: too slow? maybe try with tci enabled, see if it speeds up or down
+
+#26feb2024: -curl Support ISOs / -cdrom directives via HTTP or HTTPS.
 
