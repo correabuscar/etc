@@ -13,9 +13,13 @@ fi
 #doneFIXME: this uses current kernel version for the filename, which is old kernel when compiling a new kernel! so bad naming!
 #v="$(uname -r)" #ie. 5.9.11-gentoo-x86_64
 v="$(strings "${kerneloutdir}/vmlinux" | awk '/Linux version ([0-9]+\.[0-9]+\.[0-9]+)-/ { print $3 }'|head -1)"
-#^FIXME: use only 'awk' because 'strings' uses high CPU for like 5 seconds.
+#^FIXME: use only 'awk' because 'strings' uses high CPU for like 5 seconds. well it is 542meg file(in gentoo 04march2024, and 1gig was at some point(in 2023!) lookslike)!
 #-rwxr-xr-x 1 _kernelbuilder _kernelbuilder 1027330512 Jan 29 00:15 /tmp/genkernel.outdir/vmlinux
 cp --no-preserve=mode,ownership --preserve=timestamps -- "${kerneloutdir}/vmlinux" "/var/crash/vmlinux-${v}-${datee}" ; ec="$?"
+if test "$ec" != "0"; then
+  exit "$ec"
+fi
+cp --no-preserve=mode,ownership --preserve=timestamps -- "${kerneloutdir}/System.map" "/var/crash/System.map-${v}-${datee}" ; ec="$?"
 #NOT "-a" or it will be a+x and owned by non-root !
 #so after that 'cp' it will be:
 #-rw-r--r-- 1 root           root            1027330512 Jan 29 00:15 vmlinux-5.10.11-gentoo-x86_64-2021-01-29-00_23_02
