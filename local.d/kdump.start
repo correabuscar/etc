@@ -3,9 +3,9 @@
 #abs path may be unnecessary, own decision to do so:
 /usr/sbin/kexec --load-panic /boot/kernel --initrd=/boot/initramfs --reuse-cmdline --reset-vga --console-vga "--append= irqpoll reset_devices ipv6.disable=1 loglevel=9 zram.num_devices=0 zswap.enabled=0 fstab=no ignore_loglevel single kdumpsavedangit softlevel=kdump"
 #removed nr_cpus=1 maxcpus=1
-#softlevel=kdump  don't know what it does! added 26jan2021! maybe it uses less memory!
+#softlevel=kdump  don't know what it does! added 26jan2021! ok, it tells openrc to enter 'kdump' runlevel, which is what causes the kdumpsave script to start, else how would it?! yes this is it, i said it somewhere else!
 #'single' (assuming it means single user, so only alt+f1 = one console) added from https://wiki.gentoo.org/wiki/Kernel_Crash_Dumps
-#XXX maybe --elf64-core-headers is needed (if kexec doesn't boot the crash kernel), unsure, see: https://forums.gentoo.org/viewtopic-p-8183894.html?sid=81a419de001c7e2268ea5ccbdbda3880#8183894
+#XXX maybe --elf64-core-headers is needed (if kexec doesn't boot the crash kernel), unsure, see: https://forums.gentoo.org/viewtopic-p-8183894.html
 
 
 #comments below from archlinux:
