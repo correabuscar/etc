@@ -43,6 +43,7 @@ start() {
   echo "starting..`date`....." >> /dmesg_kexec_after.log
   dmesg >> /dmesg_kexec_after.log
   free -wlt | tee -a /dmesg_kexec_after.log
+  echo "!! Remember to use script crash_kernel_read eg. from /swcode/ to enter gdb, after u've booted back into normal kernel" | tee -a /dmesg_kexec_before.log /dmesg_kexec_after.log
   echo "done...`date`" | tee -a /dmesg_kexec_before.log /dmesg_kexec_after.log
   sync
   btrfs filesystem sync /
