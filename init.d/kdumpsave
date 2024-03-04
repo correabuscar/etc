@@ -42,13 +42,18 @@ start() {
   #XXX ^ we allow that 'cp' just in case I ever change where kernel was being built, so the 'build' symlink isn't broken! but upon 'regenkernel' script from /swcode/ , the script /etc/kernel/postinst.d/10-save-vmlinux-for-kdump will actually make a vmlinux* file in /var/crash for later use! (root:root a+r,u+w)
   echo "starting..`date`....." >> /dmesg_kexec_after.log
   dmesg >> /dmesg_kexec_after.log
-  free -wlt | tee -a /dmesg_kexec_before.log
+  free -wlt | tee -a /dmesg_kexec_after.log
   echo "done...`date`" | tee -a /dmesg_kexec_before.log /dmesg_kexec_after.log
   sync
   btrfs filesystem sync /
   /usr/bin/sync
   /bin/sync
   sync
+  #tell HDD to sync too:
+  #sync   sends  a  SYNCHRONIZE CACHE command. The device should flush any data held in its (volatile) buffers to the media.
+  /usr/bin/sdparm --command=sync -- /dev/sda
+  /usr/bin/sdparm --command=sync -- /dev/sdb
+  /usr/bin/sdparm --command=sync -- /dev/sdc
   eend
   echo "Rebooting in 10 sec... unless you C-c (if you can)"
   sleep 10
