@@ -54,3 +54,5 @@
 #because patched locally(patches are no good, kernel compilation fails still):
 =sys-apps/gawk-5.2.0
 
+#=dev-util/sccache-9999
+
