@@ -19,10 +19,17 @@
   followTags = true
   #^ https://stackoverflow.com/questions/5195859/how-do-you-push-a-tag-to-a-remote-repository-using-git/26438076#26438076
 [alias]
-  wdiff = diff --word-diff=plain --word-diff-regex='\\s*[a-zA-Z0-9]+\\s*' --color=always
+  wdiff = diff --word-diff=plain --word-diff-regex='[[:space:]]*[[:alnum:]]+[[:space:]]*' --color=always
+  wdiff1 = diff --word-diff=plain --word-diff-regex='\\s*[a-zA-Z0-9]+\\s*' --color=always #works but would rather not use escaped \ -es
   wdiff2 = diff --word-diff=plain --word-diff-regex=. --color=always
+  #broken default:
+  #^ ie. will ignore white space in certain situations and make it look like you had a concat originally! use wdiff or wdiff2
   wdiff3 = diff --color-words
-  #^ this wdiff3 is broken! will ignore white space in certain situations and make it look like you had a concat originally! use wdiff or wdiff2
+  #broken default:
+  wdiff4 = diff --word-diff=plain --color=always
+  #broken explicit default:
+  wdiff5 = diff --word-diff=plain --word-diff-regex='[[:alnum:]]+|[^[:alnum:][:space:]]+' --color=always
+
   logs = epilog --show-signature
   lol = log --graph --pretty=format:\"%C(yellow)%h%Creset%C(cyan)%C(bold)%d%Creset %C(cyan)(%cr)%Creset %C(green)%ce%Creset %s\"
 #src for lol: https://stackoverflow.com/questions/14243380/how-to-configure-git-log-to-show-commit-date
