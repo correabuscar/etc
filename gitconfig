@@ -1,2 +1,113 @@
 [safe]
 	directory = /var/db/repos/spark-overlay
+
+[core]
+  #editor = vim  #commented out to allow the use of $EDITOR variable!
+	autocrlf = input
+	pager = less -+X -R -+S -+F -+E
+	whitespace = -blank-at-eof,-blank-at-eol,-space-before-tab
+[color]
+	ui = true
+[receive]
+	fsckObjects = true
+	denyNonFastForwards = true
+	denyDeletes = true
+[push]
+  #default = matching #old default, pre git 2.0; hmm... see man 1 git-config
+  default = simple #new git 2.0 default! "pushes the current branch with the same name on the remote."
+  autoSetupRemote = true # to make default=simple easier.
+  followTags = true
+  #^ https://stackoverflow.com/questions/5195859/how-do-you-push-a-tag-to-a-remote-repository-using-git/26438076#26438076
+[alias]
+  wdiff = diff --word-diff=plain --word-diff-regex='\\s*[a-zA-Z0-9]+\\s*' --color=always
+  wdiff2 = diff --word-diff=plain --word-diff-regex=. --color=always
+  wdiff3 = diff --color-words
+  #^ this wdiff3 is broken! will ignore white space in certain situations and make it look like you had a concat originally! use wdiff or wdiff2
+  logs = epilog --show-signature
+  lol = log --graph --pretty=format:\"%C(yellow)%h%Creset%C(cyan)%C(bold)%d%Creset %C(cyan)(%cr)%Creset %C(green)%ce%Creset %s\"
+#src for lol: https://stackoverflow.com/questions/14243380/how-to-configure-git-log-to-show-commit-date
+  epilog = log --sparse --full-history --graph --pretty=fuller
+  #my;;
+
+
+#  pr = "!f() { git fetch -fu ${2:-upstream} refs/pull/$1/head:pr/$1 && git checkout pr/$1; }; f"
+#  pr-clean = "!git for-each-ref refs/heads/pr/* --format='%(refname)' | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done"
+  #src: https://gist.github.com/gnarf/5406589
+
+ pr = "!f() { git fetch -fu ${2:-$(git remote |grep ^upstream || echo origin)} refs/pull/$1/head:pr/$1 && git checkout pr/$1; }; f"
+  pr-clean = "!git for-each-ref refs/heads/pr/* --format='%(refname)' | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done"
+# for bitbucket/stash remotes
+  spr = "!f() { git fetch -fu ${2:-$(git remote |grep ^upstream || echo origin)} refs/pull-requests/$1/from:pr/$1 && git checkout pr/$1; }; f"
+  #src: https://gist.github.com/gnarf/5406589
+
+#usage:
+#git remote add upstream https://...
+#git pr 92
+#this switches to new branch pr/92
+#git checkout master
+#git merge pr/92
+
+  #for signing tag? FIXME: is that ";" there good or should it be "&&" ? or somehow fail if the --verify fails?!
+	stag = "!id=`git rev-parse --verify HEAD`; git tag -s tag_for_${id:0:8} -m \"Tag for commit $id\""
+	vtag = !git tag -v `git describe`
+#src: https://www.qubes-os.org/doc/code-signing/
+#TODO: see new commands like 'git verify-tag': https://stackoverflow.com/questions/17371955/verifying-signed-git-commits/30236531#30236531
+
+  vc = !git verify-commit -v HEAD
+
+[gpg]
+	program = gpg2
+  #src: https://help.github.com/articles/associating-an-email-with-your-gpg-key/
+
+
+[diff]
+	renameLimit = 3000
+#nvm, just use XXX: git diff --binary file1 file2   - this is good but it's hiding the content because it's a binary patch format! ("GIT binary patch" format)
+#[diff "JPG"]
+#    textconv = hexdump -v -C
+#    #^ src: https://superuser.com/a/706286/1727558
+
+#this needs "*.JPG binary diff=hex" in .gitattributes files in the repo!
+[diff "hex"]
+    textconv = hexdump -v -C
+    binary = true
+    #^ src: https://superuser.com/a/1251397/1727558
+#nevermind, just use the patched git that has 'git diff --hexdump' on binary files!, eg. https://superuser.com/questions/706042/how-can-i-diff-binary-files-in-git/1741622#1741622
+[versionsort]
+  #XXX: used for bash-devel-git when 'git tag --sort="version:refname"' is executed in pkgver() function (see its PKGBUILD)
+  suffix = -alpha
+  suffix = -beta
+  suffix = -pre
+  suffix = -rc
+[commit]
+  #gpgsign = true
+  gpgsign = false
+#  cleanup = verbatim #this will always save the commit even if you want to abort it by entering no msg, because comments are kept and thus seen as non-empty commit msg! So you've to empty the whole buffer before exiting vim if you want to abort! Actually this just adds noise anyway! disabling!
+  #cleanup = default
+  #XXX commented out or else: ^ getting during makepkg: warning: invalid commit message cleanup mode 'default'
+  status = on
+
+[status]
+  showUntrackedFiles = normal
+  #^ don't use "all" here because it shows all files/dirs within untracked dirs and may not want to expose those!
+
+[ssh]
+  variant = ssh
+  #^ https://stackoverflow.com/questions/48417505/fatal-ssh-variant-simple-does-not-support-setting-port/48417901#48417901
+
+[http]
+  connecttimeout = 10
+  #^ fatal: unable to access 'https://git.xfce.org/xfce/xfce4-panel/': Failed to connect to git.xfce.org port 443: Connection timed out
+
+#yeah I dno wtf: https://stackoverflow.com/questions/58074297/what-is-the-meaning-of-this-gitconfig-filesystem-section-filesystem-private
+#[filesystem "Oracle Corporation|11.0.4|/dev/sda1"]
+#	timestampResolution = 20000 nanoseconds
+#	minRacyThreshold = 930 microseconds
+
+#this is good:
+[protocol]
+	version = 2
+[pull]
+	ff = only
+#^ normally it's `git config pull.rebase false  # merge` so when you 'git pull' it will create a merge commit if needed. But with fast-forward only, it will fail if a merge would be needed. So, to do a merge you do 'git pull --ff' which tries fast-forward and fallback to merge.
+#
