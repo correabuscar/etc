@@ -20,20 +20,21 @@
   #^ https://stackoverflow.com/questions/5195859/how-do-you-push-a-tag-to-a-remote-repository-using-git/26438076#26438076
 [alias]
   #XXX: remember if you're already in a repo,  you need --no-index arg or else you get no differences (a 'less' of 0 bytes)
-  wdiff = diff --word-diff=plain --word-diff-regex='[[:alnum:]]+|[^[:alnum:][:space:]]|[[:space:]]' --color=always
-  wdiff1 = diff --word-diff=plain --word-diff-regex='[[:space:]]*[[:alnum:]]+[[:space:]]*' --color=always
+  #use 0 lines of context, not needed! only cluttering!
+  wdiff = diff -U0 --word-diff=plain --word-diff-regex='[[:alnum:]]+|[^[:alnum:][:space:]]|[[:space:]]' --color=always
+  wdiff1 = diff -U0 --word-diff=plain --word-diff-regex='[[:space:]]*[[:alnum:]]+[[:space:]]*' --color=always
   #wdiff1 = diff --word-diff=plain --word-diff-regex='\\s*[a-zA-Z0-9]+\\s*' --color=always #works but would rather not use escaped \ -es
   #this does per char diff:
-  chardiff = diff --word-diff=plain --word-diff-regex=. --color=always
-  cdiff = diff --word-diff=plain --word-diff-regex=. --color=always
-  wdiff2 = diff --word-diff=plain --word-diff-regex=. --color=always
+  chardiff = diff -U0 --word-diff=plain --word-diff-regex=. --color=always
+  cdiff = diff -U0 --word-diff=plain --word-diff-regex=. --color=always
+  wdiff2 = diff -U0 --word-diff=plain --word-diff-regex=. --color=always
   #broken default:
   #^ ie. will ignore white space in certain situations and make it look like you had a concat originally! use wdiff or wdiff2
-  wdiff3 = diff --color-words
+  wdiff3 = diff -U0 --color-words
   #broken default:
-  wdiff4 = diff --word-diff=plain --color=always
+  wdiff4 = diff -U0 --word-diff=plain --color=always
   #broken explicit default(maybe, chatgpt guessed regex):
-  wdiff5 = diff --word-diff=plain --word-diff-regex='[[:alnum:]]+|[^[:alnum:][:space:]]+' --color=always
+  wdiff5 = diff -U0 --word-diff=plain --word-diff-regex='[[:alnum:]]+|[^[:alnum:][:space:]]+' --color=always
 
   logs = epilog --show-signature
   lol = log --graph --pretty=format:\"%C(yellow)%h%Creset%C(cyan)%C(bold)%d%Creset %C(cyan)(%cr)%Creset %C(green)%ce%Creset %s\"
