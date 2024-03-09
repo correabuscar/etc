@@ -19,15 +19,20 @@
   followTags = true
   #^ https://stackoverflow.com/questions/5195859/how-do-you-push-a-tag-to-a-remote-repository-using-git/26438076#26438076
 [alias]
-  wdiff = diff --word-diff=plain --word-diff-regex='[[:space:]]*[[:alnum:]]+[[:space:]]*' --color=always
-  wdiff1 = diff --word-diff=plain --word-diff-regex='\\s*[a-zA-Z0-9]+\\s*' --color=always #works but would rather not use escaped \ -es
+  #XXX: remember if you're already in a repo,  you need --no-index arg or else you get no differences (a 'less' of 0 bytes)
+  wdiff = diff --word-diff=plain --word-diff-regex='[[:alnum:]]+|[^[:alnum:][:space:]]|[[:space:]]' --color=always
+  wdiff1 = diff --word-diff=plain --word-diff-regex='[[:space:]]*[[:alnum:]]+[[:space:]]*' --color=always
+  #wdiff1 = diff --word-diff=plain --word-diff-regex='\\s*[a-zA-Z0-9]+\\s*' --color=always #works but would rather not use escaped \ -es
+  #this does per char diff:
+  chardiff = diff --word-diff=plain --word-diff-regex=. --color=always
+  cdiff = diff --word-diff=plain --word-diff-regex=. --color=always
   wdiff2 = diff --word-diff=plain --word-diff-regex=. --color=always
   #broken default:
   #^ ie. will ignore white space in certain situations and make it look like you had a concat originally! use wdiff or wdiff2
   wdiff3 = diff --color-words
   #broken default:
   wdiff4 = diff --word-diff=plain --color=always
-  #broken explicit default:
+  #broken explicit default(maybe, chatgpt guessed regex):
   wdiff5 = diff --word-diff=plain --word-diff-regex='[[:alnum:]]+|[^[:alnum:][:space:]]+' --color=always
 
   logs = epilog --show-signature
