@@ -124,3 +124,5 @@
 	ff = only
 #^ normally it's `git config pull.rebase false  # merge` so when you 'git pull' it will create a merge commit if needed. But with fast-forward only, it will fail if a merge would be needed. So, to do a merge you do 'git pull --ff' which tries fast-forward and fallback to merge.
 #
+[init]
+	defaultBranch = main
