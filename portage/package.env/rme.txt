@@ -1,0 +1,15 @@
+#              package.env
+#                     Per-package environment variable settings. Entries refer to environment files that are placed in
+#                     the /etc/portage/env/ directory and have the same format as make.conf(5). Note that these  files
+#                     are  interpreted  much  earlier  than the package-specific bashrc files which are described in a
+#                     later section about /etc/portage/env/.  Beginners should be careful to recognize the  difference
+#                     between  these  two  types  of  files. When environment variable settings are all that’s needed,
+#                     package.env is the recommended approach to use.
+#
+#                     Format:
+#                     - comment lines begin with # (no inline comments)
+#                     - one DEPEND atom per line followed by name(s) of environment file(s)
+#
+#                     Example:
+#                     # use environment variables from /etc/portage/env/glibc.conf for the glibc package
+#                     sys-libs/glibc glibc.conf

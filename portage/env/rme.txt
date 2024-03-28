@@ -1,0 +1,23 @@
+#       /etc/portage/env/
+#              In this directory additional package-specific bashrc files can be created.  Note that  if  package-spe‐
+#              cific environment variable settings are all that’s needed, then /etc/portage/package.env should be used
+#              instead  of  the  bashrc approach that is described here. Also note that special variables such as FEA‐
+#              TURES and INSTALL_MASK will not produce the intended results if they are set in bashrc,  and  therefore
+#              /etc/portage/package.env  should  be  used  instead. Lastly, note that these files are interpreted much
+#              later than the portage environment file package.env.
+#
+#              Portage will source all of these bashrc files after /etc/portage/bashrc in the following order:
+#
+#              1. /etc/portage/env/${CATEGORY}/${PN}
+#
+#              2. /etc/portage/env/${CATEGORY}/${PN}:${SLOT}
+#
+#              3. /etc/portage/env/${CATEGORY}/${P}
+#
+#              4. /etc/portage/env/${CATEGORY}/${PF}
+
+
+#So I made any *.conf files in these subdirs or root here, should be
+# referenced by /etc/portage/package.env/package.env.ALL
+#else they shouldn't be .conf, and thus will be used as bashrc env.vars. like
+#during build instead of during portage package processing like *.conf are

@@ -1,12 +1,1 @@
-#
-KBUILD_OUTPUT="/tmp/genkernel.outdir/"
-#else you get this:
-# * Could not find a usable .config in the kernel source directory.
-# * Please ensure that /usr/src/linux points to a configured set of Linux sources.
-# * If you are using KBUILD_OUTPUT, please set the environment var so that
-# * it points to the necessary object directory so that it might find .config.
-# * ERROR: app-emulation/virtualbox-modules-6.1.16-r1::gentoo failed (setup phase):
-# *   Kernel not configured; no .config found in /usr/src/linux
-#
-
 CCACHE_DISABLE=1
