@@ -1,0 +1,3 @@
+TARGET="aarch64-unknown-linux-gnu"
+VER="2.42"
+LIBPATH="/usr/lib64/binutils/aarch64-unknown-linux-gnu/2.42"
