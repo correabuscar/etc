@@ -21,3 +21,11 @@
 # referenced by /etc/portage/package.env/package.env.ALL
 #else they shouldn't be .conf, and thus will be used as bashrc env.vars. like
 #during build instead of during portage package processing like *.conf are
+
+so anything with *.conf is already in /etc/portage/package.env/package.env.ALL
+(unless u forgot to add them)
+therefore each of its vars is exported eg. declare -x
+otherwise, non-.conf files have their vars set but not exported ie. declare --
+
+so never use non-.conf files! 30March2024
+
