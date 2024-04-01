@@ -3,7 +3,7 @@
 #//re-enabled: gstreamer (24 jan 2016) dis: 31st jan 2016 and youtube still works(with gstreamer disabled and uninstalled! maybe because it's using media-plugins/gst-plugins-libav ? )
 #//re-enabled: gstreamer (5 jan 2016)
 #disabled 'gstreamer' and 'hwaccel' (31 dec 2015 and 13 jan 2016)
-www-client/firefox -gmp-autoupdate -gstreamer pulseaudio system-jpeg system-icu -system-libvpx system-sqlite -wifi -debug -egl -system-cairo -hwaccel jit hardened -openh264 clang lto -pgo eme-free -screencast -geckodriver jumbo-build -telemetry
+www-client/firefox -gmp-autoupdate -gstreamer pulseaudio system-jpeg system-icu system-av1 system-libvpx system-sqlite -wifi -debug -egl -system-cairo -hwaccel jit hardened -openh264 clang lto -pgo eme-free -screencast -geckodriver jumbo-build -telemetry
 #added 'eme-free' for 'ac_add_options --disable-eme' (old mozconfig) on 29nov2020
 #with debug it fails on startup with this: https://bugzilla.mozilla.org/show_bug.cgi?id=994859
 #With USE=-clang aka gcc/g++ you have to remove -fno-delete-null-pointer-checks from CXXFLAGS as per https://bugs.gentoo.org/751787#c25 or else firefox fails to compile Span.h error: '((& arr[0]) != 0)' is not a constant expression
@@ -27,3 +27,7 @@ www-client/firefox -gmp-autoupdate -gstreamer pulseaudio system-jpeg system-icu 
 #Don't install the Cisco System openh264 plugin in firefox
 media-libs/openh264 -plugin
 #XXX: must put -openh264 for firefox package too! or else it will want "plugin" on this!
+
+
+=www-client/firefox-123.0 -system-av1 -system-libvpx
+#^ https://bugs.gentoo.org/926172
