@@ -118,9 +118,11 @@ pre_src_prepare() {
 if [[ $EBUILD_PHASE == @(postinst|postrm) ]]; then
   echo ":: current ebuild phase is $EBUILD_PHASE and uid=$(id -u),gid=$(id -g)"
   #nvmFIXME: this can't be seen on console or in /var/log/emerge.log but it can only be seen inside /tmp/ebuild.logs/build/  eg. /tmp/ebuild.logs/build/sys-devel/gdb-9.1:20200215-193603.log
-  echo ":: Calling updatedb (from $0 aka /etc/portage/bashrc) to update its database" #:: Calling updatedb (from /usr/lib/portage/python3.6/ebuild.sh aka /etc/portage/bashrc) to update its database         
-  #ewarn "`id`" #* uid=0(root) gid=0(root) groups=0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10(wheel),11(floppy),26(tape),27(video)
-  sudo updatedb  #the sudo seems necessary(and there's no password prompt TODO: investigate why) or else: updatedb: can not open a temporary file for `/var/lib/mlocate/mlocate.db'
+  if test "${SYSTEM_WIDE_EMERGE_DONT_UPDATEDB:-0}" == "0"; then
+	  echo ":: Calling updatedb (from $0 aka /etc/portage/bashrc) to update its database" #:: Calling updatedb (from /usr/lib/portage/python3.6/ebuild.sh aka /etc/portage/bashrc) to update its database         
+	  #ewarn "`id`" #* uid=0(root) gid=0(root) groups=0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10(wheel),11(floppy),26(tape),27(video)
+	  sudo updatedb  #the sudo seems necessary(and there's no password prompt TODO: investigate why) or else: updatedb: can not open a temporary file for `/var/lib/mlocate/mlocate.db'
+  fi
   echo ":: Any ccache non-portage user/group files are listed below(should be none unless compiler was ran as root at some point eg. 'install' phase):"
   #see: https://bugs.gentoo.org/492910#c5
   find /ccache \( \! -user portage -o \! -group portage \) -a \! -name ccache.conf -a \! -name reperm
