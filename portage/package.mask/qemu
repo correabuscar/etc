@@ -1,0 +1,3 @@
+#
+>app-emulation/qemu-8.2.2
+#it's in localrepo, because the usual one depends on pip, but i want it to depend on python[ensurepip], see: https://bugs.gentoo.org/913084#c6
