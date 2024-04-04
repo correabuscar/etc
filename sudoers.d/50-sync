@@ -1,1 +1,2 @@
 %wheel ALL=(root:root) NOPASSWD: /swcode/sync
+%wheel ALL=(root:root) NOPASSWD: /swcode/bin.prepend/sync
