@@ -110,7 +110,7 @@ addargs "enforcing=0"
 
 addargs "udev.children-max=1256 rd.udev.children-max=1256"
 addargs "nohz=on"
-addargs "oops=panic"
+addargs "oops=panic" #same as CONFIG_PANIC_ON_OOPS=y or if =n this still has effect.
 if is_Z575; then
   #addargs "crashkernel=128M" #running out of memory!
   addargs "crashkernel=512M" #now 389M free via 'vmstat'(command)
