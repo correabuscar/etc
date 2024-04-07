@@ -1,0 +1,4 @@
+#
+x11-misc/alock -xbacklight
+#$ xbacklight -get
+#No outputs have backlight property
