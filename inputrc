@@ -79,3 +79,44 @@ $endif
 # fix Home and End for German users
 "\e[7~": beginning-of-line
 "\e[8~": end-of-line
+
+#ADDITIONS, own modifications:
+
+set bell-style audible
+#^ the default, need this for visual bell in alacritty to trigger, else 'none' won't.
+
+set enable-bracketed-paste on
+#^ You can enable bracketed paste mode in bash-4.4 and later by putting that in your inputrc src: https://lists.gnu.org/archive/html/bug-bash/2020-04/msg00079.html
+#also by $ bind 'set enable-bracketed-paste off'
+
+# already in /etc/inputrc
+"\e[1;5C": forward-word     # Ctrl+right  => forward word
+"\e[1;5D": backward-word    # Ctrl+left   => backward word
+
+# urxvt:
+"\eOc": forward-word     # Ctrl+right  => forward word
+"\eOd": backward-word    # Ctrl+left   => backward word
+#"\e[6~": #keypad_PgDn, same code as PgDn
+#"\e[5~": #keypad_PgUp, same code as PgUp
+#ok, had to use xmodmap for these numpadkeys to work under vim with urxvt
+
+# this is the default anyway: "the terminal now echoes ^C after Ctrl+C is pressed"
+# src: https://wiki.archlinux.org/index.php/Readline#Disabling_control_echo
+set echo-control-characters on
+
+#TODO: disable flowcontrol instead, via: stty -ixon  , or via: https://github.com/bjornfor/nixos-config/blob/ec41b432c8b24bdc40c17417402a52977a738462/cfg/shell.nix#L26 which, in case that url is 404 in the future, is this: `stty stop ""` and `stty start ""`, but not disabling them yet because Ctrl+S/Ctrl+Q might seem useful, like a ScrollLock equivalent.
+
+"\C-y": forward-search-history
+#"\C-r": "$(fzf-history-widget)" #not how it works!, it's `source /usr/share/fzf/key-bindings.bash`
+
+# fix numHome and numEnd for my Z575 laptop  (these are in effect in emacs mode, wtw that is; as per global inputrc in /etc/ )
+#"\e[1~": beginning-of-line
+#"\e[4~": end-of-line
+# ^ no effect, this is supposed to work in less; works everywhere else without this though! maybe it's xfce4-terminal? right, I've to use lesskey to set the keys
+# ok numHome and numEnd work fine if TERM=linux but not at all if TERM=xterm  and xfce4-terminal doesn't work with TERM=linux (cannot load stuff from /etc/termcap)
+#
+
+#make alt+n and alt+p do what they do in 'mc':
+"\ep": history-search-backward
+"\en": history-search-forward
+
