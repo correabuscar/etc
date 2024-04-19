@@ -1,1 +1,1 @@
-app-shells/bash bundled-readline -bashlogger mem-scramble -plugins
+app-shells/bash bundled-readline -bashlogger mem-scramble -plugins -static
