@@ -1,5 +1,8 @@
 #for ebuild phases see: https://dev.gentoo.org/~zmedico/portage/doc/ch06.html#package-ebuild-phases
 
+#elog "wtf bro" #ok this shows, tho only seen after the build is done or fails!
+#XXX: so EAPI=7+ uses eapply and eapply_user and stuff, not sure if i need to do anything as they seem to always be working so far, other than actually knowing whether they did use any user patches
+
 #if [[ $EBUILD_PHASE == @(depend) ]]; then  #depend is not a real one, it's just 'if'-ed within the 'inherit' function!
 #    source "${PORTDIR}/eclass/epatch3.eclass" ; ec="$?"
 #    #inherit epatch
