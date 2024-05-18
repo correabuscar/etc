@@ -164,6 +164,7 @@ if test "$mitigations" == "0"; then
   #      check bypass). With this option data leaks are possible
   #      in the system.
   addargs "retbleed=off" 
+  addargs "spectre_bhi=off"
   addargs "reg_file_data_sampling=off" 
   addargs "noretpoline" #probably only has any effect on nixos?! since I can't really find this in kernel 5.0 source code! however it seems to be a part of spectre_v2= see Documentation/admin-guide/kernel-parameters.txt
   #^ this one is useless because it's already overridden (and set to off) by: nospectre_v2
@@ -234,7 +235,17 @@ if test "$mitigations" == "0"; then
 #      time according to the CPU.
 #
 #      Not specifying this option is equivalent to retbleed=auto.
+# spectre_bhi=
 #
+#  [X86] Control mitigation of Branch History Injection
+#  (BHI) vulnerability.  This setting affects the deployment
+#  of the HW BHI control and the SW BHB clearing sequence.
+#
+#  on
+#    (default) Enable the HW or SW mitigation as
+#    needed.
+#  off
+#    Disable the mitigation.
 
   addargs "mds=off"
 elif test "$mitigations" == "2"; then #yes 2! because 1 is whatever the defaults are when unspecified! ie. mitigations=auto (aka yes smt) :)
