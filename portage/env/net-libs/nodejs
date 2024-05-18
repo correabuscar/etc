@@ -1,0 +1,7 @@
+#!/bin/bash
+#remove only this flag, else: https://bugs.gentoo.org/931514#c5
+export CFLAGS="${CFLAGS//-fno-delete-null-pointer-checks/}"
+export CPPFLAGS="${CPPFLAGS//-fno-delete-null-pointer-checks/}"
+export CXXFLAGS="${CXXFLAGS//-fno-delete-null-pointer-checks/}"
+
+#so this is how to remove a flag but must be using the bashrc variant, not the package.env *.conf variant which will error when using this kind of style env vars with // inside the ${}
