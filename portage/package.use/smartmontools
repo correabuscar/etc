@@ -1,4 +1,7 @@
-sys-apps/smartmontools minimal update_drivedb
+sys-apps/smartmontools minimal -update_drivedb -update-drivedb -daemon
+#needs "-daemon" to avoid making a /var/db/smartmontools/drivedb.h which would override any patches for drivedb.h in the source. Daemon is smartd but wasn't used before: rc-service smartd start
+#don't use "update-drivedb" because it needs running a sh script as root to fetch file from upstream, which is thus less secure than not using it at all, keep embedded drivedb.h instead! note that it will ignore /usr/share/smartmontools/drivedb.h apparently! so a rebuild is needed when change in that file is needed.
+
 #* WARNING: There's already a drive database in '//var/db/smartmontools'!
 # * Because we cannot determine if this database is untouched
 # * or was modified by the user you have to manually update the
