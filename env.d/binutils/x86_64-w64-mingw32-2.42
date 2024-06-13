@@ -1,3 +1,0 @@
-TARGET="x86_64-w64-mingw32"
-VER="2.42"
-LIBPATH="/usr/lib64/binutils/x86_64-w64-mingw32/2.42"

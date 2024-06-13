@@ -75,7 +75,7 @@ x11-apps/xinit minimal
 ## required by lxqt-base/lxqt-config-0.14.1-r1::gentoo[monitor]
 ## required by lxqt-base/lxqt-meta-0.14.1-r1::gentoo
 ## required by lxqt-base/lxqt-meta (argument)
->=dev-qt/qtgui-5.14.0-r2 egl
+#>=dev-qt/qtgui-5.14.0-r2 egl
 # required by dev-util/catalyst-3.0.8::gentoo
 # required by dev-util/catalyst (argument)
 >=app-arch/tar-1.32 xattr

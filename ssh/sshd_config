@@ -105,8 +105,8 @@
 # no default banner path
 #Banner none
 
-# override default of no subsystems
-Subsystem	sftp	/usr/lib64/misc/sftp-server
+# Make sure that all Match options are below this Include!
+Include "/etc/ssh/sshd_config.d/*.conf"
 
 # Example of overriding settings on a per-user basis
 #Match User anoncvs
@@ -114,5 +114,3 @@ Subsystem	sftp	/usr/lib64/misc/sftp-server
 #	AllowTcpForwarding no
 #	PermitTTY no
 #	ForceCommand cvs server
-
-Include "/etc/ssh/sshd_config.d/*.conf"

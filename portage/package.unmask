@@ -56,3 +56,8 @@
 
 #=dev-util/sccache-9999
 
+#got masked by upstream, so need to unmask this:
+=xfce-base/libxfce4util-4.19.3::gentoo
+=xfce-base/libxfce4ui-4.19.5::gentoo
+=xfce-base/xfconf-4.19.2::gentoo
+

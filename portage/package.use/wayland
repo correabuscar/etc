@@ -1,3 +1,4 @@
+# disabled/uninstalled wayland as not using due to bugged + high cpu usage; haven't checked if still bugged at this time tho, 12 june 2024
 #!!! The ebuild selected to satisfy ">=media-libs/gst-plugins-base-1.4.5:1.0" has unmet requirements.
 #- media-libs/gst-plugins-base-1.20.3::gentoo USE="X introspection ogg opengl orc pango vorbis wayland -alsa -egl -gbm -gles2 -ivorbis -nls -test -theora" ABI_X86="(64) -32 (-x32)"
 #
@@ -10,7 +11,7 @@
 #(dependency required by "media-video/vlc-3.0.17.4-r2::gentoo[gstreamer]" [ebuild])
 #(dependency required by "@selected" [set])
 #(dependency required by "@world" [argument])
-media-libs/gst-plugins-base egl
+#media-libs/gst-plugins-base egl
 
 #!!! The ebuild selected to satisfy "x11-wm/mutter" has unmet requirements.
 ##- x11-wm/mutter-42.5::gentoo USE="elogind introspection wayland -doc -gnome -screencast -sysprof -systemd -test -udev" ABI_X86="(64)" INPUT_DEVICES="-wacom" VIDEO_CARDS="-nvidia"
@@ -20,7 +21,7 @@ media-libs/gst-plugins-base egl
 ###
 #  The above constraints are a subset of the following complete expression:
 #    wayland? ( exactly-one-of ( elogind systemd ) udev ) test? ( wayland )
-x11-wm/mutter udev
+#x11-wm/mutter udev
 
 #The following USE changes are necessary to proceed:
 # (see "package.use" in the portage(5) man page for more details)
@@ -29,41 +30,59 @@ x11-wm/mutter udev
 # required by gnome-base/gnome-settings-daemon-42.2-r4::gentoo[colord]
 # required by x11-wm/mutter-42.5::gentoo
 # required by x11-wm/mutter (argument)
->=virtual/libusb-1-r2 udev
+#>=virtual/libusb-1-r2 udev
 # required by virtual/libusb-1-r2::gentoo
 # required by dev-libs/libgusb-0.4.2::gentoo
 # required by x11-misc/colord-1.4.6::gentoo
 # required by gnome-base/gnome-settings-daemon-42.2-r4::gentoo[colord]
 # required by x11-wm/mutter-42.5::gentoo
 # required by x11-wm/mutter (argument)
->=dev-libs/libusb-1.0.26 udev
+#>=dev-libs/libusb-1.0.26 udev
 
 #since 11feb2024:
 # required by dev-qt/qtwayland-6.6.1::gentoo
 # required by dev-qt/qtwayland (argument)
->=dev-qt/qtbase-6.6.1-r4 opengl
+#>=dev-qt/qtbase-6.6.1-r4 opengl
 # required by kde-plasma/kwin-5.27.10-r2::gentoo
 # required by kde-plasma/plasma-workspace-5.27.10-r1::gentoo
 # required by kde-plasma/plasma-desktop-5.27.10-r1::gentoo
 # required by kde-plasma/plasma-desktop (argument)
->=dev-qt/qtgui-5.15.12-r1 accessibility
+#>=dev-qt/qtgui-5.15.12-r1 accessibility
 # required by kde-plasma/libplasma-5.114.0::gentoo
 # required by kde-plasma/milou-5.27.10::gentoo
 # required by kde-plasma/plasma-workspace-5.27.10-r1::gentoo
 # required by kde-plasma/plasma-desktop-5.27.10-r1::gentoo
 # required by kde-plasma/plasma-desktop (argument)
->=kde-frameworks/kconfig-5.114.0 qml
+#>=kde-frameworks/kconfig-5.114.0 qml
 # required by kde-plasma/kwin-5.27.10-r2::gentoo
 # required by kde-plasma/plasma-workspace-5.27.10-r1::gentoo
 # required by kde-plasma/plasma-desktop-5.27.10-r1::gentoo
 # required by kde-plasma/plasma-desktop (argument)
->=kde-frameworks/kitemmodels-5.114.0 qml
+#>=kde-frameworks/kitemmodels-5.114.0 qml
 # required by kde-frameworks/qqc2-desktop-style-5.114.0::gentoo
 # required by kde-plasma/plasma-desktop-5.27.10-r1::gentoo
 # required by kde-plasma/plasma-desktop (argument)
->=kde-frameworks/sonnet-5.114.0 qml
+#>=kde-frameworks/sonnet-5.114.0 qml
 # required by kde-plasma/plasma-workspace-5.27.10-r1::gentoo
 # required by kde-plasma/plasma-desktop-5.27.10-r1::gentoo
 # required by kde-plasma/plasma-desktop (argument)
->=kde-frameworks/prison-5.114.0 qml
+#>=kde-frameworks/prison-5.114.0 qml
 
+## required by dev-qt/qtwayland-5.15.14::gentoo
+## required by @__auto_slot_operator_replace_installed__ (argument)
+#=dev-qt/qtgui-5.15.14 egl
+## required by dev-qt/qtwayland-6.7.1::gentoo
+## required by @selected
+## required by @world (argument)
+#=dev-qt/qtbase-6.7.1 wayland opengl
+## required by www-client/firefox-126.0::localrepo[wayland]
+## required by @selected
+## required by @world (argument)
+#>=x11-libs/gtk+-3.24.42 wayland
+#
+## required by x11-libs/gtk+-3.24.42::gentoo[wayland]
+## required by x11-libs/wxGTK-3.2.2.1-r4::gentoo[X]
+## required by app-crypt/veracrypt-1.26.7::gentoo
+## required by @selected
+## required by @world (argument)
+#>=media-libs/mesa-24.1.1 wayland

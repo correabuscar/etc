@@ -1,4 +1,4 @@
 #
-media-libs/gst-plugins-base opengl
+media-libs/gst-plugins-base opengl egl
 media-libs/gst-plugins-bad opengl
 #-gles2

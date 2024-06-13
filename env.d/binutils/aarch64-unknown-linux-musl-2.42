@@ -1,3 +1,0 @@
-TARGET="aarch64-unknown-linux-musl"
-VER="2.42"
-LIBPATH="/usr/lib64/binutils/aarch64-unknown-linux-musl/2.42"
