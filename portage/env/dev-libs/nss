@@ -27,6 +27,8 @@ post_pkg_postinst() {
   # pwd is used for private keys which we won't be using at all! so it doesn't matter which pwd it is. Well, looks like it's needed even when adding a cert to trust.
   set -e
   certutil -N -d "sql:${GLOBAL_NSS_DB}" -f <(echo -n "$CUR_PWD")
+  #needs +r perms for others, else only root can read it! This might be why a bunch of my tries just defaulted to hardcoded certs, like firefox!
+  chmod -vR a+r -- "${GLOBAL_NSS_DB}"
   set +e
 
 
@@ -45,7 +47,7 @@ post_pkg_postinst() {
   #ln -sf "/usr/lib64/libnssckbi.so" "$GLOBAL_NSS_DB"
   #ln [OPTION]... -t DIRECTORY TARGET...
   #  -t, --target-directory=DIRECTORY  specify the DIRECTORY in which to create the links
-  ln -sf -t "$GLOBAL_NSS_DB" "/usr/lib64/libnssckbi.so"
+  ln -vsf -t "$GLOBAL_NSS_DB" "/usr/lib64/libnssckbi.so"
   #Ok, doing that, adds another module:
   #    slot: NSS Builtin Objects
   #   token: Builtin Object Token
