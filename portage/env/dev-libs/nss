@@ -28,17 +28,64 @@ post_pkg_postinst() {
   set -e
   certutil -N -d "sql:${GLOBAL_NSS_DB}" -f <(echo -n "$CUR_PWD")
   set +e
-  for file in "${certfiles[@]}"; do
-    local fname="${RELATIVE_TO_DIR}/${file}"
-    echo "Trusting CA cert: $fname"
-    set -e
-    certutil -d "sql:${GLOBAL_NSS_DB}" -f <(echo -n "$CUR_PWD") -A -t "C,," -n "$fname" -i "$fname"
-    set +e
-  done
+
+
   set -e
   #show the modules:
   certutil -U -d "sql:${GLOBAL_NSS_DB}"
   #show the certs:
+  certutil -L -d "sql:${GLOBAL_NSS_DB}"
+
+  #The hardcoded certs will next be marked as untrusted (trusted for none):
+  #as per: https://wiki.gentoo.org/wiki/Certificates#NSS-based_modifications
+  #must've already existed, else catch possible rename?
+  test -f "/usr/lib64/libnssckbi.so"
+  #this makes a symlink(located in dir "$GLOBAL_NSS_DB") to that .so
+  #ln [OPTION]... TARGET... DIRECTORY
+  #ln -sf "/usr/lib64/libnssckbi.so" "$GLOBAL_NSS_DB"
+  #ln [OPTION]... -t DIRECTORY TARGET...
+  #  -t, --target-directory=DIRECTORY  specify the DIRECTORY in which to create the links
+  ln -sf -t "$GLOBAL_NSS_DB" "/usr/lib64/libnssckbi.so"
+  #Ok, doing that, adds another module:
+  #    slot: NSS Builtin Objects
+  #   token: Builtin Object Token
+  #     uri: pkcs11:token=Builtin%20Object%20Token;manufacturer=Mozilla%20Foundation;serial=1;model=1
+  #show the modules:
+  certutil -U -d "sql:${GLOBAL_NSS_DB}"
+  #show the hardcoded certs:
+  echo "These are the by-default hardcoded certs:"
+  certutil -L -d "sql:${GLOBAL_NSS_DB}" -h "Builtin Object Token"
+  #this removes the trust bits from the output, keeps only the prefix and certname
+  mapfile -t hardcoded_certs < <(
+    certutil -L -d "sql:${GLOBAL_NSS_DB}" -h "Builtin Object Token" |
+      awk '/^Builtin Object Token:/ {sub(/ [[:space:]]*[a-zA-Z,]+[[:space:]]*$/, ""); print}'
+  )
+  for hardcoded_cert in "${hardcoded_certs[@]}"; do
+    #remove any trust bits so it's untrusted; well, it's trusted for nothing.
+    echo "Removing trust from hardcoded cert: $hardcoded_cert"
+    certutil -M -d "sql:${GLOBAL_NSS_DB}" -f <(echo -n "$CUR_PWD") -n "$hardcoded_cert" -t ",,"
+  done
+
+  #tried to remove it, but firefox still sees the hardcoded ones, even if I delete the files({cert9.db,key4.db,pkcs11.txt}) from firefox profile dir
+  set -e
+  rm --one-file-system -v -- "${GLOBAL_NSS_DB}/libnssckbi.so"
+  set +e
+
+  set +e
+  #only trusted ones are marked as trusted for ssl from that /etc/custom-ca-certificates.conf file (see above)
+  for file in "${certfiles[@]}"; do
+    local fname="${RELATIVE_TO_DIR}/${file}"
+    echo "Trusting CA cert: $fname"
+    #In the context of certutil command from NSS (Network Security Services), the option -t "C,," specifies trust attributes for a certificate. Here’s what C,, signifies:
+    #    C: This stands for "trusted for SSL" (Secure Sockets Layer). When a certificate is marked with C, it means it is trusted for establishing secure connections over HTTPS or other SSL/TLS protocols. Clients like web browsers use this trust attribute to verify the authenticity of servers during SSL/TLS handshakes.
+    #    ,,: The two commas following C indicate that the certificate is not trusted for email (S/MIME) or code signing purposes. This means the certificate is trusted only for SSL/TLS, and not for signing emails or executable code.
+    set -e
+    certutil -d "sql:${GLOBAL_NSS_DB}" -f <(echo -n "$CUR_PWD") -A -t "C,," -n "$fname" -i "$fname"
+    set +e
+  done
+
+  set -e
+  echo "These are the modified hardcoded certs to not be trusted plus whatever u did trust before:"
   certutil -L -d "sql:${GLOBAL_NSS_DB}"
   set +e
 }
