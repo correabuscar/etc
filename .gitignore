@@ -18,3 +18,4 @@ machine-id
 adjtime
 localtime
 hosts.back*
+pki/nssdb

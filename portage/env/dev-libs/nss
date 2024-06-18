@@ -1,0 +1,44 @@
+#!/bin/bash
+#src: https://wiki.gentoo.org/wiki/Certificates#Modifying_CA_trusts
+# Execute this logic after the installation of dev-libs/nss
+post_pkg_postinst() {
+  #well but this is for dev-libs/nss so it has to use certutil
+
+  #Link in the hard-coded list, and then modify the trust bits for the certificate that needs modifying:
+  local GLOBAL_NSS_DB="/etc/pki/nssdb"
+  local RELATIVE_TO_DIR="/usr/share/ca-certificates"
+  local SELECTED_CERTS="/etc/custom-ca-certificates.conf"
+  #note: ^ this file didn't exist before, for me! therefore fk it, deleting it each time
+  rm -r -v -- "$GLOBAL_NSS_DB"
+  mkdir -p -- "$GLOBAL_NSS_DB"
+  mapfile -t certfiles < <( grep -v '^\s*#' -- "${SELECTED_CERTS}" )
+
+  local PWGEN="/usr/bin/pwgen"
+  if ! test -x "$PWGEN"; then
+    echo "$PWGEN doesn't exist"
+    exit 11
+  fi
+  local CUR_PWD="$($PWGEN -s 128|head -1)"
+  test -n "$CUR_PWD"
+  #create new db (not really needed as -A does that already, but just in case we got no certs tho!)
+  #sets a random password to avoid being asked and to avoid using premade password
+  #if pwgen isn't found it will err out like `password file contains no data`, however exit code is still 0, weirdly!
+  # -f file is taking the one line pwd from that file, which here is the output of pwgen|head
+  # pwd is used for private keys which we won't be using at all! so it doesn't matter which pwd it is. Well, looks like it's needed even when adding a cert to trust.
+  set -e
+  certutil -N -d "sql:${GLOBAL_NSS_DB}" -f <(echo -n "$CUR_PWD")
+  set +e
+  for file in "${certfiles[@]}"; do
+    local fname="${RELATIVE_TO_DIR}/${file}"
+    echo "Trusting CA cert: $fname"
+    set -e
+    certutil -d "sql:${GLOBAL_NSS_DB}" -f <(echo -n "$CUR_PWD") -A -t "C,," -n "$fname" -i "$fname"
+    set +e
+  done
+  set -e
+  #show the modules:
+  certutil -U -d "sql:${GLOBAL_NSS_DB}"
+  #show the certs:
+  certutil -L -d "sql:${GLOBAL_NSS_DB}"
+  set +e
+}
