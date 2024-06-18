@@ -1,0 +1,13 @@
+#!/bin/bash
+#src: https://wiki.gentoo.org/wiki/Certificates#Modifying_CA_trusts
+# Execute this logic after the installation
+post_pkg_postinst() {
+  local CUSTOMFILE="/etc/custom-ca-certificates.conf"
+  local CACONFIG="/etc/ca-certificates.conf"
+
+  if [[ -f "${CUSTOMFILE}" ]] ; then
+    echo "Redeploying custom ca-certificates.conf file from $CUSTOMFILE"
+    install -o root -g root -m 644 "${CUSTOMFILE}" "${CACONFIG}" && \
+    update-ca-certificates
+  fi
+}
