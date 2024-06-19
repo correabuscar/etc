@@ -1,0 +1,7 @@
+#This shouldn't be included by anything that's part of dnsmasq itself.
+#It's supposed to be used only by scripts that allow hosts by modifying dnsmasq .conf files and pointing their dns servers to these for those allowed hosts!
+
+#used by script: /swcode/bin.prepend/dnswl
+
+server=45.90.30.0
+server=45.90.28.0
