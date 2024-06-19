@@ -5,7 +5,7 @@ The   special  server  address  '#'  means,  "use  the  standard
               1.2.3.4, except  *www.google.com  which  will  be  forwarded  as
               usual.
 
-thus find a way to block everything/ "server=/./" ? and then use the above '#' method as whitelist to allow only certain hosts to be queried, hmm... maybe also keep the blacklist because well:
+thus find a way to block everything[1]/ "server=/./" [2] ? and then use the above '#' method as whitelist to allow only certain hosts to be queried, hmm... maybe also keep the blacklist because well:
 More  specific  domains  take  precedence over less specific do‐
               mains,             so:              --server=/google.com/1.2.3.4
               --server=/www.google.com/2.3.4.5    will    send   queries   for
@@ -13,4 +13,8 @@ More  specific  domains  take  precedence over less specific do‐
               to 2.3.4.5
 
 from man 8 dnsmasq
+[1] see https://unix.stackexchange.com/questions/99169/dnsmasq-white-list-for-specific-clients-on-network/99173#99173
+so by not specifying server=IPhere and thus only using server=/hostnamehere/IPhere  where IPhere is dns server IP on the inet, and hostnamehere is whitelisted host, can achieve whitelisting.
+
+[2] that server=/./  thing has no blocking effect, at least not when server=IPhere is used.
 
