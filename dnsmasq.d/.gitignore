@@ -1,3 +1,5 @@
 add-cpe-id.conf
 denied_by_script.conf
 allowed_by_script.conf
+denied_by_script.hosts.lst
+allowed_by_script.hosts.lst
