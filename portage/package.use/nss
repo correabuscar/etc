@@ -1,1 +1,2 @@
 dev-libs/nss utils -cacert
+app-misc/ca-certificate -cacert
