@@ -1,6 +1,6 @@
 >lxqt-base/lxqt-meta-1.4 -window-manager
 lxqt-base/lxqt-meta -trash terminal -sudo -sddm screenshot -processviewer -powermanagement -archiver -about -admin desktop-portal -display-manager filemanager -lximage -nls -policykit -ssh-askpass minimal
->=lxqt-base/lxqt-panel-2.0.1 lm-sensors -mount networkmonitor worldclock
-
+>=lxqt-base/lxqt-panel-2.0.1 lm-sensors -mount networkmonitor worldclock tray
+>=lxqt-base/liblxqt-2.0.0-r1 -backlight
 
 
