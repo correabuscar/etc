@@ -1,1 +1,3 @@
+#
 gnome-base/gvfs -google -http mtp fuse
+#unclear why i needed those ^ prolly for mobile phone mounting, which I can't remember how to do.

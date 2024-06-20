@@ -24,7 +24,7 @@ dictd:x:998:998:uid for app-text/dictd:/dev/null:/sbin/nologin
 logcheck:x:997:997:User for app-admin/logcheck; user account removed @ 2022-08-15:/dev/null:/sbin/nologin
 _kernelbuilder:x:1002:1005::/home/_kernelbuilder:/sbin/nologin
 at:x:25:25:added by portage for at:/var/spool/at/atjobs:/sbin/nologin
-sddm:x:996:996:A user for x11-misc/sddm:/var/lib/sddm:/sbin/nologin
+sddm:x:996:996:A user for x11-misc/sddm; user account removed @ 2024-06-20:/var/lib/sddm:/sbin/nologin
 pcap:x:377:377:User for capturing network traffic:/dev/null:/sbin/nologin
 dnsmasq:x:275:275:User for net-dns/dnsmasq:/dev/null:/sbin/nologin
 apache:x:81:81:added by portage for apache:/var/www:/sbin/nologin
