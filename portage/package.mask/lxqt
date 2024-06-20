@@ -1,0 +1,3 @@
+# this now pulls in >=kde-plasma/layer-shell-qt-6.0:6 which pulls in dev-qt/qtwayland-6.7.2::gentoo and who knows what else that pulls in!
+#>=lxqt-base/lxqt-notificationd-2.0.0
+#well this can't be done, so allowing it without masking!
