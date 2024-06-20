@@ -1,4 +1,4 @@
-this /etc/hosts.d.gen/ dir is manually added and is supposed to contain the
+this /etc/hosts.d.gen/ dir has been manually created here in /etc/ and is supposed to contain the
 .conf files and script(s) to generate /etc/hosts
 10 June 2021
 
