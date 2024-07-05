@@ -1,13 +1,37 @@
-[safe]
-	directory = /var/db/repos/spark-overlay
+#[safe]
+#	directory = /var/db/repos/spark-overlay
 
 [core]
   #editor = vim  #commented out to allow the use of $EDITOR variable!
 	autocrlf = input
-	pager = less -+X -R -+S -+F -+E
+  #" The order of preference is the $GIT_PAGER environment variable, then core.pager configuration, then $PAGER, and then the default chosen at compile time (usually less)." - man git config
+  #pager = less -+X -R -+S -+F -+E
+  pager = colordiff | less -+X -R -+S -+F -+E
+  #^ doesn't work, but as GIT_PAGER env var value it does! it's because I had GIT_PAGER=less set from ~/.bashrc
+  #pager = gitpager
 	whitespace = -blank-at-eof,-blank-at-eol,-space-before-tab
 [color]
 	ui = true
+#not my colors:
+#[color]
+#        diff = auto
+#        status = auto
+#        branch = auto
+#        ui = true
+#[color "branch"]
+#        current = cyan bold
+#        local = yellow
+#        remote = red
+#[color "diff"]
+#        meta = yellow bold
+#        frag = red bold
+#        old = red
+#        new = cyan
+#        whitespace = red reverse
+[color "status"]
+        added = green
+        changed = red
+        untracked = cyan
 [receive]
 	fsckObjects = true
 	denyNonFastForwards = true
@@ -77,6 +101,9 @@
   find-merge = "!sh -c 'commit=$0 && branch=${1:-HEAD} && (git rev-list $commit..$branch --ancestry-path | cat -n; git rev-list $commit..$branch --first-parent | cat -n) | sort -k2 -s | uniq -f1 -d | sort -n | tail -1 | cut -f2'"
   show-merge = "!sh -c 'merge=$(git find-merge $0 $1) && [ -n \"$merge\" ] && git show $merge'"
 
+  show2 = show --ext-diff
+  #^ I also have a bash function that does 'git show --ext-diff' when you do 'git show', in ~/.second.bashrc because using 'show' as an alias here has no effect!
+
 [gpg]
 	program = gpg2
   #src: https://help.github.com/articles/associating-an-email-with-your-gpg-key/
@@ -84,6 +111,7 @@
 
 [diff]
 	renameLimit = 3000
+  external = "diff --git-diff"
 #nvm, just use XXX: git diff --binary file1 file2   - this is good but it's hiding the content because it's a binary patch format! ("GIT binary patch" format)
 #[diff "JPG"]
 #    textconv = hexdump -v -C
