@@ -62,3 +62,4 @@ pipewire:x:509:user
 plugdev:x:272:
 openct:x:46:pcscd
 pcscd:x:47:
+realtime:x:206:
