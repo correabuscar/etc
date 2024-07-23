@@ -41,3 +41,25 @@
 ## required by media-sound/musescore-4.2.1-r2::gentoo
 ## required by media-sound/musescore (argument)
 #>=dev-qt/qtquickcontrols2-5.15.14 widgets
+
+## required by dev-python/matplotlib-3.9.1::gentoo[-test]
+## required by dev-python/matplotlib (argument)
+#>=dev-python/pillow-10.4.0 webp
+## required by dev-python/matplotlib-3.9.1::gentoo[qt5,-test,-python_targets_python3_13,-python_targets_python3_10,-python_targets_python3_11,python_targets_python3_12]
+## required by dev-python/matplotlib (argument)
+#>=dev-python/PyQt5-5.15.10-r1 widgets gui
+## required by virtual/fortran-0-r1::gentoo
+## required by sci-libs/lapack-3.12.0-r1::gentoo
+## required by virtual/cblas-3.8::gentoo
+## required by dev-python/numpy-2.0.0::gentoo
+## required by dev-python/contourpy-1.2.1::gentoo
+## required by dev-python/matplotlib-3.9.1::gentoo[-test]
+## required by dev-python/matplotlib (argument)
+#>=sys-devel/gcc-14.1.1_p20240622 fortran
+## required by dev-python/matplotlib-3.9.1::gentoo[-test]
+## required by dev-python/matplotlib (argument)
+#>=virtual/imagemagick-tools-1 tiff
+## required by virtual/imagemagick-tools-1::gentoo[-svg]
+## required by dev-python/matplotlib-3.9.1::gentoo[-test]
+## required by dev-python/matplotlib (argument)
+#>=media-gfx/imagemagick-7.1.1.25 tiff
