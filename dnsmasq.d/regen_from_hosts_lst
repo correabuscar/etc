@@ -1,0 +1,19 @@
+#!/bin/bash
+
+declare -a hosts
+hosts=()
+#SC2046 (warning): Quote this to prevent word splitting.
+#we need it to word split
+# shellcheck disable=SC2046
+#hosts=( $(grep -v '^\s*#' -- allowed_by_script.hosts.lst | grep -v '^$' | tr '\n' ' ') )
+
+# Read the file line by line
+while IFS= read -r line; do
+  # Skip commented and empty lines
+  [[ $line =~ ^\s*# ]] && continue
+  [[ $line =~ ^\s*$ ]] && continue
+  # Append the line to the array
+  hosts+=("$line")
+done < allowed_by_script.hosts.lst
+
+dnswl "${hosts[@]}"
