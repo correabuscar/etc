@@ -4,6 +4,8 @@
 >=net-misc/curl-8.1.1 nss
 #>=net-misc/curl-8.3.0 CURL_SSL="rustls"
 >=net-misc/curl-8.3.0 rustls curl_ssl_rustls
+>=net-misc/curl-8.9.1-r1 -quic -curl_quic_openssl -http3
+#^ it doesn't allow rustls with quic openssl!
 
 
 
