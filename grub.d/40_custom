@@ -39,6 +39,7 @@ menuentry "gentoo admincd 19 april 2020" {
 }
 
 
+#info src: https://wiki.gentoo.org/wiki/GRUB2/Chainloading
 menuentry "gentoo installcd 19 april 2020" {
   set isofile=/boot.iso/gentoo/install-amd64-minimal-20200419T214502Z.iso
   loopback loop $isofile
@@ -47,3 +48,15 @@ menuentry "gentoo installcd 19 april 2020" {
   initrd (loop)/boot/gentoo.igz
 }
 
+#info src: https://wiki.gentoo.org/wiki/GRUB2/Chainloading
+menuentry "system rescue cd" {
+  set isofile=/boot.iso/systemrescuecd/systemrescue-11.01-amd64.iso
+  loopback loop $isofile
+  #old settings, untested if needed anymore or if they still work:
+  #old: the dns is nextdns IP.
+  #old: so setkmap=us to not get the prompt for keyboard
+  #old: rootpass is the root password
+  #XXX: don't use memory_corruption_check_size=600K or you get kernel panic "Real mode trampoline was not allocated" because it says before it doesn't have enough low ram for it.
+	linux (loop)/sysresccd/boot/x86_64/vmlinuz img_dev=$imgdevpath img_loop=$isofile scandelay=1 archisobasedir=sysresccd setkmap=us rootpass=/ dns=45.90.30.0  earlymodules=loop systemd.mask=dhcpcd@ root_trim=yes rd.luks.allow-discards rd.luks.options=discard ipv6.disable=1 ipv6.disable_ipv6=1 ipv6.autoconf=0 loglevel=15 log_buf_len=16M ignore_loglevel printk.always_kmsg_dump=y printk.time=y printk.devkmsg=on mminit_loglevel=4 memory_corruption_check=1 memory_corruption_check_period=60 fbcon=scrollback:4096k fbcon=font:ProFont6x11 net.ifnames=0 nolvm dobtrfs gk.log.keep=true console=tty1 earlyprintk=vga audit=0 systemd.log_target=kmsg systemd.journald.forward_to_console=1 enforcing=0 udev.children-max=1256 rd.udev.children-max=1256 nohz=on oops=panic panic=0 print_fatal_signals=1 page_poison=1 psi=1 sysrq_always_enabled random.trust_cpu=off logo.nologo lpj=0 mce=bootlog reboot=force,cold noexec=on nohibernate scsi_mod.use_blk_mq=1 consoleblank=120 mitigations=on rd.log=all noefi cpuidle.governor=menu zram.num_devices=4 zswap.enabled=0 vsyscall=none acpi_force_table_verification i915.enable_fbc=1 i915.verbose_state_checks=1 i915.enable_hangcheck=1 i915.error_capture=1 enable_mtrr_cleanup delayacct init_on_free=0 init_on_alloc=0 page_table_check=on docache copytoram doxdetect dostartx memtest=3
+  initrd (loop)/sysresccd/boot/intel_ucode.img (loop)/sysresccd/boot/amd_ucode.img (loop)/sysresccd/boot/x86_64/sysresccd.img
+}
