@@ -512,4 +512,5 @@
 ##127.0.0.1 ::𝖥𝖥𝖥𝖥:127.1.1.2
 ##src: https://www.compart.com/en/unicode/based/U+0046
 0.0.0.0 alive.github.com
+0.0.0.0 www.gravatar.com #if it's not in here like this, then even tho dnsmasq says NXDOMAIN, firefox says "Couldn't resolve", but if it's here, it's not gonna be in dnsmasq.log !
 # all done from './genhosts.bash'
