@@ -132,7 +132,7 @@ set -e
 echo 'server=/hi/' >> "$tmpfile"
 echo 'server=/firefox_blocked_domain.tld/' >> "$tmpfile"
 echo '#^ all subdomains like something.firefox_blocked_domain.tld will be blocked! this is how it works! FIXME: this may not be wanted for addons.mozilla.org even though you have only "server=/mozilla.org/"'
-print_all_the_hostnames | sed -re 's|^(.*)$|server=/\1/|' >> "$tmpfile"
+print_all_the_hostnames | sort -u | sed -re 's|^(.*)$|server=/\1/|' >> "$tmpfile"
 echo "# all done" >> "$tmpfile"
 set +e
 if test "$1" != "nodiff"; then
