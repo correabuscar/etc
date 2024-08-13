@@ -2,5 +2,6 @@
 
 # See the dnsmasq(8) man page for possible options to put here.
 DNSMASQ_OPTS="--user=dnsmasq --group=dnsmasq --log-debug --stop-dns-rebind --filter-AAAA"
+#no apparent effect: --min-cache-ttl=60", 13aug2024, well no effect on those firefox [HTTPS](like [A] or [AAAA]) dns queries that happen only when about:config setting network.dns.native_https_query is true
 #--stop-dns-rebind see man 8 dnsmasq, also in /etc/dnsmasq.conf look for bogus-nxdomain=0.0.0.0 which is needed for NextDNS !
 #       --filter-AAAA  Remove AAAA records from answers. No IPv6 addresses will be returned.

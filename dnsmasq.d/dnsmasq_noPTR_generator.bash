@@ -54,7 +54,7 @@ function print_all_hostnames_from_etc_hosts() {
 function main() {
 
 if test "$1" != "nodiff"; then
-  if which colordiff; then
+  if which colordiff >/dev/null; then
     diff=colordiff
     if test -n "$DEBUG" -a "0$DEBUG" != "00"; then
       echo "Using '$diff'" >&2
@@ -122,6 +122,11 @@ cat > "$tmpfile" <<EOF
 EOF
 set +e
 
+if cat /etc/hosts /etc/hosts.dnsmasq | grep -v '^\s*#'|grep -v '^\s*$'|sed -re 's/^[0-9.: \t]+//'|sed -re 's/[[:space:]]+/ /g' | grep --color=always '#'; then
+  echo "-------" >&2
+  echo "Found comment after the 'IP hostname' form in one of the files '/etc/hosts /etc/hosts.dnsmasq', this would cause each word of the comment to be treated as hostname and thus might cause dnsmasq to exit when reading its .conf files. Aborting!" >&2
+  exit 10
+fi
 
 set -e
 echo 'server=/hi/' >> "$tmpfile"

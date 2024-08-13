@@ -52,6 +52,39 @@ cat > "$tmpfile" <<EOF
 #DO not modify this directly but instead use '$hostsdgen_dir_withslash' and place a new .conf file there in same format as /etc/hosts
 EOF
 
+#find -L "$hostsdgen_dir_withslash" -type f -and -name '*.conf' -and -print0 | sort -z | xargs -0 -P1 -- grep --
+#XXX: checking if any '#' comments are on the same line as the IP and host in /etc/hosts style format, which will cause some other script to choke on those because it's treating those each word of the comment as hostnames:
+# Find all .conf files, process each file, and check the output
+found_something="nah"
+#Doesn't need to be exported, it's seen below!
+tmpfname="/tmp/genhosts_bash_lameo_${RANDOM}.log"
+rm -- "$tmpfname" 2>/dev/null || true
+find -L "$hostsdgen_dir_withslash" -type f -name '*.conf' | while read -r file; do
+    # Process the file and store results
+    grep -v '^\s*#' "$file" | grep -v '^\s*$' | sed -re 's/^[0-9.: \t]+//' | sed -re 's/[[:space:]]+/ /g' | grep --color=always -- '#' | while read -r line; do
+        # Print the filename and the matching line
+        echo "----------"
+        echo "File: $file"
+        echo "Line: $line"
+        if test "$found_something" != "yea"; then
+          found_something="yea" #XXX: Can't read this from parent shell, well this IS a subshell here, so can't set it in parent! so have to use filename below to signal this state!
+          if test -n "$tmpfname"; then
+            echo "yea" > "$tmpfname"
+          else
+            echo "tmpfname is empty"
+            exit 8
+          fi
+        fi
+    done
+done
+if test "$(cat -- "$tmpfname" 2>/dev/null)" == "yea"; then
+  echo "----------"
+  rm -v -- "$tmpfname"
+  echo "The above file(s) has comments on the 'IP hostname' line which will cause some other script to treat the comment words as hostnames thus break dnsmasq when reading its .conf files"
+  echo "Aborting due to the above errors!" >&2
+  exit 7
+fi
+
 #-L follow links
 #find -L "$hostsdgen_dir_withslash" -type f -and -name '*.conf' -and -printf '%P\0'| sort -z | xargs -0 -P1 -- cat -- >> "$tmpfile"
 #XXX last good:
